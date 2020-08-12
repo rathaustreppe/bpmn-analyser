@@ -1,6 +1,10 @@
 import unittest
 import pytest
 
+import sys
+import os
+sys.path.append(os.getcwd())
+
 from src.models.token import Token
 
 class TestToken:
