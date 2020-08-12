@@ -1,9 +1,9 @@
 
-# This class defines a single rule that is checked
-# before a token state can change
+# local file imports
 from src.models.token import Token
 
-
+# This class defines a single rule that is checked
+# before a token state can change
 class Token_State_Rule:
     def __init__(self, tok_attribute:str = None,
                  operator: str = None,
@@ -13,7 +13,7 @@ class Token_State_Rule:
         self.tok_value = tok_value
 
     def apply_rule(self, t:Token) -> bool:
-        val = t.get_attribute(self.tok_attribute)
+        val = t.get_attribute(key=self.tok_attribute)
         if self.operator == '=':
             if val == self.tok_value:
                 return True

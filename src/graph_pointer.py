@@ -2,9 +2,11 @@ import igraph as ig
 from igraph import Edge
 from pedantic import pedantic
 
+
+# local file imports
 from src.models.token_state_rule import Token_State_Rule
 from src.models.token import Token
-from src.models.graph_text import Graph_Text
+from src.models.graphtext import GraphText
 
 # Graph_Pointer is the object that points to a
 # single vertex in the BPMN-graph and reads its values
@@ -90,7 +92,7 @@ class Graph_Pointer:
         # Step 1: analyze the text
         # Step 2: change token state
         vertex = self.graph.vs[self.__pointer]
-        vertex_text:Graph_Text = vertex['text']
+        vertex_text:GraphText = vertex['text']
 
         # make text analysis
         unterschrift = 'Unterschrift'
@@ -100,14 +102,14 @@ class Graph_Pointer:
             rule = Token_State_Rule(tok_attribute='Ort', operator='=',
                                     tok_value='Görlitz')
             if rule.apply_rule(t=self.token):
-                self.token.change_value('Unterschrift ML', True)
+                self.token.change_value(key='Unterschrift ML', value=True)
                 return
 
         zittau = 'Zittau'
         schicken = 'schicken'
         if zittau in vertex_text and schicken in vertex_text:
             # no rules applied
-            self.token.change_value('Ort', zittau)
+            self.token.change_value(key='Ort', value=zittau)
             return
 
         vertragspruefung = 'Vertragsprüfung'
@@ -116,7 +118,7 @@ class Graph_Pointer:
             rule = Token_State_Rule(tok_attribute='Ort', operator='=',
                                     tok_value='Zittau')
             if rule.apply_rule(t=self.token):
-                self.token.change_value("Fachlich geprüft", True)
+                self.token.change_value(key="Fachlich geprüft", value=True)
                 return
 
         if unterschrift in vertex_text and \
@@ -133,19 +135,19 @@ class Graph_Pointer:
             if rule1.apply_rule(self.token) and \
                     rule2.apply_rule(self.token):
                 self.token.change_value\
-                    ('Unterschrift Zittau', True)
+                    (key='Unterschrift Zittau', value=True)
                 return
 
         dresden = 'Dresden'
         if dresden in vertex_text and schicken in vertex_text:
             # no rule applied
-            self.token.change_value('Ort', dresden)
+            self.token.change_value(key='Ort', value=dresden)
             return
 
         goerlitz = 'Görlitz'
         if goerlitz in vertex_text and schicken in vertex_text:
             # no rule applied
-            self.token.change_value('Ort', goerlitz)
+            self.token.change_value(key='Ort', value=goerlitz)
             return
 
 
