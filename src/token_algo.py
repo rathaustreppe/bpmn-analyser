@@ -1,8 +1,8 @@
-from src.graph_text import Graph_Text
-from src.token import Token
-from src.graph_pointer import Graph_Pointer
 import igraph as ig
 
+from src.models.graph_text import Graph_Text
+from src.graph_pointer import Graph_Pointer
+from src.models.token import Token
 
 # solution token
 init_attributes = {

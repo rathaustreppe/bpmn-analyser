@@ -1,7 +1,7 @@
 
 # This class defines a single rule that is checked
 # before a token state can change
-from src.token import Token
+from src.models.token import Token
 
 
 class Token_State_Rule:
