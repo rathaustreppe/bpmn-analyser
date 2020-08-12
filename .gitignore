@@ -1,2 +1,4 @@
  #pyharm ide
 .idea
+*.pyc
+*.svg

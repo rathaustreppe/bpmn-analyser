@@ -1,7 +1,7 @@
 import unittest
 import pytest
 
-from classes.token import Token
+from src.token import Token
 
 class TestToken:
     @pytest.fixture(autouse=True)

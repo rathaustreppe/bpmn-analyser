@@ -1,9 +1,9 @@
 import igraph as ig
 from igraph import Edge
 
-from classes.token_state_rule import Token_State_Rule
-from classes.token import Token
-from classes.graph_text import Graph_Text
+from src.token_state_rule import Token_State_Rule
+from src.token import Token
+from src.graph_text import Graph_Text
 
 # Graph_Pointer is the object that points to a
 # single vertex in the BPMN-graph and reads its values
