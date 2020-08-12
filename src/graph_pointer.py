@@ -1,5 +1,6 @@
 import igraph as ig
 from igraph import Edge
+from pedantic import pedantic
 
 from src.models.token_state_rule import Token_State_Rule
 from src.models.token import Token
@@ -16,7 +17,8 @@ class Graph_Pointer:
         self.token = token
         self.__pointer = -1
 
-    def runstep_graph(self):
+    @pedantic
+    def runstep_graph(self) -> int:
         # goes through the graph and changes token state
         # call it multiple times. First time calling it will
         # put the pointer to the start of the graph
