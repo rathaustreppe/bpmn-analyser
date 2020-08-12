@@ -2,3 +2,7 @@
 .idea
 *.pyc
 *.svg
+
+# python virutal environments
+venv38
+build_requirements.bat
