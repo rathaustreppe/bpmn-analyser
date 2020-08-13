@@ -1,151 +1,192 @@
 import igraph as ig
 from igraph import Edge
-from pedantic import pedantic
+from pedantic import pedantic, validate_args, \
+    needs_refactoring
 
-from src.models.token_state_rule import Token_State_Rule
+# local file imports
+from src.models.tokenstaterule import TokenStateRule
 from src.models.token import Token
-from src.models.graph_text import Graph_Text
+from src.models.graphtext import GraphText
 
-# Graph_Pointer is the object that points to a
-# single vertex in the BPMN-graph and reads its values
-# to change the token attributes --> the tokens current
-# state.
+
 class Graph_Pointer:
-
-    def __init__(self, graph:ig.Graph, token:Token):
+    """
+    Graph_Pointer is the object that points to a
+    single vertex in the BPMN-graph and reads its values
+    to change the token attributes --> the tokens current
+    state.
+    """
+    # @pedantic # does not yet work with 'type'
+    # see https://github.com/LostInDarkMath/pedantic-python-decorators/issues/5
+    def __init__(self, graph:'ig.Graph', token:'Token'):
         self.graph = graph
         self.token = token
         self.__pointer = -1
 
     @pedantic
+    def get_token(self) -> Token:
+        return self.token
+
+    @pedantic
     def runstep_graph(self) -> int:
-        # goes through the graph and changes token state
-        # call it multiple times. First time calling it will
-        # put the pointer to the start of the graph
+        """
+        With each call, it iterates one step through the
+        graph (= changes pointer), analyses the text (= bpmn
+        activity) and performs state transitions on token.
+        Returns:
+            int:
+            1 if the end of the graph is reached
+            0 if the the step was performed successfully but
+            the end of the graph is not reached yet
+        """
+        if self.__pointer < -1:
+            raise RuntimeError(
+                f'GraphPointer.__pointer {self.__pointer} '
+                f'is set horribly wrong.')
+
         if self.__pointer == -1:
-            self.__set_start_verticy()
+            # case: init, first call of runstep_graph
+            # set pointer to first vertex of graph and
+            # change the state of the token
+            self.__set_start_vertex()
+            self.__change_token_state()
             return 0
 
-        # all outgoing edges from vertex pointed by __pointer
+        # all other cases: decide what to to by outgoing edges
         edges_ids = self.graph.incident(self.__pointer, mode='OUT')
 
-        # if there are no edges left, return 2
+        # if there are no edges left, we are done
         if len(edges_ids) == 0:
-            return 2
-
-        # if vertex the pointer points to has one
-        # outgoing edge:
-        if len(edges_ids) == 1:
-            # get the vertex the edge points to and set
-            # the pointer
-            edge: Edge = self.graph.es[edges_ids[0]]
-            vertex_id = edge.target
-            self.change_pointer(vertex_id)
             return 1
 
+        # if there is one outgoing edge, set pointer to it
+        # and change token state
+        if len(edges_ids) == 1:
+            # get the vertex the edge points to
+            edge: Edge = self.graph.es[edges_ids[0]]
+            vertex_id = edge.target
 
-    def __set_start_verticy(self):
-        # define the entry point of the graph from where
-        # the graph is read
-        # can only process directed graphs
+            self.change_pointer(vertex_id=vertex_id)
+            self.__change_token_state()
+            return 0
+
+    @pedantic
+    def __set_start_vertex(self) -> None:
+        """
+        Define the entry point of the graph from where
+        the graph is read. Can only process directed graphs
+        and only graphs with one start vertex.
+        Start vertex have no prior (incident) vertex.
+        Returns: None, but changes inner pointer of GraphPointer
+
+        """
         if not self.graph.is_directed():
-            print("ERROR: graph is not directed")
-            return -1
+            raise RuntimeError(
+                'ERROR: graph is not directed')
 
-        # get the incidence list of all verteces
+        # get the incidence list of all verticies
         # if one and only one vertices has no incident edge,
         # it is the start vertex
-        inclist = (self.graph.get_inclist(mode="IN"))
+        incidence_list = (self.graph.get_inclist(mode="IN"))
 
-        # check for only one empty list and return index
-        # position of it
-        starting_points = []
-        for idx, list in enumerate(inclist, start=0):
-            if len(list) == 0:
-                starting_points.append(idx)
-            else:
-                continue
+        # now we got something like
+        # >>> [[], [0], [1], [2], [3]]
+        # and want to check that there is only one empty
+        # list and we want to get the position of the list
+        # because this is equal to the vertex_id (see
+        # documentation of igraph.graph.get_inclist)
+        if (incidence_list.count([])) != 1:
+            raise RuntimeError(
+                'ERROR: graph has multiple starting points')
+        vertex_id = incidence_list.index([])
 
-        if len(starting_points) != 1:
-            print("ERROR: graph has multiple "
-                  "starting points")
-            return -1
-        else:
-            self.change_pointer(starting_points[0])
+        # set inner pointer to starting vertex
+        self.change_pointer(vertex_id=vertex_id)
 
+    #@validate_args(lambda vertex_id: (vertex_id >= 0, f'ERROR: vertex_id {vertex_id} is smaller than 0'))
+    #@pedantic both decorators dont work at same time.
+    #see https://github.com/LostInDarkMath/pedantic-python-decorators/issues/6
+    def change_pointer(self, vertex_id:int) -> None:
+        """
+        Changes the pointer to another vertex.
+        Args:
+            vertex_id (int): The ID of the vertex given
+            by igraph-lib.
 
-    def change_pointer(self, vertex_id):
-        if vertex_id is None:
-            print('ERROR: vertex id is none!')
-            return -1
-        else:
-            self.__pointer = vertex_id
-            # the pointer has changed. So we now change the
-            # token state according to the content of the vertex
-            self.__change_token_state()
+        Returns:
+            None, but side effect of inner pointer of GraphPointer
+        """
+        if vertex_id is None or vertex_id < 0:
+            raise RuntimeError(
+                'ERROR: vertex_id is invalid'
+                '(None or smaller than 0')
+        self.__pointer = vertex_id
 
-    def __change_token_state(self):
+    @pedantic
+    def __change_token_state(self) -> None:
         # we call this function whenever the pointer has
         # changed
         # Step 1: analyze the text
         # Step 2: change token state
         vertex = self.graph.vs[self.__pointer]
-        vertex_text:Graph_Text = vertex['text']
+        vertex_text:GraphText = vertex['text']
 
         # make text analysis
         unterschrift = 'Unterschrift'
         ML = 'ML'
         if unterschrift in vertex_text and ML in vertex_text:
             # rule: Ort == Görlitz
-            rule = Token_State_Rule(tok_attribute='Ort', operator='=',
-                                    tok_value='Görlitz')
-            if rule.apply_rule(t=self.token):
-                self.token.change_value('Unterschrift ML', True)
+            rule = TokenStateRule(tok_attribute='Ort',
+                                  operator='=',
+                                  tok_value='Görlitz')
+            if rule.apply_rule(token=self.token):
+                self.token.change_value(key='Unterschrift ML', value=True)
                 return
 
         zittau = 'Zittau'
         schicken = 'schicken'
         if zittau in vertex_text and schicken in vertex_text:
             # no rules applied
-            self.token.change_value('Ort', zittau)
+            self.token.change_value(key='Ort', value=zittau)
             return
 
         vertragspruefung = 'Vertragsprüfung'
         if vertragspruefung in vertex_text:
             # rule: 'Ort' == 'Zittau'
-            rule = Token_State_Rule(tok_attribute='Ort', operator='=',
-                                    tok_value='Zittau')
-            if rule.apply_rule(t=self.token):
-                self.token.change_value("Fachlich geprüft", True)
+            rule = TokenStateRule(tok_attribute='Ort',
+                                  operator='=',
+                                  tok_value='Zittau')
+            if rule.apply_rule(token=self.token):
+                self.token.change_value(key="Fachlich geprüft", value=True)
                 return
 
         if unterschrift in vertex_text and \
                 zittau in vertex_text:
                 # rule: 'Ort' == 'Zittau' and
                 # 'fachlich geprüft' = True
-            rule1 = Token_State_Rule(tok_attribute='Ort',
-                                     operator='=',
-                                     tok_value='Zittau')
-            rule2 = Token_State_Rule(tok_attribute='Fachlich geprüft',
-                                     operator='=',
-                                     tok_value=True)
+            rule1 = TokenStateRule(tok_attribute='Ort',
+                                   operator='=',
+                                   tok_value='Zittau')
+            rule2 = TokenStateRule(tok_attribute='Fachlich geprüft',
+                                   operator='=',
+                                   tok_value=True)
 
-            if rule1.apply_rule(self.token) and \
-                    rule2.apply_rule(self.token):
+            if rule1.apply_rule(token=self.token) and \
+                    rule2.apply_rule(token=self.token):
                 self.token.change_value\
-                    ('Unterschrift Zittau', True)
+                    (key='Unterschrift Zittau', value=True)
                 return
 
         dresden = 'Dresden'
         if dresden in vertex_text and schicken in vertex_text:
             # no rule applied
-            self.token.change_value('Ort', dresden)
+            self.token.change_value(key='Ort', value=dresden)
             return
 
         goerlitz = 'Görlitz'
         if goerlitz in vertex_text and schicken in vertex_text:
             # no rule applied
-            self.token.change_value('Ort', goerlitz)
+            self.token.change_value(key='Ort', value=goerlitz)
             return
 
 

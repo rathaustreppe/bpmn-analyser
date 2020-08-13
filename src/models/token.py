@@ -1,45 +1,64 @@
-from typing import Dict, List
+from typing import Dict, Any, Optional
 
-# Is the class for a token-object to be passed through
-# the business-process-graphs.
+from pedantic import pedantic, overrides
+
+
 class Token:
-    def __init__(self, attributes: Dict[str, any] = None):
+    """
+    Is the class for a token-object to be passed through
+    the business-process-graphs.
+    """
+
+    @pedantic
+    def __init__(self,
+                 attributes: Optional[Dict[str, Any]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
             self.attributes = attributes
 
-    def __change_value(self, key, value):
+    @pedantic
+    def __change_value(self, key: str, value: Any) -> None:
         if key in self.attributes.keys():
-            v_before = self.attributes[key]
+            val_before = self.attributes[key]
             self.attributes[key] = value
-            print("Token-State-Changed")
-            print('attribute',key,'from', v_before,'to', value)
+            print(f'{key}: {val_before} -> {value}')
         else:
-            print('ERROR: key', key,"not in token attributes")
+            raise RuntimeError(
+                f'ERROR: key {key} not in token attributes')
 
-    def init_keys(self, keys: List[str]):
-        empty_value = 0
-        self.attributes.fromkeys(keys, empty_value)
-
-    def new_attribute(self, key, value):
+    @pedantic
+    def new_attribute(self, key: str, value: Any) -> None:
         self.attributes[key] = value
 
-    def change_value(self, key, value):
-        self.__change_value(key, value)
+    @pedantic
+    def change_value(self, key: str, value: Any) -> None:
+        self.__change_value(key=key, value=value)
 
-    def get_all_attributes(self):
-        return self.attributes
-
-    def get_attribute(self, key):
+    @pedantic
+    def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
 
-    def compare_token(self, other):
-        other: Token
+    #@pedantic #does not yet work with TypeHint 'Token'
+    @overrides(object)
+    def __eq__(self, other: 'Token') -> bool:
+        """
+        Compares two tokens if they have equal dict-
+        attributes.
+        Overriding __eq__ means you can use '==' syntax.
+        >>> if token1 == token2: # do something
+        Args:
+            other (Token): token you want to compare to
+
+        Returns:
+            bool: True if tokens are equal. Returns false otherwise
+
+        """
         if len(self.attributes) == len(other.attributes):
             for key in self.attributes.keys():
                 if key in other.attributes.keys() and \
-                        self.attributes[key] == other.attributes[key]:
+                        self.attributes[key] == \
+                        other.attributes[key]:
                     pass
                 else:
                     return False
@@ -47,5 +66,6 @@ class Token:
             return False
         return True
 
-    def __str__(self):
+    @pedantic
+    def __str__(self) -> str:
         return "token attribues: " + str(self.attributes)
