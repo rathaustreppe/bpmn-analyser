@@ -4,7 +4,7 @@ from pedantic import pedantic
 
 
 # local file imports
-from src.models.token_state_rule import Token_State_Rule
+from src.models.tokenstaterule import TokenStateRule
 from src.models.token import Token
 from src.models.graphtext import GraphText
 
@@ -99,9 +99,10 @@ class Graph_Pointer:
         ML = 'ML'
         if unterschrift in vertex_text and ML in vertex_text:
             # rule: Ort == Görlitz
-            rule = Token_State_Rule(tok_attribute='Ort', operator='=',
-                                    tok_value='Görlitz')
-            if rule.apply_rule(t=self.token):
+            rule = TokenStateRule(tok_attribute='Ort',
+                                  operator='=',
+                                  tok_value='Görlitz')
+            if rule.apply_rule(token=self.token):
                 self.token.change_value(key='Unterschrift ML', value=True)
                 return
 
@@ -115,9 +116,9 @@ class Graph_Pointer:
         vertragspruefung = 'Vertragsprüfung'
         if vertragspruefung in vertex_text:
             # rule: 'Ort' == 'Zittau'
-            rule = Token_State_Rule(tok_attribute='Ort', operator='=',
-                                    tok_value='Zittau')
-            if rule.apply_rule(t=self.token):
+            rule = TokenStateRule(tok_attribute='Ort', operator='=',
+                                  tok_value='Zittau')
+            if rule.apply_rule(token=self.token):
                 self.token.change_value(key="Fachlich geprüft", value=True)
                 return
 
@@ -125,15 +126,15 @@ class Graph_Pointer:
                 zittau in vertex_text:
                 # rule: 'Ort' == 'Zittau' and
                 # 'fachlich geprüft' = True
-            rule1 = Token_State_Rule(tok_attribute='Ort',
-                                     operator='=',
-                                     tok_value='Zittau')
-            rule2 = Token_State_Rule(tok_attribute='Fachlich geprüft',
-                                     operator='=',
-                                     tok_value=True)
+            rule1 = TokenStateRule(tok_attribute='Ort',
+                                   operator='=',
+                                   tok_value='Zittau')
+            rule2 = TokenStateRule(tok_attribute='Fachlich geprüft',
+                                   operator='=',
+                                   tok_value=True)
 
-            if rule1.apply_rule(self.token) and \
-                    rule2.apply_rule(self.token):
+            if rule1.apply_rule(token=self.token) and \
+                    rule2.apply_rule(token=self.token):
                 self.token.change_value\
                     (key='Unterschrift Zittau', value=True)
                 return

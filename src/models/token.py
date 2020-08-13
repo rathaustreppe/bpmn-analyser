@@ -1,6 +1,6 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
-from pedantic import pedantic
+from pedantic import pedantic, overrides
 
 
 class Token:
@@ -11,7 +11,7 @@ class Token:
 
     @pedantic
     def __init__(self,
-                 attributes: Dict[str, Any] = None) -> None:
+                 attributes: Optional[Dict[str, Any]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
@@ -22,12 +22,10 @@ class Token:
         if key in self.attributes.keys():
             val_before = self.attributes[key]
             self.attributes[key] = value
-            print('{}: {} -> {}'
-                  .format(key, val_before, value))
+            print(f'{key}: {val_before} -> {value}')
         else:
             raise RuntimeError(
-                'ERROR: key {} not '
-                'in token attributes'.format(key))
+                f'ERROR: key {key} not in token attributes')
 
     @pedantic
     def new_attribute(self, key: str, value: Any) -> None:
@@ -41,16 +39,17 @@ class Token:
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
 
-    # @pedantic #does not yet work with TypeHint 'Token'
-    def compare_token(self, other: 'Token') -> bool:
+    #@pedantic #does not yet work with TypeHint 'Token'
+    @overrides(object)
+    def __eq__(self, other: 'Token') -> bool:
         """
         Compares two tokens if they have equal dict-
         attributes.
         Args:
-            other: Token of class Token
+            other (Token): Token of class Token
 
-        Returns: True if tokens are equal.
-        Returns false otherwise
+        Returns:
+            bool: True if tokens are equal. Returns false otherwise
 
         """
         if len(self.attributes) == len(other.attributes):
