@@ -27,8 +27,8 @@ class GraphText:
         to use the 'in' - operator for GraphText-objects
         thus enhances readability
         Example:
-        my_graph_text = GraphText(text='abcd')
-        if 'ab' in my_graph_text -> True
+        >>> my_graph_text = GraphText(text='abcd')
+        >>> if 'ab' in my_graph_text -> True
         Args:
             item: substring you want to check
 

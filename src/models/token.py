@@ -45,8 +45,10 @@ class Token:
         """
         Compares two tokens if they have equal dict-
         attributes.
+        Overriding __eq__ means you can use '==' syntax.
+        >>> if token1 == token2: # do something
         Args:
-            other (Token): Token of class Token
+            other (Token): token you want to compare to
 
         Returns:
             bool: True if tokens are equal. Returns false otherwise

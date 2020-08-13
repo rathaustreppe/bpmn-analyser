@@ -5,7 +5,6 @@ from pedantic import pedantic
 # local file imports
 from src.models.token import Token
 
-
 class TokenStateRule:
     """
     This class defines a single rule that is checked
@@ -32,6 +31,16 @@ class TokenStateRule:
 
     @pedantic
     def apply_rule(self, token:Token) -> bool:
+        """
+        Takes a token and and and checks if its pre-defined
+        rule is true or false wth the given token.
+        Args:
+            token (Token): a Token object you want to check
+
+        Returns:
+             bool: True if rule applied to token is okay.
+             False if token does not comply with rule
+        """
         val = token.get_attribute(key=self.tok_attribute)
         if self.operator == '=':
             if val == self.tok_value:
@@ -39,5 +48,6 @@ class TokenStateRule:
             else:
                 return False
         else:
-            print('ERROR Operator', self.operator,
-                  'not defined!')
+            raise RuntimeWarning(f'ERROR: opertor '
+                                 f'{self.operator} '
+                                 f'not implemented')
