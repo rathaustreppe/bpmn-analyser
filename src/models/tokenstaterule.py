@@ -1,16 +1,15 @@
 from typing import Any
-from pedantic import pedantic
-
+from pedantic import pedantic, pedantic_class
 
 # local file imports
 from src.models.token import Token
 
+@pedantic_class
 class TokenStateRule:
     """
     This class defines a single rule that is checked
     before a token state can change.
     """
-    @pedantic
     def __init__(self, tok_attribute: str = '',
                  operator: str = '',
                  tok_value: Any = None) -> None:
@@ -29,7 +28,6 @@ class TokenStateRule:
         self.operator = operator
         self.tok_value = tok_value
 
-    @pedantic
     def apply_rule(self, token:Token) -> bool:
         """
         Takes a token and and and checks if its pre-defined

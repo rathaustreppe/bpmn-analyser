@@ -1,7 +1,6 @@
-import igraph as ig
-from igraph import Edge
+from igraph import Edge, Graph
 from pedantic import pedantic, validate_args, \
-    needs_refactoring
+    needs_refactoring, pedantic_class
 
 # local file imports
 from src.models.tokenstaterule import TokenStateRule
@@ -9,6 +8,7 @@ from src.models.token import Token
 from src.models.graphtext import GraphText
 
 
+@pedantic_class
 class Graph_Pointer:
     """
     Graph_Pointer is the object that points to a
@@ -16,18 +16,14 @@ class Graph_Pointer:
     to change the token attributes --> the tokens current
     state.
     """
-    # @pedantic # does not yet work with 'type'
-    # see https://github.com/LostInDarkMath/pedantic-python-decorators/issues/5
-    def __init__(self, graph:'ig.Graph', token:'Token'):
+    def __init__(self, graph:'Graph', token:'Token') -> None:
         self.graph = graph
         self.token = token
         self.__pointer = -1
 
-    @pedantic
     def get_token(self) -> Token:
         return self.token
 
-    @pedantic
     def runstep_graph(self) -> int:
         """
         With each call, it iterates one step through the
@@ -70,7 +66,6 @@ class Graph_Pointer:
             self.__change_token_state()
             return 0
 
-    @pedantic
     def __set_start_vertex(self) -> None:
         """
         Define the entry point of the graph from where
@@ -103,18 +98,12 @@ class Graph_Pointer:
         # set inner pointer to starting vertex
         self.change_pointer(vertex_id=vertex_id)
 
-    #@validate_args(lambda vertex_id: (vertex_id >= 0, f'ERROR: vertex_id {vertex_id} is smaller than 0'))
-    #@pedantic both decorators dont work at same time.
-    #see https://github.com/LostInDarkMath/pedantic-python-decorators/issues/6
+
     def change_pointer(self, vertex_id:int) -> None:
         """
         Changes the pointer to another vertex.
         Args:
-            vertex_id (int): The ID of the vertex given
-            by igraph-lib.
-
-        Returns:
-            None, but side effect of inner pointer of GraphPointer
+            vertex_id (int): The ID of the vertex given by igraph-lib.
         """
         if vertex_id is None or vertex_id < 0:
             raise RuntimeError(
@@ -122,7 +111,6 @@ class Graph_Pointer:
                 '(None or smaller than 0')
         self.__pointer = vertex_id
 
-    @pedantic
     def __change_token_state(self) -> None:
         # we call this function whenever the pointer has
         # changed

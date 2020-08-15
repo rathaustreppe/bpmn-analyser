@@ -1,14 +1,13 @@
-from pedantic import pedantic
+from pedantic import pedantic, pedantic_class, overrides
 
 
+@pedantic_class
 class GraphText:
     """
     Stores the text from a single vertex
     = business process activity
     used for better object structure in code
     """
-
-    @pedantic
     def __init__(self, text: str = "") -> None:
         self.__text = text
         self.__text_iter = self.__text.__iter__()
@@ -19,8 +18,8 @@ class GraphText:
     def get_text(self) -> str:
         return self.__text
 
-    # @pedantic # not working with op-oveload yet :(
-    def __contains__(self, item: str) -> bool:
+    @overrides(str)
+    def __contains__(self, item: str = '') -> bool:
         """
         Checks if GraphText contains substring.
         Overriding __contains__ build in functions allows
