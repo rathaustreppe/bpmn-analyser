@@ -1,8 +1,12 @@
-from typing import Tuple, List
+from typing import List
 from xml.etree.ElementTree import Element
 
+from src.converter.bpmn_models.bpmn_activity import \
+    BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
     BPMNElement
+from src.converter.bpmn_models.bpmn_endevent import \
+    BPMNEndEvent
 from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
 from src.converter.bpmn_models.bpmn_startevent import \
@@ -13,40 +17,66 @@ class ModelBuilder:
     """
     Static class that converts XML-elements into BPMN-objects
     """
-    @staticmethod
-    def make_startevent(element: Tuple[Element, List[Element]]) -> BPMNStartEvent:
-        # [(element, sequenceflow), (element, sequenceflow, sequenceflow)]
-        id, name = ModelBuilder.make_bpmn_element(element=element[0])
-
-        # so far only 1 sequence flow going from startevent
-        # is implemented. So we can directly access the sequence
-        # flow in the tuple.
-        sequence_flow = element[1][0]
-        sequence_flow = ModelBuilder.make_sequenceflow(element=sequence_flow)
-        return BPMNStartEvent(id=id, name=name, sequenceFlow=sequence_flow)
 
     @staticmethod
-    def make_empty_sequenceflow(element: Element) -> BPMNSequenceFlow:
+    def make_startevent(element: Element) -> BPMNStartEvent:
+        id, name = ModelBuilder.make_bpmn_element(element=element)
+        return BPMNStartEvent(id=id, name=name, sequenceFlow=None)
+
+
+    @staticmethod
+    def make_end_event(element:Element) -> BPMNEndEvent:
+        id, name = ModelBuilder.make_bpmn_element(element=element)
+        return BPMNEndEvent(id=id, name=name, sequenceFlow=None)
+
+
+    @staticmethod
+    def make_sequenceflow(sequence_flow: Element, elements: List[BPMNElement]) -> BPMNSequenceFlow:
         """
-        Creates a sequenceflow without target and source.
-        Only with id.
+        We fully build a sequence flow here. We take the
+        BPMN-elements as a list to search for the object
+        references.
         Args:
-            element (Element):
+            sequence_flow:
+            elements:
 
         Returns:
 
         """
-        return BPMNSequenceFlow(id=element.text)
+        id = sequence_flow.get('id')
+        source_ref = sequence_flow.get('sourceRef')
+        target_ref = sequence_flow.get('targetRef')
 
-    @staticmethod
-    def make_sequenceflow(element: Element) -> BPMNSequenceFlow:
-        id = element.get('id')
-        #source = element.get('sourceRef')
-        #target = element.get('targetRef')
-        return BPMNSequenceFlow(id=id, source=None, target=None)
+        # Notice how a sequence flow target is incomming for
+        # activities. And how outgoing for a activity means
+        # source for a sequence flow!
+        # If we want to check where our SequenceFlow points
+        # to (our target) is on the other side the source-
+        # attribute of our BPMN-elements.
+        sequence_targets = []
+        for source in elements:
+            source: BPMNElement
+            if target_ref == source.get_id():
+                sequence_targets.append(source)
+
+        sequence_sources = []
+        for target in elements:
+            target: BPMNElement
+            if source_ref == target.get_id():
+                sequence_sources.append(target)
+
+        # Sequence Flow can only point to one source and targer
+        # so far!
+        return BPMNSequenceFlow(id=id, source=sequence_sources[0], target=sequence_targets[0])
+
 
     @staticmethod
     def make_bpmn_element(element: Element) -> (str, str):
         id = element.get('id')
         name = element.get('name')
         return id, name
+
+    @staticmethod
+    def make_activity(element:Element) -> BPMNActivity:
+        id, name = ModelBuilder.make_bpmn_element(element=element)
+        return BPMNActivity(id=id, name=name, sequenceFlowIn=None, sequenceFlowOut=None)

@@ -6,8 +6,14 @@ from igraph import Graph
 # local import
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
+from src.converter.bpmn_models.bpmn_element import \
+    BPMNElement
+from src.converter.bpmn_models.bpmn_endevent import \
+    BPMNEndEvent
 from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
+from src.converter.bpmn_models.bpmn_start_end_event import \
+    BPMNStartEndEvent
 from src.converter.bpmn_models.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
@@ -61,7 +67,7 @@ class Converter:
 
 
     #@pedantic
-    def all_xml_elements(self, elementname: BPMNEnum) -> List[Tuple[Element, List[Element]]]:
+    def all_xml_elements(self, elementname: BPMNEnum) -> List[Element]:
         """
         access all <elementnames> of xml file with XPath syntax
         .// means: in whole xml document (doesnt care about depth)
@@ -86,24 +92,12 @@ class Converter:
         """
         elements_in_file = []
         for element in self.xml_tree.findall('.//' + elementname.value):
-            # --> [element, element, ...]
-            # case flows: incoming and outgoing sequenceflows are
-            # only referenced with their id. But we want them as
-            # a full object. So we query them as well.
-            flow_list: List[Element] = []
-            for child in element:
-                child:Element
-                if child.tag == 'incoming' or child.tag == 'outgoing':
-                    sequence_flow_id:str = child.text
-                    sequence_flow = self.xml_tree.find('sequenceFlow[@id="%s"]' % sequence_flow_id)
-                    flow_list.append(sequence_flow)
-
-            # We dont need to preserve what sequence flow is
+            # We dont need to preserve which sequence flow is
             # incomming and outgoing. This is stored in
             # sourceRef and targetRef of each sequenceFlow.
             # We return something like:
-            #[(element, sequenceflow), (element, sequenceflow, sequenceflow)]
-            elements_in_file.append((element, flow_list))
+            #[(sequence_flow, sequenceflow), (sequence_flow, sequenceflow, sequenceflow)]
+            elements_in_file.append(element)
 
         return elements_in_file
 
@@ -143,10 +137,61 @@ class Converter:
         Returns:
 
         """
+        # First we generate all BPMNElements and next
+        # we link them with the sequenceflows. So we can
+        # update all indices/links/attrbibutes of all
+        # BPMNElements with the correct reference of the
+        # sequenceflows-objects.
+        # For this purpose we create a list that contains
+        # all BPMNElements for later linking
+        bpmn_elements: List[BPMNElement] = []
+
         # read startevent. There can only be one startEvent
         # (BPMN-Specification)
         start_event = self.all_xml_elements(elementname=BPMNEnum.STARTEVENT)
-        start_event = ModelBuilder.make_startevent(start_event[0])
+        start_event_obj = ModelBuilder.make_startevent(element=start_event[0])
+        bpmn_elements.append(start_event_obj)
+
+        # read endevent. There should be only one endEvent
+        end_event = self.all_xml_elements(elementname=BPMNEnum.ENDEVENT)
+        end_event_obj = ModelBuilder.make_end_event(element=end_event[0])
+        bpmn_elements.append(end_event_obj)
+
+        # make activities that lie between start and end
+        # may need refactoring in future. Only works with
+        # linear chains.
+        activities = self.all_xml_elements(elementname=BPMNEnum.ACTIVITY)
+        for activity in activities:
+            activity_obj = ModelBuilder.make_activity(element=activity)
+            bpmn_elements.append(activity_obj)
+
+        print(start_event, end_event, bpmn_elements)
+
+        # read sequence flows with correct references
+        # to their sources and targets
+        sequence_flows = self.all_xml_elements(elementname=BPMNEnum.SEQUENCEFLOW)
+        sequence_flows_list: List[BPMNSequenceFlow] = []
+        for sequence_flow in sequence_flows:
+            sequence_flow_obj = ModelBuilder.make_sequenceflow(
+                sequence_flow=sequence_flow,
+                elements=bpmn_elements)
+            sequence_flows_list.append(sequence_flow_obj)
+
+        # Update references of sequence flows in bpmn-elements
+        for sequence_flow in sequence_flows_list:
+            # class where flow points to
+            if isinstance(sequence_flow.get_source(), BPMNStartEvent):
+                sequence_flow.get_source().set_sequenceFlow(sequence_flow=sequence_flow)
+
+            if isinstance(sequence_flow.get_target(), BPMNEndEvent):
+                sequence_flow.get_target().set_sequenceFlow(sequence_flow=sequence_flow)
+
+            if isinstance(sequence_flow.get_source(), BPMNActivity):
+                sequence_flow.get_source().set_sequenceFlowOut(sequenceFlow = sequence_flow)
+
+            if isinstance(sequence_flow.get_target(), BPMNActivity):
+                sequence_flow.get_target().set_sequenceFlowIn(sequenceFlow = sequence_flow)
+
 
     @pedantic
     def convert(self, path_to_bpmn: str) -> None:

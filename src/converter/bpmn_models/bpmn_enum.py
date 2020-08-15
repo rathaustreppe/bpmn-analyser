@@ -5,3 +5,4 @@ class BPMNEnum(Enum):
     STARTEVENT = 'startEvent'
     ACTIVITY = 'task'
     SEQUENCEFLOW = 'sequenceFlow'
+    ENDEVENT = 'endEvent'

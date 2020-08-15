@@ -10,6 +10,6 @@ from src.converter.bpmn_models.bpmn_start_end_event import \
 
 
 @pedantic_class
-class BPMNStartEvent(BPMNStartEndEvent):
+class BPMNEndEvent(BPMNStartEndEvent):
     def __init__(self, id:str, name: str, sequenceFlow: Optional[BPMNSequenceFlow] = None) -> None:
         super().__init__(name=name, id=id, sequenceFlow=sequenceFlow)
