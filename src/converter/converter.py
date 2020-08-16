@@ -290,7 +290,7 @@ class Converter:
         return self.graph
 
     @pedantic
-    def convert(self, path_to_bpmn: str) -> None:
+    def convert(self, path_to_bpmn: str) -> Graph:
         """
         Highest function of converter. Does all the stuff:
         reading xml, parsing to elementtree and putting
@@ -321,5 +321,4 @@ class Converter:
 
         self._build_graph(bpmn_elements=bpmn_elements, sequence_flows=sequence_flows)
 
-        # print graph
-        Graph.write_svg(self.graph, "printed_graph.svg", labels=BPMNEnum.NAME.value)
+        return self.graph

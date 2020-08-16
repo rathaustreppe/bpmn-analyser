@@ -3,6 +3,7 @@ from pedantic import pedantic, validate_args, \
     needs_refactoring, pedantic_class
 
 # local file imports
+from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.models.tokenstaterule import TokenStateRule
 from src.models.token import Token
 from src.models.graphtext import GraphText
@@ -117,7 +118,7 @@ class Graph_Pointer:
         # Step 1: analyze the text
         # Step 2: change token state
         vertex = self.graph.vs[self.__pointer]
-        vertex_text:GraphText = vertex['text']
+        vertex_text:GraphText = vertex[BPMNEnum.NAME.value]
 
         # make text analysis
         unterschrift = 'Unterschrift'
