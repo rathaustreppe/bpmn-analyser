@@ -1,4 +1,8 @@
+import inspect
+
 from pedantic import pedantic, pedantic_class, overrides
+from pyparsing import unicode
+import string
 
 
 @pedantic_class
@@ -38,3 +42,23 @@ class GraphText:
             return True
         else:
             return False
+
+    def __str__(self) -> str:
+        """
+        When printing svg with igraph lib there is a utf-8
+        error. ß, ä,ü... are not correctly written in the
+        svg-file. And therefore the text is not displayed.
+        We workaround this problem if we check the calling
+        stack. If write_svg calls this function here, we
+        give back an ascii-representation of the text.
+        Returns:
+            str: Ascii if called with write_svg function,
+            otherwise standard python string representation.
+        """
+        stack = inspect.stack()
+        for caller in stack:
+            if caller.function == 'write_svg':
+                return self.__text.encode("ascii", errors="ignore").decode()
+        return self.__text
+
+
