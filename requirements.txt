@@ -1,11 +1,12 @@
 atomicwrites==1.4.0
 attrs==19.3.0
+clr==1.0.3
 colorama==0.4.3
 docstring-parser==0.7.2
 iniconfig==1.0.1
 more-itertools==8.4.0
 packaging==20.4
-pedantic==1.0.3
+pedantic==1.0.4
 pluggy==0.13.1
 py==1.9.0
 pyparsing==2.4.7
