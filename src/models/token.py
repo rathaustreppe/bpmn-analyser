@@ -1,7 +1,6 @@
 from typing import Dict, Any, Optional
 
-from pedantic import pedantic, overrides, pedantic_class, \
-    combine
+from pedantic import overrides, pedantic_class
 
 
 @pedantic_class
@@ -12,13 +11,18 @@ class Token:
     """
 
     def __init__(self,
-                 attributes: Optional[Dict[str, Any]] = None) -> None:
+                 attributes: Optional[
+                     Dict[str, Any]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
             self.attributes = attributes
 
-    def __change_value(self, key: str, value: Any) -> None:
+    def new_attribute(self, key: str, value: Any) -> None:
+        if key not in self.attributes:
+            self.attributes[key] = value
+
+    def change_value(self, key: str, value: Any) -> None:
         if key in self.attributes.keys():
             val_before = self.attributes[key]
             self.attributes[key] = value
@@ -26,12 +30,6 @@ class Token:
         else:
             raise RuntimeError(
                 f'ERROR: key {key} not in token attributes')
-
-    def new_attribute(self, key: str, value: Any) -> None:
-        self.attributes[key] = value
-
-    def change_value(self, key: str, value: Any) -> None:
-        self.__change_value(key=key, value=value)
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]

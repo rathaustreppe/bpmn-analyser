@@ -3,7 +3,7 @@
     <startEvent id="Event_08oupc5" name="Eingang Rechnung Zittau">
       <outgoing>Flow_0b8jwpw</outgoing>
     </startEvent>
-    <task id="Activity_1rw5zu6" name="nach Zittau schcken">
+    <task id="Activity_1rw5zu6" name="nach Zittau schicken">
       <incoming>Flow_0u8j6rp</incoming>
       <outgoing>Flow_0xapkuv</outgoing>
     </task>
