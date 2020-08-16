@@ -34,6 +34,17 @@ class Token:
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
 
+    @overrides(str)
+    def __contains__(self, item: str) -> bool:
+        # Enables easy syntax for in-operator:
+        # Example:
+        # >>> token contains 'abc in attributes
+        # >>> if 'abc' in token # True
+        if item in self.attributes:
+            return True
+        else:
+            return False
+
     @overrides(object)
     def __eq__(self, other: 'Token') -> bool:
         """

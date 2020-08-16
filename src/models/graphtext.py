@@ -14,7 +14,6 @@ class GraphText:
     """
     def __init__(self, text: str = "") -> None:
         self.__text = text
-        self.__text_iter = self.__text.__iter__()
 
     def set_text(self, text: str) -> None:
         self.__text = text
@@ -27,7 +26,7 @@ class GraphText:
         """
         Checks if GraphText contains substring.
         Overriding __contains__ build in functions allows
-        to use the 'in' - operator for GraphText-objects
+        to use the 'in' - _operator for GraphText-objects
         thus enhances readability
         Example:
         >>> my_graph_text = GraphText(text='abcd')

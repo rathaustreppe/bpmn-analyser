@@ -1,12 +1,12 @@
 from igraph import Edge, Graph
-from pedantic import pedantic, validate_args, \
-    needs_refactoring, pedantic_class
+from pedantic import pedantic_class
 
 # local file imports
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.models.tokenstaterule import TokenStateRule
-from src.models.token import Token
 from src.models.graphtext import GraphText
+from src.models.token import Token
+from src.models.tokenstaterule import TokenStateRule, \
+    Operators
 
 
 @pedantic_class
@@ -126,7 +126,7 @@ class Graph_Pointer:
         if unterschrift in vertex_text and ML in vertex_text:
             # rule: Ort == Görlitz
             rule = TokenStateRule(tok_attribute='Ort',
-                                  operator='=',
+                                  operator=Operators.EQUALS,
                                   tok_value='Görlitz')
             if rule.apply_rule(token=self.token):
                 self.token.change_value(key='Unterschrift ML', value=True)
@@ -143,7 +143,7 @@ class Graph_Pointer:
         if vertragspruefung in vertex_text:
             # rule: 'Ort' == 'Zittau'
             rule = TokenStateRule(tok_attribute='Ort',
-                                  operator='=',
+                                  operator=Operators.EQUALS,
                                   tok_value='Zittau')
             if rule.apply_rule(token=self.token):
                 self.token.change_value(key="Fachlich geprüft", value=True)
@@ -154,10 +154,10 @@ class Graph_Pointer:
                 # rule: 'Ort' == 'Zittau' and
                 # 'fachlich geprüft' = True
             rule1 = TokenStateRule(tok_attribute='Ort',
-                                   operator='=',
+                                   operator=Operators.EQUALS,
                                    tok_value='Zittau')
             rule2 = TokenStateRule(tok_attribute='Fachlich geprüft',
-                                   operator='=',
+                                   operator=Operators.EQUALS,
                                    tok_value=True)
 
             if rule1.apply_rule(token=self.token) and \
