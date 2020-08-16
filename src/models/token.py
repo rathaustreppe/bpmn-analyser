@@ -1,24 +1,28 @@
 from typing import Dict, Any, Optional
 
-from pedantic import pedantic, overrides
+from pedantic import overrides, pedantic_class
 
 
+@pedantic_class
 class Token:
     """
     Is the class for a token-object to be passed through
     the business-process-graphs.
     """
 
-    @pedantic
     def __init__(self,
-                 attributes: Optional[Dict[str, Any]] = None) -> None:
+                 attributes: Optional[
+                     Dict[str, Any]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
             self.attributes = attributes
 
-    @pedantic
-    def __change_value(self, key: str, value: Any) -> None:
+    def new_attribute(self, key: str, value: Any) -> None:
+        if key not in self.attributes:
+            self.attributes[key] = value
+
+    def change_value(self, key: str, value: Any) -> None:
         if key in self.attributes.keys():
             val_before = self.attributes[key]
             self.attributes[key] = value
@@ -27,19 +31,20 @@ class Token:
             raise RuntimeError(
                 f'ERROR: key {key} not in token attributes')
 
-    @pedantic
-    def new_attribute(self, key: str, value: Any) -> None:
-        self.attributes[key] = value
-
-    @pedantic
-    def change_value(self, key: str, value: Any) -> None:
-        self.__change_value(key=key, value=value)
-
-    @pedantic
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
 
-    #@pedantic #does not yet work with TypeHint 'Token'
+    @overrides(str)
+    def __contains__(self, item: str) -> bool:
+        # Enables easy syntax for in-operator:
+        # Example:
+        # >>> token contains 'abc in attributes
+        # >>> if 'abc' in token # True
+        if item in self.attributes:
+            return True
+        else:
+            return False
+
     @overrides(object)
     def __eq__(self, other: 'Token') -> bool:
         """
@@ -66,6 +71,5 @@ class Token:
             return False
         return True
 
-    @pedantic
     def __str__(self) -> str:
         return "token attribues: " + str(self.attributes)

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_08oupc5" name="Eingang Rechnung Zittau">
+      <outgoing>Flow_0b8jwpw</outgoing>
+    </startEvent>
+    <task id="Activity_1rw5zu6" name="nach Zittau schicken">
+      <incoming>Flow_0u8j6rp</incoming>
+      <outgoing>Flow_0xapkuv</outgoing>
+    </task>
+    <task id="Activity_00dopgn" name="ML Unterschrift">
+      <incoming>Flow_0b8jwpw</incoming>
+      <outgoing>Flow_0u8j6rp</outgoing>
+    </task>
+    <task id="Activity_1vkqbsc" name="Zittau Unterschrift">
+      <incoming>Flow_0xapkuv</incoming>
+      <outgoing>Flow_1rkd3sn</outgoing>
+    </task>
+    <task id="Activity_1vf6quo" name="nach Dresden schicken">
+      <incoming>Flow_1rkd3sn</incoming>
+      <outgoing>Flow_1ej9cxg</outgoing>
+    </task>
+    <endEvent id="Event_00bpn41" name="Rechnung außer Haus">
+      <incoming>Flow_1ej9cxg</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1ej9cxg" sourceRef="Activity_1vf6quo" targetRef="Event_00bpn41" />
+    <sequenceFlow id="Flow_0b8jwpw" sourceRef="Event_08oupc5" targetRef="Activity_00dopgn" />
+    <sequenceFlow id="Flow_0u8j6rp" sourceRef="Activity_00dopgn" targetRef="Activity_1rw5zu6" />
+    <sequenceFlow id="Flow_0xapkuv" sourceRef="Activity_1rw5zu6" targetRef="Activity_1vkqbsc" />
+    <sequenceFlow id="Flow_1rkd3sn" sourceRef="Activity_1vkqbsc" targetRef="Activity_1vf6quo" />
+  </process>
