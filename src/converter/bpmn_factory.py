@@ -34,11 +34,11 @@ class BPMNFactory(IBPMNFactory):
         else:
             raise ValueError(
                 f'BPMNEnum {BPMNEnum} with value {BPMNEnum.value} is not \
-                implemented as BPMNElement'
+                implemented'
             )
 
     def create_bpmn_flow(self, flow: Element,
-                         elem_type: BPMNEnum.SEQUENCEFLOW,
+                         elem_type: BPMNEnum,
                          elements: List[BPMNElement]) -> BPMNSequenceFlow:
 
         if elem_type == BPMNEnum.SEQUENCEFLOW:
