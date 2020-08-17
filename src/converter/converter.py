@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element
 from igraph import Graph, Vertex, VertexSeq
 
 # local import
+from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -17,7 +18,6 @@ from src.converter.bpmn_models.bpmn_start_end_event import \
 from src.converter.bpmn_models.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.converter.model_builder import ModelBuilder
 from src.models.graphtext import GraphText
 
 '''
@@ -33,10 +33,10 @@ class Converter:
     IGraph libary.
     """
 
-    def __init__(self, xml_tree: Optional[Element] = None, graph: Optional[Graph] = None) -> None:
+    def __init__(self, xml_tree: Optional[Element] = None,
+                 graph: Optional[Graph] = None) -> None:
         self.xml_tree = xml_tree
         self.graph = graph
-
 
     def _read_xml_file(self, path: str) -> str:
         """
@@ -49,7 +49,8 @@ class Converter:
         Returns:
             Element: with XPath Traversable XML Element Tree.
         """
-        abs_path = self._make_absolute_path(relative_path=path)
+        abs_path = self._make_absolute_path(
+            relative_path=path)
 
         try:
             import xml.etree.ElementTree as ET
@@ -59,16 +60,16 @@ class Converter:
             print(e)
         return xml_tree
 
-
-    def _make_absolute_path(self, relative_path: str) -> str:
+    def _make_absolute_path(self,
+                            relative_path: str) -> str:
         import os
         abs_path = os.path.abspath(relative_path)
         print(abs_path)
         return abs_path
 
-
-    #@pedantic
-    def all_xml_elements(self, elementname: BPMNEnum) -> List[Element]:
+    # @pedantic
+    def _all_xml_elements(self, elementname: BPMNEnum) -> \
+    List[Element]:
         """
         access all <elementnames> of xml file with XPath syntax
         .// means: in whole xml document (doesnt care about depth)
@@ -92,18 +93,19 @@ class Converter:
 
         """
         elements_in_file = []
-        for element in self.xml_tree.findall('.//' + elementname.value):
+        for element in self.xml_tree.findall(
+                './/' + elementname.value):
             # We dont need to preserve which sequence flow is
             # incomming and outgoing. This is stored in
             # sourceRef and targetRef of each sequenceFlow.
             # We return something like:
-            #[(sequence_flow, sequenceflow), (sequence_flow, sequenceflow, sequenceflow)]
+            # [(sequence_flow, sequenceflow), (sequence_flow, sequenceflow, sequenceflow)]
             elements_in_file.append(element)
 
         return elements_in_file
 
-
-    def _strip_xml_definitions(self, path_to_xml:str) -> None:
+    def _strip_xml_definitions(self,
+                               path_to_xml: str) -> None:
         """
         The bpmn-xml of demo.bpmn.io contains wrong
         xmlns-definitions that prevent the python xml
@@ -128,10 +130,10 @@ class Converter:
 
         with open(path_to_xml, "w") as f:
             for line in lines:
-                 f.write(line)
+                f.write(line)
 
-
-    def _read_all_elements(self) -> Tuple[List[BPMNElement], List[BPMNSequenceFlow]]:
+    def _read_all_elements(self) -> Tuple[
+        List[BPMNElement], List[BPMNSequenceFlow]]:
         """
         Reads all the elements of the bpmn and put them
         into lists.
@@ -147,58 +149,77 @@ class Converter:
         # all BPMNElements for later linking
         bpmn_elements: List[BPMNElement] = []
 
+        factory = BPMNFactory()
+
         # read startevent. There can only be one startEvent
         # (BPMN-Specification)
-        start_event = self.all_xml_elements(elementname=BPMNEnum.STARTEVENT)
-        start_event_obj = ModelBuilder.make_startevent(element=start_event[0])
+        start_event = self._all_xml_elements(
+            elementname=BPMNEnum.STARTEVENT)
+        start_event_obj = factory.create_bpmn_element(
+            element=start_event[0], elem_type=BPMNEnum.STARTEVENT)
         bpmn_elements.append(start_event_obj)
 
         # read endevent. There should be only one endEvent
-        end_event = self.all_xml_elements(elementname=BPMNEnum.ENDEVENT)
-        end_event_obj = ModelBuilder.make_end_event(element=end_event[0])
+        end_event = self._all_xml_elements(
+            elementname=BPMNEnum.ENDEVENT)
+        end_event_obj = factory.create_bpmn_element(
+            element=end_event[0], elem_type=BPMNEnum.ENDEVENT)
         bpmn_elements.append(end_event_obj)
 
         # make activities that lie between start and end
         # may need refactoring in future. Only works with
         # linear chains.
-        activities = self.all_xml_elements(elementname=BPMNEnum.ACTIVITY)
+        activities = self._all_xml_elements(
+            elementname=BPMNEnum.ACTIVITY)
         for activity in activities:
-            activity_obj = ModelBuilder.make_activity(element=activity)
+            activity_obj = factory.create_bpmn_element(
+                element=activity, elem_type=BPMNEnum.ACTIVITY)
             bpmn_elements.append(activity_obj)
 
         # read sequence flows with correct references
         # to their sources and targets
-        sequence_flows = self.all_xml_elements(elementname=BPMNEnum.SEQUENCEFLOW)
+        sequence_flows = self._all_xml_elements(
+            elementname=BPMNEnum.SEQUENCEFLOW)
         sequence_flows_list: List[BPMNSequenceFlow] = []
         for sequence_flow in sequence_flows:
-            sequence_flow_obj = ModelBuilder.make_sequenceflow(
-                sequence_flow=sequence_flow,
+            sequence_flow_obj = factory.create_bpmn_flow(
+                flow=sequence_flow,
+                elem_type=BPMNEnum.SEQUENCEFLOW,
                 elements=bpmn_elements)
             sequence_flows_list.append(sequence_flow_obj)
 
         # Update references of sequence flows in bpmn-elements
         for sequence_flow in sequence_flows_list:
             # class where flow points to
-            if isinstance(sequence_flow.get_source(), BPMNStartEvent):
-                sequence_flow.get_source().set_sequenceFlow(sequence_flow=sequence_flow)
+            if isinstance(sequence_flow.get_source(),
+                          BPMNStartEvent):
+                sequence_flow.get_source().set_sequenceFlow(
+                    sequence_flow=sequence_flow)
                 continue
 
-            if isinstance(sequence_flow.get_target(), BPMNEndEvent):
-                sequence_flow.get_target().set_sequenceFlow(sequence_flow=sequence_flow)
+            if isinstance(sequence_flow.get_target(),
+                          BPMNEndEvent):
+                sequence_flow.get_target().set_sequenceFlow(
+                    sequence_flow=sequence_flow)
                 continue
 
-            if isinstance(sequence_flow.get_source(), BPMNActivity):
-                sequence_flow.get_source().set_sequenceFlowOut(sequenceFlow = sequence_flow)
+            if isinstance(sequence_flow.get_source(),
+                          BPMNActivity):
+                sequence_flow.get_source().set_sequenceFlowOut(
+                    sequenceFlow=sequence_flow)
                 continue
 
-            if isinstance(sequence_flow.get_target(), BPMNActivity):
-                sequence_flow.get_target().set_sequenceFlowIn(sequenceFlow = sequence_flow)
+            if isinstance(sequence_flow.get_target(),
+                          BPMNActivity):
+                sequence_flow.get_target().set_sequenceFlowIn(
+                    sequenceFlow=sequence_flow)
                 continue
 
         return bpmn_elements, sequence_flows_list
 
-
-    def _build_graph(self, bpmn_elements: List[BPMNElement], sequence_flows: List[BPMNSequenceFlow]) -> Graph:
+    def _build_graph(self, bpmn_elements: List[BPMNElement],
+                     sequence_flows: List[
+                         BPMNSequenceFlow]) -> Graph:
         """
         From BPMN-Python objects we construct a IGraph.Graph.
         Args:
@@ -229,8 +250,10 @@ class Converter:
                 None: but side effect on graph
             """
             _name = element.get_name()
-            self.graph.vs[idx][BPMNEnum.NAME.value] = GraphText(text=_name)
-            self.graph.vs[idx][BPMNEnum.ID.value] = element.get_id()
+            self.graph.vs[idx][
+                BPMNEnum.NAME.value] = GraphText(text=_name)
+            self.graph.vs[idx][
+                BPMNEnum.ID.value] = element.get_id()
 
         # generate vertices for activity, start-and endEvent
         # does not preserve order of the given list
@@ -254,9 +277,9 @@ class Converter:
                 idx += 1
                 continue
 
-
         # generate edges
-        def _find_vertex(vertex_seq:VertexSeq, id:str) -> Vertex:
+        def _find_vertex(vertex_seq: VertexSeq,
+                         id: str) -> Vertex:
             for vertex in vertex_seq:
                 if vertex[BPMNEnum.ID.value] == id:
                     return vertex
@@ -265,13 +288,13 @@ class Converter:
             source_id = sequence_flow.get_source().get_id()
             target_id = sequence_flow.get_target().get_id()
 
-
-
             # search vertex-list of graph for
             # source and target-ids
             vertex_seq = VertexSeq(self.graph)
-            vertex_source = _find_vertex(vertex_seq=vertex_seq, id=source_id)
-            vertex_target = _find_vertex(vertex_seq=vertex_seq, id=target_id)
+            vertex_source = _find_vertex(
+                vertex_seq=vertex_seq, id=source_id)
+            vertex_target = _find_vertex(
+                vertex_seq=vertex_seq, id=target_id)
 
             # get idx where the vertex were put in graph.vs
             vtx_src_idx = vertex_source.index
@@ -279,7 +302,8 @@ class Converter:
 
             # generate edge in graph
             self.graph: Graph
-            self.graph.add_edge(source=vtx_src_idx, target=vtx_tgt_idx)
+            self.graph.add_edge(source=vtx_src_idx,
+                                target=vtx_tgt_idx)
 
             # print(f'sequenceFlow {sequence_flow.get_id()}')
             # print(f'sf-source {sequence_flow.get_source().get_id()}')
@@ -305,20 +329,23 @@ class Converter:
             Graph that equals the given BPMN-process
         """
 
-        self.xml_tree = self._read_xml_file(path=path_to_bpmn)
+        self.xml_tree = self._read_xml_file(
+            path=path_to_bpmn)
 
         # the bpmn-xml of demo.bpmn.io contains wrong
         # xmlns-definitions that prevent the python xml
         # parser to read the xml.
         # < definitions xmlns = "http://www.omg.org/spec/BPMN/20100524/MODEL"
         # xmlns: bpmndi = "http://www.omg.org/spec/BPMN/20100524/DI"
-        #... <several others>
+        # ... <several others>
         # We kick them out.
-        self._strip_xml_definitions(path_to_xml=path_to_bpmn)
+        self._strip_xml_definitions(
+            path_to_xml=path_to_bpmn)
 
         # convert all xml-elements into python objects
         bpmn_elements, sequence_flows = self._read_all_elements()
 
-        self._build_graph(bpmn_elements=bpmn_elements, sequence_flows=sequence_flows)
+        self._build_graph(bpmn_elements=bpmn_elements,
+                          sequence_flows=sequence_flows)
 
         return self.graph
