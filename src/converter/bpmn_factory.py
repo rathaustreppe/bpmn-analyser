@@ -3,7 +3,7 @@ from xml.etree.ElementTree import Element
 
 from pedantic import pedantic_class
 
-from src.converter.I_BPMNFactory import IBPMNFactory
+from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -43,7 +43,7 @@ class BPMNFactory(IBPMNFactory):
 
         if elem_type == BPMNEnum.SEQUENCEFLOW:
             return self._create_sequenceflow(sequence_flow=flow,
-                                             elements=elements,)
+                                             elements=elements)
 
 
     def _create_end_event(self, element: Element) -> BPMNEndEvent:

@@ -135,7 +135,7 @@ gp4 = Graph_Pointer(graph=g4,token=t4)
 path_to_xml = r'..\src\converter\bpmn-files\3-correct.bpmn'
 
 converter = Converter()
-g5 = converter.convert(path_to_bpmn=path_to_xml)
+g5 = converter.convert(rel_path_to_bpmn=path_to_xml)
 
 
 init_attributes = {

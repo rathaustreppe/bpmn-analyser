@@ -18,6 +18,7 @@ from src.converter.bpmn_models.bpmn_start_end_event import \
 from src.converter.bpmn_models.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.xml_reader import XMLReader
 from src.models.graphtext import GraphText
 
 '''
@@ -37,35 +38,7 @@ class Converter:
                  graph: Optional[Graph] = None) -> None:
         self.xml_tree = xml_tree
         self.graph = graph
-
-    def _read_xml_file(self, path: str) -> str:
-        """
-        Takes a relative path from content root and reads
-        the xml. Returns a traversable xml-dom object.
-        (Not a long string!)
-        Args:
-            path (str): Path from content root
-
-        Returns:
-            Element: with XPath Traversable XML Element Tree.
-        """
-        abs_path = self._make_absolute_path(
-            relative_path=path)
-
-        try:
-            import xml.etree.ElementTree as ET
-            xml_tree = ET.parse(abs_path).getroot()
-
-        except Exception as e:
-            print(e)
-        return xml_tree
-
-    def _make_absolute_path(self,
-                            relative_path: str) -> str:
-        import os
-        abs_path = os.path.abspath(relative_path)
-        print(abs_path)
-        return abs_path
+        self.xml_reader = XMLReader()
 
     # @pedantic
     def _all_xml_elements(self, elementname: BPMNEnum) -> \
@@ -77,16 +50,16 @@ class Converter:
         optional, you can specifiy a list of elements
         that are ignored
         return a list containing all elements in the xml with
-        the <elementname> tag
+        the <element_name> tag
         Example with exclude_ids: 123
         <hello>
           <world id=123\>
           <world id=456\>
         <\hello>
-        elementname: 'world'
+        element_name: 'world'
         Returns: [<world id=456>] with 'world' beeing an object
         Args:
-            elementname (str): elementname of bpmn-specification
+            elementname (str): element_name of bpmn-specification
 
         Returns:
 
@@ -104,33 +77,6 @@ class Converter:
 
         return elements_in_file
 
-    def _strip_xml_definitions(self,
-                               path_to_xml: str) -> None:
-        """
-        The bpmn-xml of demo.bpmn.io contains wrong
-        xmlns-definitions that prevent the python xml
-        parser to read the xml.
-        < definitions xmlns = "http://www.omg.org/spec/BPMN/20100524/MODEL"
-        xmlns: bpmndi = "http://www.omg.org/spec/BPMN/20100524/DI"
-        ... <several others>
-        We kick them out.
-        Returns:
-
-        """
-        with open(path_to_xml, "r") as f:
-            lines = f.readlines()
-        # delete 2 lines: opening and closing tags
-        for idx, line in enumerate(lines):
-            if line.startswith('<definitions'):
-                del lines[idx]
-                continue
-            if line.startswith('</definitions'):
-                del lines[idx]
-                continue
-
-        with open(path_to_xml, "w") as f:
-            for line in lines:
-                f.write(line)
 
     def _read_all_elements(self) -> Tuple[
         List[BPMNElement], List[BPMNSequenceFlow]]:
@@ -314,7 +260,7 @@ class Converter:
         return self.graph
 
     @pedantic
-    def convert(self, path_to_bpmn: str) -> Graph:
+    def convert(self, rel_path_to_bpmn: str) -> Graph:
         """
         Highest function of converter. Does all the stuff:
         reading xml, parsing to elementtree and putting
@@ -328,9 +274,7 @@ class Converter:
                 Returns:
             Graph that equals the given BPMN-process
         """
-
-        self.xml_tree = self._read_xml_file(
-            path=path_to_bpmn)
+        self.xml_reader.rel_path = rel_path_to_bpmn
 
         # the bpmn-xml of demo.bpmn.io contains wrong
         # xmlns-definitions that prevent the python xml
@@ -339,8 +283,9 @@ class Converter:
         # xmlns: bpmndi = "http://www.omg.org/spec/BPMN/20100524/DI"
         # ... <several others>
         # We kick them out.
-        self._strip_xml_definitions(
-            path_to_xml=path_to_bpmn)
+        self.xml_reader.prepare_dom()
+
+        self.xml_tree = self.xml_reader.parse_to_dom()
 
         # convert all xml-elements into python objects
         bpmn_elements, sequence_flows = self._read_all_elements()

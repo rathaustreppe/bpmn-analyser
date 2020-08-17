@@ -8,3 +8,4 @@ class BPMNEnum(Enum):
     ENDEVENT = 'endEvent'
     ID = 'id'
     NAME = 'name'
+    PROCESS = 'process'
