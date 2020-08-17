@@ -22,6 +22,7 @@ class XMLReader:
         parser to read the xml.
         We kick them out. Creates new working file and
         leaves original untouched.
+        Can work with relative and absolute paths.
         """
 
         # we need those sadistic low-level commands, because

@@ -17,7 +17,7 @@ from src.converter.bpmn_models.bpmn_startevent import \
     BPMNStartEvent
 
 
-#@pedantic_class
+@pedantic_class
 class BPMNFactory(IBPMNFactory):
     def create_bpmn_element(self,
                             element: Element,
@@ -63,9 +63,14 @@ class BPMNFactory(IBPMNFactory):
 
     def _create_activity(self, element:Element) -> BPMNActivity:
         id, name = self._create_bpmn_element(element=element)
-        return BPMNActivity(id=id, name=name, sequenceFlowIn=None, sequenceFlowOut=None)
+        return BPMNActivity(id=id,
+                            name=name,
+                            sequenceFlowIn=None,
+                            sequenceFlowOut=None)
 
-    def _create_sequenceflow(self, sequence_flow: Element, elements: List[BPMNElement]) -> BPMNSequenceFlow:
+    def _create_sequenceflow(self,
+                             sequence_flow: Element,
+                             elements: List[BPMNElement]) -> BPMNSequenceFlow:
         """
         We fully build a sequence flow here. We take the
         BPMN-elements as a list to search for the object
@@ -104,4 +109,6 @@ class BPMNFactory(IBPMNFactory):
 
         # Sequence Flow can only point to one source and target
         # so far!
-        return BPMNSequenceFlow(id=id, source=sequence_sources[0], target=sequence_targets[0])
+        return BPMNSequenceFlow(id=id,
+                                source=sequence_sources[0],
+                                target=sequence_targets[0])
