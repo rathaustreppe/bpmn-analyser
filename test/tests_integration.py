@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from src.converter.converter import Converter
@@ -29,10 +31,15 @@ class TestIntegration:
         solution_token = Token(attributes=init_attributes)
 
         # Graph from *.bpmn-file
-        path_to_xml = r'..\src\converter\bpmn-files\3-correct.bpmn'
+        pytest_root = os.path.dirname(os.path.abspath(__file__))
+        working_dict = os.path.join(pytest_root,
+                                    'test_files',
+                                    'xml')
+        xml_file_path = os.path.join(working_dict,
+                                     'bill_process_no_def.bpmn')
 
         converter = Converter()
-        g = converter.convert(rel_path_to_bpmn=path_to_xml)
+        g = converter.convert(rel_path_to_bpmn=xml_file_path)
 
         init_attributes = {
             "Ort": "Zittau",
