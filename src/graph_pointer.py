@@ -3,16 +3,16 @@ from pedantic import pedantic_class
 
 # local file imports
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.models.graphtext import GraphText
+from src.models.graph_text import GraphText
 from src.models.token import Token
-from src.models.tokenstaterule import TokenStateRule, \
+from src.models.token_state_rule import TokenStateRule, \
     Operators
 
 
 @pedantic_class
-class Graph_Pointer:
+class GraphPointer:
     """
-    Graph_Pointer is the object that points to a
+    GraphPointer is the object that points to a
     single vertex in the BPMN-graph and reads its values
     to change the token attributes --> the tokens current
     state.

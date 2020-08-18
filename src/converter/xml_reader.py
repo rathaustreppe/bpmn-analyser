@@ -50,7 +50,8 @@ class XMLReader:
                        '<bpmndi', '</bpmndi',
                        '<omgdi', '<omgdc')
 
-        new_file = [line for line in lines if not any(map(line.__contains__,block_ids))]
+        new_file = [line for line in lines
+                    if not any(map(line.__contains__,block_ids))]
 
         # write back without deleted lines in new file
         with open(self.abs_path, "w") as f:

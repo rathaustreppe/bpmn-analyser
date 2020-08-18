@@ -17,7 +17,7 @@ from src.converter.bpmn_models.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
-from src.models.graphtext import GraphText
+from src.models.graph_text import GraphText
 
 #pedantic_class
 class GraphBuilder:
