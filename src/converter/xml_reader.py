@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from pedantic import pedantic_class
 from xml.etree.ElementTree import Element
@@ -20,35 +20,44 @@ class XMLReader:
         The bpmn-xml of demo.bpmn.io contains wrong
         xmlns-definitions that prevent the python xml
         parser to read the xml.
-        We kick them out. Creates new working file and
-        leaves original untouched.
+        We kick them out.
+        It also creates alot of diagram-position-attributes.
+        When kicking out <definitions>, the xml is still not
+        well-formed:
+        before:
+        <definitions ....> # prevent parsing
+            <process>
+                # our process discription
+            </process>
+            <bpmndi>
+                # information where to put diagrams in a gui
+            </bpmndi>
+        </definitions>
+        So we delete bpmndi and all sub-tags too.
         Can work with relative and absolute paths.
         """
 
         # we need those sadistic low-level commands, because
         # we cannot parse the xml, modify it with xpath and
-        # write it back, because the parser dies. Thats why
-        # we're here :(
+        # write it back, because the parser dies.
         if self.abs_path is None:
             self.abs_path = self.rel_to_abs_path()
         with open(self.abs_path, "r") as f:
             lines = f.readlines()
-        # delete 2 lines: opening and closing tags
-        for idx, line in enumerate(lines):
-            if line.startswith('<definitions'):
-                del lines[idx]
-                continue
-            if line.startswith('</definitions'):
-                del lines[idx]
-                continue
+
+        # lines to delete containing:
+        block_ids: Tuple[str, ...] = ('<definitions', '</definitions',
+                       '<bpmndi', '</bpmndi',
+                       '<omgdi', '<omgdc')
+
+        new_file = [line for line in lines if not any(map(line.__contains__,block_ids))]
 
         # write back without deleted lines in new file
-        # ToDo: Change filename for new file
         with open(self.abs_path, "w") as f:
-            for line in lines:
+            for line in new_file:
                 f.write(line)
 
-    def parse_to_dom(self) -> Element:
+    def parse_to_dom(self, abs_path: Optional[str] = None) -> Element:
         """
         Reads the file from self.abs_path and tries to
         parse it. Returns a traversable xml-dom object.
@@ -56,6 +65,11 @@ class XMLReader:
         Returns:
             Element: with XPath traversable XML Element Tree.
         """
+        if abs_path is not None:
+            self.abs_path = abs_path
+
+        # abs_path can be set via constructor, so extra check
+        # needed
         if self.abs_path is None:
             self.abs_path = self.rel_to_abs_path()
         try:

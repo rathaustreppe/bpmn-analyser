@@ -14,4 +14,3 @@
     </endEvent>
     <sequenceFlow id="Flow_1dzd5xh" sourceRef="Task_1hcentk" targetRef="Event_0oxpk5n" />
   </process>
-</definitions>
