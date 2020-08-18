@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_1z0igdb" name="Eingang Rechnung Zittau">
+      <outgoing>Flow_1gr4k0o</outgoing>
+    </startEvent>
+    <task id="Activity_1u6zmrm" name="nach Görlitz schicken">
+      <incoming>Flow_1gr4k0o</incoming>
+      <outgoing>Flow_0ax9sbd</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1gr4k0o" sourceRef="Event_1z0igdb" targetRef="Activity_1u6zmrm" />
+    <task id="Activity_0d0hvui" name="ML Unterschrift">
+      <incoming>Flow_0ax9sbd</incoming>
+      <outgoing>Flow_1ki55kd</outgoing>
+    </task>
+    <sequenceFlow id="Flow_0ax9sbd" sourceRef="Activity_1u6zmrm" targetRef="Activity_0d0hvui" />
+    <task id="Activity_0mqbxit" name="nach Zittau schicken">
+      <incoming>Flow_1ki55kd</incoming>
+      <outgoing>Flow_1ywc9mz</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1ki55kd" sourceRef="Activity_0d0hvui" targetRef="Activity_0mqbxit" />
+    <task id="Activity_0d9ywoo" name="Vertragsprüfung">
+      <incoming>Flow_1ywc9mz</incoming>
+      <outgoing>Flow_0b9r9nu</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1ywc9mz" sourceRef="Activity_0mqbxit" targetRef="Activity_0d9ywoo" />
+    <task id="Activity_171hgt5" name="Zittau Unterschrift">
+      <incoming>Flow_0b9r9nu</incoming>
+      <outgoing>Flow_0cdo9tp</outgoing>
+    </task>
+    <sequenceFlow id="Flow_0b9r9nu" sourceRef="Activity_0d9ywoo" targetRef="Activity_171hgt5" />
+    <task id="Activity_1iyx2o9" name="nach Dresden schicken">
+      <incoming>Flow_0cdo9tp</incoming>
+      <outgoing>Flow_0u8vfg6</outgoing>
+    </task>
+    <sequenceFlow id="Flow_0cdo9tp" sourceRef="Activity_171hgt5" targetRef="Activity_1iyx2o9" />
+    <endEvent id="Event_1xdoowm" name="Rechnung außer Haus">
+      <incoming>Flow_0u8vfg6</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0u8vfg6" sourceRef="Activity_1iyx2o9" targetRef="Event_1xdoowm" />
+  </process>

@@ -1,8 +1,8 @@
 import pytest
 
 from src.models.token import Token
-from src.models.tokenstaterule import TokenStateRule
-from src.models.tokenstaterule import Operators
+from src.models.token_state_rule import TokenStateRule
+from src.models.token_state_rule import Operators
 
 
 class TestTokenStateRule:
@@ -22,10 +22,6 @@ class TestTokenStateRule:
             tok_value='v1')
 
     @pytest.fixture(autouse=True)
-    def empty_token(self):
-        self.empty_token = Token(attributes=None)
-
-    @pytest.fixture(autouse=True)
     def example_token(self):
         attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
         self.example_token = Token(attributes=attributes)
@@ -37,18 +33,18 @@ class TestTokenStateRule:
                            operator=Operators.XYZ,
                            tok_value=None)
 
-    def test_empty_token_attribute(self):
+    def test_empty_token_attribute(self, empty_token):
         # empty token attribute raises error
         with pytest.raises(KeyError):
             self.empty_rule.apply_rule(
-                token=self.empty_token)
+                token=empty_token)
 
-    def test_nonexisting_token_attribute_in_rule(self):
+    def test_nonexisting_token_attribute_in_rule(self, empty_token):
         # apply token_attribute in rule that does not
         # exist in token
         with pytest.raises(KeyError):
             self.example_rule.apply_rule(
-                token=self.empty_token)
+                token=empty_token)
 
     def test_rule_with_none_value(self):
         # rule checks for none-value
