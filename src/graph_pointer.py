@@ -4,9 +4,12 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.models.graph_text import GraphText
 from src.models.token import Token
-from src.models.token_state_rule import TokenStateRule, \
-    Operators
+from src.models.token_state_modification import \
+    TokenStateModification
+from src.models.token_state_rule import TokenStateRule
 from src.nlp.text_analyzer import TextAnalyzer
+from src.models.token_state_condition import \
+    TokenStateCondition, Operators
 
 
 @pedantic_class
@@ -147,58 +150,63 @@ class GraphPointer:
         unterschrift = 'Unterschrift'
         ML = 'ML'
         if unterschrift in vertex_text and ML in vertex_text:
-            # rule: Ort == Görlitz
-            rule = TokenStateRule(tok_attribute='Ort',
+            condition = TokenStateCondition(tok_attribute='Ort',
                                   operator=Operators.EQUALS,
                                   tok_value='Görlitz')
-            if rule.check_rule(token=self.token):
-                self.token.change_value(key='Unterschrift ML', value=True)
-                return
+            modification = TokenStateModification(key='Unterschrift ML', value=True)
+
+            rule = TokenStateRule(state_conditions=[condition], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
+            return
 
         zittau = 'Zittau'
         schicken = 'schicken'
         if zittau in vertex_text and schicken in vertex_text:
-            # no rules applied
-            self.token.change_value(key='Ort', value=zittau)
+            modification = TokenStateModification(key='Ort', value=zittau)
+
+            rule = TokenStateRule(state_conditions=[], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
             return
 
         vertragspruefung = 'Vertragsprüfung'
         if vertragspruefung in vertex_text:
-            # rule: 'Ort' == 'Zittau'
-            rule = TokenStateRule(tok_attribute='Ort',
+            condition = TokenStateCondition(tok_attribute='Ort',
                                   operator=Operators.EQUALS,
                                   tok_value='Zittau')
-            if rule.check_rule(token=self.token):
-                self.token.change_value(key="Fachlich geprüft", value=True)
-                return
+            modification = TokenStateModification(key='Fachlich geprüft', value=True)
+            rule = TokenStateRule(state_conditions=[condition], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
+            return
+
 
         if unterschrift in vertex_text and \
                 zittau in vertex_text:
                 # rule: 'Ort' == 'Zittau' and
                 # 'fachlich geprüft' = True
-            rule1 = TokenStateRule(tok_attribute='Ort',
+            condition1 = TokenStateCondition(tok_attribute='Ort',
                                    operator=Operators.EQUALS,
                                    tok_value='Zittau')
-            rule2 = TokenStateRule(tok_attribute='Fachlich geprüft',
+            condition2 = TokenStateCondition(tok_attribute='Fachlich geprüft',
                                    operator=Operators.EQUALS,
                                    tok_value=True)
+            modification = TokenStateModification(key='Unterschrift Zittau', value=True)
 
-            if rule1.check_rule(token=self.token) and \
-                    rule2.check_rule(token=self.token):
-                self.token.change_value\
-                    (key='Unterschrift Zittau', value=True)
-                return
+            rule = TokenStateRule(state_conditions=[condition1,condition2], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
 
         dresden = 'Dresden'
         if dresden in vertex_text and schicken in vertex_text:
-            # no rule applied
-            self.token.change_value(key='Ort', value=dresden)
+            modification=TokenStateModification(key='Ort', value=dresden)
+            rule = TokenStateRule(state_conditions=[], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
             return
 
         goerlitz = 'Görlitz'
         if goerlitz in vertex_text and schicken in vertex_text:
-            # no rule applied
-            self.token.change_value(key='Ort', value=goerlitz)
+            modification = TokenStateModification(key='Ort',value=goerlitz)
+
+            rule = TokenStateRule(state_conditions=[], state_modifications=[modification])
+            self.token = rule.check_and_modify(token=self.token)
             return
 
 

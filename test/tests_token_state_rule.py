@@ -1,75 +1,43 @@
 import pytest
 
-from src.models.token import Token
+from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.models.token_state_rule import Operators
 
 
 class TestTokenStateRule:
     @pytest.fixture(autouse=True)
     def empty_rule(self):
-        self.empty_rule = \
-            TokenStateRule(
-                tok_attribute='',
-                operator=Operators.EQUALS,
-                tok_value=None)
+        return TokenStateRule(state_conditions=[], state_modifications=[])
 
-    @pytest.fixture(autouse=True)
-    def example_rule(self):
-        self.example_rule = TokenStateRule(
-            tok_attribute='k1',
-            operator=Operators.EQUALS,
-            tok_value='v1')
+    def test_empty_rule_on_empty_token(self, empty_rule, empty_token):
+        #empty token with empty rule
+        ret = empty_rule.check_and_modify(token=empty_token)
+        assert ret == empty_token
 
-    @pytest.fixture(autouse=True)
-    def example_token(self):
-        attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
-        self.example_token = Token(attributes=attributes)
+    def test_empty_rule_on_token(self, empty_rule, example_token):
+        # full token with empty rule
+        ret = empty_rule.check_and_modify(token=example_token)
+        assert ret == example_token
 
-    def test_operator_not_implemented(self):
-        # even with enums, you never know...
-        with pytest.raises(Exception):
-            TokenStateRule(tok_attribute='',
-                           operator=Operators.XYZ,
-                           tok_value=None)
+    def test_empty_condition_single_modification(self, example_token):
+        # no conditions but single modifications
+        k = 'k1'
+        v = 'v42'
+        modification = TokenStateModification(key=k, value=v)
+        tsr = TokenStateRule(state_conditions=[], state_modifications=[modification])
+        ret = tsr.check_and_modify(token=example_token)
+        example_token.change_value(modification=modification)
+        assert ret == example_token
 
-    def test_empty_token_attribute(self, empty_token):
-        # empty token attribute raises error
-        with pytest.raises(KeyError):
-            self.empty_rule.check_rule(
-                token=empty_token)
+    def test_empty_condition_multiple_modification(self, example_token):
+        k1, v1 = 'k1','v42'
+        k2, v2 = 'k2', 'v43'
+        modification1 = TokenStateModification(key=k1, value=v1)
+        modification2 = TokenStateModification(key=k2, value=v2)
+        tsr = TokenStateRule(state_conditions=[], state_modifications=[modification1, modification2])
+        ret = tsr.check_and_modify(token=example_token)
 
-    def test_nonexisting_token_attribute_in_rule(self, empty_token):
-        # apply token_attribute in rule that does not
-        # exist in token
-        with pytest.raises(KeyError):
-            self.example_rule.check_rule(
-                token=empty_token)
+        example_token.change_value(modification=modification1)
+        example_token.change_value(modification=modification2)
+        assert ret == example_token
 
-    def test_rule_with_none_value(self):
-        # rule checks for none-value
-        rule = TokenStateRule(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value=None)
-        token = Token(attributes={'k1': None})
-        assert rule.check_rule(token=token)
-
-    def test_rule_with_none_value_2(self):
-        # rule checks for none-value but is wrong with that
-        rule = TokenStateRule(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value=None)
-        token = Token(attributes={'k1': 'v1'})
-        assert rule.check_rule(token=token) is False
-
-    def test_rule_with_none_value_3(self):
-        # rule checks for value but finds none
-        rule = TokenStateRule(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value='v1')
-        token = Token(attributes={'k1': None})
-        assert rule.check_rule(token=token) is False
-
-    def test_rule_normal(self):
-        assert self.example_rule.check_rule(
-            token=self.example_token)
