@@ -1,11 +1,11 @@
 from typing import List, Optional
 
 from src.models.token import Token
-from src.nlp.chunks import SynonymCloud
 from src.models.token_state_condition import \
     TokenStateCondition
 from src.models.token_state_modification import \
     TokenStateModification
+from src.nlp.synonym_cloud import SynonymCloud
 
 
 class TokenStateRule:
