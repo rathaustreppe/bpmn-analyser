@@ -1,12 +1,12 @@
 from igraph import Edge, Graph
 from pedantic import pedantic_class
 
-# local file imports
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.models.graph_text import GraphText
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule, \
     Operators
+from src.nlp.text_analyzer import TextAnalyzer
 
 
 @pedantic_class
@@ -21,6 +21,7 @@ class GraphPointer:
         self.graph = graph
         self.token = token
         self.__pointer = -1
+        self.text_analyzer = TextAnalyzer()
 
     def get_token(self) -> Token:
         return self.token
@@ -67,6 +68,10 @@ class GraphPointer:
             self.__change_token_state()
             return 0
 
+        if len(edges_ids) > 1:
+            print('Token-Algo is not implemented for this case')
+
+
     def __set_start_vertex(self) -> None:
         """
         Define the entry point of the graph from where
@@ -91,9 +96,14 @@ class GraphPointer:
         # list and we want to get the position of the list
         # because this is equal to the vertex_id (see
         # documentation of igraph.graph.get_inclist)
-        if (incidence_list.count([])) != 1:
+        if (incidence_list.count([])) == 0:
+            raise RuntimeError(
+                'ERROR: graph has no starting point')
+
+        if (incidence_list.count([])) > 1:
             raise RuntimeError(
                 'ERROR: graph has multiple starting points')
+
         vertex_id = incidence_list.index([])
 
         # set inner pointer to starting vertex
@@ -112,11 +122,24 @@ class GraphPointer:
                 '(None or smaller than 0')
         self.__pointer = vertex_id
 
+
     def __change_token_state(self) -> None:
         # we call this function whenever the pointer has
         # changed
         # Step 1: analyze the text
         # Step 2: change token state
+
+        vertex = self.graph.vs[self.__pointer]
+        vertex_text: GraphText = vertex[BPMNEnum.NAME.value]
+
+        #rule = self.text_analyzer.analyze(text=vertex_text)
+
+
+
+
+
+
+
         vertex = self.graph.vs[self.__pointer]
         vertex_text:GraphText = vertex[BPMNEnum.NAME.value]
 
@@ -128,7 +151,7 @@ class GraphPointer:
             rule = TokenStateRule(tok_attribute='Ort',
                                   operator=Operators.EQUALS,
                                   tok_value='Görlitz')
-            if rule.apply_rule(token=self.token):
+            if rule.check_rule(token=self.token):
                 self.token.change_value(key='Unterschrift ML', value=True)
                 return
 
@@ -145,7 +168,7 @@ class GraphPointer:
             rule = TokenStateRule(tok_attribute='Ort',
                                   operator=Operators.EQUALS,
                                   tok_value='Zittau')
-            if rule.apply_rule(token=self.token):
+            if rule.check_rule(token=self.token):
                 self.token.change_value(key="Fachlich geprüft", value=True)
                 return
 
@@ -160,8 +183,8 @@ class GraphPointer:
                                    operator=Operators.EQUALS,
                                    tok_value=True)
 
-            if rule1.apply_rule(token=self.token) and \
-                    rule2.apply_rule(token=self.token):
+            if rule1.check_rule(token=self.token) and \
+                    rule2.check_rule(token=self.token):
                 self.token.change_value\
                     (key='Unterschrift Zittau', value=True)
                 return

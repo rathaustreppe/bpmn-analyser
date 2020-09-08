@@ -36,14 +36,14 @@ class TestTokenStateRule:
     def test_empty_token_attribute(self, empty_token):
         # empty token attribute raises error
         with pytest.raises(KeyError):
-            self.empty_rule.apply_rule(
+            self.empty_rule.check_rule(
                 token=empty_token)
 
     def test_nonexisting_token_attribute_in_rule(self, empty_token):
         # apply token_attribute in rule that does not
         # exist in token
         with pytest.raises(KeyError):
-            self.example_rule.apply_rule(
+            self.example_rule.check_rule(
                 token=empty_token)
 
     def test_rule_with_none_value(self):
@@ -52,7 +52,7 @@ class TestTokenStateRule:
                               operator=Operators.EQUALS,
                               tok_value=None)
         token = Token(attributes={'k1': None})
-        assert rule.apply_rule(token=token)
+        assert rule.check_rule(token=token)
 
     def test_rule_with_none_value_2(self):
         # rule checks for none-value but is wrong with that
@@ -60,7 +60,7 @@ class TestTokenStateRule:
                               operator=Operators.EQUALS,
                               tok_value=None)
         token = Token(attributes={'k1': 'v1'})
-        assert rule.apply_rule(token=token) is False
+        assert rule.check_rule(token=token) is False
 
     def test_rule_with_none_value_3(self):
         # rule checks for value but finds none
@@ -68,8 +68,8 @@ class TestTokenStateRule:
                               operator=Operators.EQUALS,
                               tok_value='v1')
         token = Token(attributes={'k1': None})
-        assert rule.apply_rule(token=token) is False
+        assert rule.check_rule(token=token) is False
 
     def test_rule_normal(self):
-        assert self.example_rule.apply_rule(
+        assert self.example_rule.check_rule(
             token=self.example_token)

@@ -35,7 +35,7 @@ class TokenStateRule:
         self._operator = operator
         self._tok_value = tok_value
 
-    def apply_rule(self, token: Token) -> bool:
+    def check_rule(self, token: Token) -> bool:
         """
         Takes a token and and and checks if its pre-defined
         rule is true or false wth the given token.
