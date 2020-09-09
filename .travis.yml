@@ -3,5 +3,6 @@ python:
   - "3.8"
 install:
   - pip install -r requirements.txt
+  - python -c "import nltk; nltk.download('wordnet')"
 script:
   - pytest test/tests_main.py

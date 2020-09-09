@@ -39,7 +39,7 @@ class SynonymComposite:
             synset = self.tagged_word_to_synset(tagged_word=tagged_word)
             return self._synset_comparison(synsets_to_check=synset)
         # check synonyms via simple text compare
-        if self.word is not '':
+        if self.word != '':
             return tagged_word[0] == self.word
 
     def tagged_word_to_synset(self,
