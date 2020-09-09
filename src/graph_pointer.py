@@ -7,7 +7,7 @@ from src.models.token import Token
 from src.models.token_state_modification import \
     TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.text_analyzer import TextAnalyzer
+from src.nlp.rule_finder import RuleFinder
 from src.models.token_state_condition import \
     TokenStateCondition, Operators
 
@@ -24,7 +24,7 @@ class GraphPointer:
         self.graph = graph
         self.token = token
         self.__pointer = -1
-        self.text_analyzer = TextAnalyzer()
+        self.text_analyzer = RuleFinder()
 
     def get_token(self) -> Token:
         return self.token
@@ -145,6 +145,9 @@ class GraphPointer:
 
         vertex = self.graph.vs[self.__pointer]
         vertex_text:GraphText = vertex[BPMNEnum.NAME.value]
+
+
+
 
         # make text analysis
         unterschrift = 'Unterschrift'

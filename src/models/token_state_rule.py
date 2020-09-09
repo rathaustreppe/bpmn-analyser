@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from pedantic import pedantic_class
+
 from src.models.token import Token
 from src.models.token_state_condition import \
     TokenStateCondition
@@ -8,10 +10,11 @@ from src.models.token_state_modification import \
 from src.nlp.synonym_cloud import SynonymCloud
 
 
+@pedantic_class
 class TokenStateRule:
     def __init__(self, state_conditions: List[TokenStateCondition],
                  state_modifications: List[TokenStateModification],
-                 synonym_cloud: Optional[SynonymCloud] = None)-> None:
+                 synonym_cloud: Optional[SynonymCloud] = None) -> None:
         self.synonym_cloud = synonym_cloud
         self.token_state_conditions = state_conditions
         self.token_state_modifications = state_modifications
@@ -27,7 +30,7 @@ class TokenStateRule:
             token.change_value(modification=modification)
         return token
 
-    def check_and_modify(self, token:Token) -> Token:
-        if self._check_conditions(token):
+    def check_and_modify(self, token: Token) -> Token:
+        if self._check_conditions(token=token):
             token = self._apply_modifications(token=token)
         return token

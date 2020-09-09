@@ -23,12 +23,6 @@ class SynonymComposite:
     def from_synset(cls, synset: Synset) -> 'SynonymComposite':
         return cls(word='', synset=synset)
 
-    def get_word(self) -> str:
-        return self.word
-
-    def get_synset(self) -> Optional[Synset]:
-        return self.synset
-
     def are_synonyms(self, tagged_word: Tuple[str, str]) -> bool:
         """
         Checks if the tagged_word is a synonym of solutions_synset.

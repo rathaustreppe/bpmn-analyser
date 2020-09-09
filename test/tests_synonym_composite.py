@@ -21,14 +21,14 @@ class TestSynonymComposite:
     def test_constructor_from_string(self):
         word = 'mail'
         sc = SynonymComposite.from_str(word=word)
-        assert sc.get_synset() is None
-        assert sc.get_word() == word
+        assert sc.synset is None
+        assert sc.word == word
 
     def test_constructor_from_synset(self):
         synset = wn.synset('mail.v.02')
         sc = SynonymComposite.from_synset(synset=synset)
-        assert sc.get_word() == ''
-        assert sc.get_synset() == synset
+        assert sc.word == ''
+        assert sc.synset == synset
 
     def test_tagged_word_empty(self, syn_comp):
         # giving an empty parameter
