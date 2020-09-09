@@ -12,6 +12,7 @@ from test.tests_bpmn_factory import TestBPMNFactory
 from test.tests_xml_reader import TestXMLReader
 from test.tests_graph_pointer import TestGraphPointer
 from test.tests_token_state_rule import TestTokenStateRule
+from test.tests_synonym_composite import TestSynonymComposite
 
 # integration tests of unit compositions
 from test.tests_integration import TestIntegration
