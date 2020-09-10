@@ -32,7 +32,7 @@ class Token:
         if key in self.attributes.keys():
             val_before = self.attributes[key]
             self.attributes[key] = value
-            print(f'{key}: {val_before} -> {value}')
+            print(f'Token changed: {key}: {val_before} -> {value}')
         else:
             raise RuntimeError(
                 f'ERROR: key {key} not in token attributes')
@@ -78,4 +78,7 @@ class Token:
         return True
 
     def __str__(self) -> str:
-        return "token attribues: " + str(self.attributes)
+        return "token attributes: " + str(self.attributes)
+
+    def __repr__(self) -> str:
+        return self.__str__()

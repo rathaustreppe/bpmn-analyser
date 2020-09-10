@@ -38,54 +38,20 @@ tsr_1 = TokenStateRule(state_conditions=[cond_r1],
                        state_modifications=[modification_r1],
                        synonym_cloud=syncloud_r1)
 
-# Rule 1.1: Zittau signs: only in Zittau and with a ckecked contract
-# synonymcloud: 'Zittau' is fixed, 'signs' has synonyms
-syncloud_r11 = SynonymCloud.from_list(text=['Zittau',
-                                            wn.synset('sign.v.01'),
-                                            wn.synset('bill.n.02'),
-                                            ])
-cond1_r11 = TokenStateCondition(tok_attribute='place',
-                                operator=Operators.EQUALS,
-                                tok_value='Zittau')
-cond2_r11 = TokenStateCondition(tok_attribute='contract checked',
-                                operator=Operators.EQUALS,
-                                tok_value=True)
-modification_r11 = TokenStateModification(key='signature Zittau', value=True)
-tsr_11 = TokenStateRule(state_conditions=[cond1_r11, cond2_r11],
-                        state_modifications=[modification_r11],
-                        synonym_cloud=syncloud_r11)
-
-# Rule 2: send to <places>
+# Rule 2: send to <places>: no condition, but change 'place' to a value of <places>
+# synonymcloud: '<place> is fixed', 'send' has synonyms,
+# 'bill' has synonyms, 'to' is mandatory
 places = ['Zittau', 'Goerlitz', 'Dresden']
-# synonymcloud: 'Zittau is fixed', 'send' has synonyms, 'to' optional
-syncloud_r2 = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
-                                           wn.synset('bill.n.02'),
-                                           'to',
-                                           'Zittau'])
-modification_r2 = TokenStateModification(key='place', value='Zittau')
-tsr_2 = TokenStateRule(state_conditions=[],
-                       state_modifications=[modification_r2],
-                       synonym_cloud=syncloud_r2)
-
-# Rule 2.1:
-syncloud_r21 = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
+tsr_2 = []
+for place in places:
+    syncloud = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
                                             wn.synset('bill.n.02'),
-                                            'to',
-                                            'Goerlitz'])
-modification_r21 = TokenStateModification(key='place', value='Goerlitz')
-tsr_21 = TokenStateRule(state_conditions=[],
-                        state_modifications=[modification_r21],
-                        synonym_cloud=syncloud_r21)
-
-# Rule 2.2:
-syncloud_r22 = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
-                                            wn.synset('bill.n.02'),
-                                            'to',
-                                            'Dresden'])
-modification_r22 = TokenStateModification(key='place', value='Dresden')
-tsr_22 = TokenStateRule(state_conditions=[],
-                        state_modifications=[modification_r22],
-                        synonym_cloud=syncloud_r22)
+                                            'to', place])
+    modification = TokenStateModification(key='place', value=place)
+    tsr = TokenStateRule(state_conditions=[],
+                         state_modifications=[modification],
+                         synonym_cloud=syncloud)
+    tsr_2.append(tsr)
 
 # Rule 3: checking contract: only in Zittau
 # synonymcloud: 'Zittau' is fixed, 'checks' and 'contract' have synonyms
@@ -100,7 +66,25 @@ tsr_3 = TokenStateRule(state_conditions=[cond_r3],
                        state_modifications=[modification_r3],
                        synonym_cloud=syncloud_r3)
 
-ruleset = [tsr_1, tsr_11, tsr_2, tsr_21, tsr_22, tsr_3]
+# Rule 4: Zittau signs: only in Zittau and with a ckecked contract
+# synonymcloud: 'Zittau' is fixed, 'signs' has synonyms
+syncloud_r4 = SynonymCloud.from_list(text=['Zittau',
+                                           wn.synset('sign.v.01'),
+                                           wn.synset('bill.n.02'),
+                                           ])
+cond1_r4 = TokenStateCondition(tok_attribute='place',
+                               operator=Operators.EQUALS,
+                               tok_value='Zittau')
+cond2_r4 = TokenStateCondition(tok_attribute='contract checked',
+                               operator=Operators.EQUALS,
+                               tok_value=True)
+modification_r4 = TokenStateModification(key='signature Zittau', value=True)
+tsr_4 = TokenStateRule(state_conditions=[cond1_r4, cond2_r4],
+                       state_modifications=[modification_r4],
+                       synonym_cloud=syncloud_r4)
+
+ruleset = [tsr_1, tsr_3, tsr_4]
+ruleset.extend(tsr_2)
 
 # required ChunkGrams to match synonymclouds:
 chunk_grams = r"""
@@ -118,7 +102,7 @@ chunker = Chunker(chunk_grams=chunk_grams,
 
 # This is the students solution. We want to check if this BPMN-Graph is correct.
 # Graph from *.bpmn-file
-path_to_bpmn = r'..\src\converter\bpmn-files\3-correct.bpmn'
+path_to_bpmn = r'converter/bpmn-files/bill_process.bpmn'
 
 converter = Converter()
 g = converter.convert(rel_path_to_bpmn=path_to_bpmn)

@@ -23,7 +23,7 @@ class SynonymCloud:
         self.syncloud = syncloud
 
     @classmethod
-    def from_list(cls, text: List[Union[str, Synset]]) -> 'SynonymCloud':
+    def from_list(cls, text: List[Union[str, Synset, 'SynonymCloud']]) -> 'SynonymCloud':
         syn_composites = []
         for word in text:
             if isinstance(word, str):
