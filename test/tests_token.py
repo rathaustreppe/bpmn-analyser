@@ -3,6 +3,8 @@ import copy
 import pytest
 
 from src.models.token import Token
+from src.models.token_state_modification import \
+    TokenStateModification
 
 
 class TestToken:
@@ -46,7 +48,8 @@ class TestToken:
         k1 = 'k1'
         v2 = 'v2'
         empty_token.new_attribute(key=k1, value=v1)
-        empty_token.change_value(key=k1, value=v2)
+        tsm = TokenStateModification(key=k1, value=v2)
+        empty_token.change_value(modification=tsm)
         r = empty_token.get_attribute(key=k1)
         assert v2 == r
 
@@ -55,7 +58,8 @@ class TestToken:
         k1 = 'k1'
         v1 = 'v1'
         with pytest.raises(RuntimeError):
-            empty_token.change_value(key=k1, value=v1)
+            tsm = TokenStateModification(key=k1, value=v1)
+            empty_token.change_value(modification=tsm)
 
     def test_get_nonexisting_key(selff, empty_token):
         with pytest.raises(KeyError):
@@ -102,7 +106,8 @@ class TestToken:
 
     def test_equal_different_value(self, example_token):
         token2 = copy.deepcopy(example_token)
-        token2.change_value(key='k1', value='v42')
+        tsm = TokenStateModification(key='k1', value='v42')
+        token2.change_value(modification=tsm)
         assert token2 != example_token
 
     def test_equal_two_none_values(self):

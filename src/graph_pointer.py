@@ -1,12 +1,14 @@
+from typing import List
+
 from igraph import Edge, Graph
 from pedantic import pedantic_class
 
-# local file imports
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.models.graph_text import GraphText
 from src.models.token import Token
-from src.models.token_state_rule import TokenStateRule, \
-    Operators
+from src.models.token_state_rule import TokenStateRule
+from src.nlp.chunker import Chunker
+from src.nlp.rule_finder import RuleFinder
 
 
 @pedantic_class
@@ -17,10 +19,15 @@ class GraphPointer:
     to change the token attributes --> the tokens current
     state.
     """
-    def __init__(self, graph:'Graph', token:'Token') -> None:
+
+    def __init__(self, graph: Graph,
+                 token: Token,
+                 ruleset: List[TokenStateRule],
+                 chunker: Chunker) -> None:
         self.graph = graph
         self.token = token
         self.__pointer = -1
+        self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
 
     def get_token(self) -> Token:
         return self.token
@@ -67,6 +74,9 @@ class GraphPointer:
             self.__change_token_state()
             return 0
 
+        if len(edges_ids) > 1:
+            print('Token-Algo is not implemented for this case')
+
     def __set_start_vertex(self) -> None:
         """
         Define the entry point of the graph from where
@@ -91,16 +101,20 @@ class GraphPointer:
         # list and we want to get the position of the list
         # because this is equal to the vertex_id (see
         # documentation of igraph.graph.get_inclist)
-        if (incidence_list.count([])) != 1:
+        if (incidence_list.count([])) == 0:
+            raise RuntimeError(
+                'ERROR: graph has no starting point')
+
+        if (incidence_list.count([])) > 1:
             raise RuntimeError(
                 'ERROR: graph has multiple starting points')
+
         vertex_id = incidence_list.index([])
 
         # set inner pointer to starting vertex
         self.change_pointer(vertex_id=vertex_id)
 
-
-    def change_pointer(self, vertex_id:int) -> None:
+    def change_pointer(self, vertex_id: int) -> None:
         """
         Changes the pointer to another vertex.
         Args:
@@ -113,70 +127,23 @@ class GraphPointer:
         self.__pointer = vertex_id
 
     def __change_token_state(self) -> None:
-        # we call this function whenever the pointer has
-        # changed
-        # Step 1: analyze the text
-        # Step 2: change token state
+        # we call this function whenever the pointer has changed
+        # analyzes text and updates token
+        # we apply rules (==change token state), when their synonymclouds are
+        # matching and their conditions are true
+
         vertex = self.graph.vs[self.__pointer]
-        vertex_text:GraphText = vertex[BPMNEnum.NAME.value]
+        vertex_text: GraphText = vertex[BPMNEnum.NAME.value]
 
-        # make text analysis
-        unterschrift = 'Unterschrift'
-        ML = 'ML'
-        if unterschrift in vertex_text and ML in vertex_text:
-            # rule: Ort == Görlitz
-            rule = TokenStateRule(tok_attribute='Ort',
-                                  operator=Operators.EQUALS,
-                                  tok_value='Görlitz')
-            if rule.apply_rule(token=self.token):
-                self.token.change_value(key='Unterschrift ML', value=True)
-                return
-
-        zittau = 'Zittau'
-        schicken = 'schicken'
-        if zittau in vertex_text and schicken in vertex_text:
-            # no rules applied
-            self.token.change_value(key='Ort', value=zittau)
+        # no handling of start and end events implemented yet, skip them
+        if vertex_text.get_text() == 'startendevent':
             return
 
-        vertragspruefung = 'Vertragsprüfung'
-        if vertragspruefung in vertex_text:
-            # rule: 'Ort' == 'Zittau'
-            rule = TokenStateRule(tok_attribute='Ort',
-                                  operator=Operators.EQUALS,
-                                  tok_value='Zittau')
-            if rule.apply_rule(token=self.token):
-                self.token.change_value(key="Fachlich geprüft", value=True)
-                return
+        rules_with_matching_syncloud = self.rule_finder.find_rules(
+            text=vertex_text)
 
-        if unterschrift in vertex_text and \
-                zittau in vertex_text:
-                # rule: 'Ort' == 'Zittau' and
-                # 'fachlich geprüft' = True
-            rule1 = TokenStateRule(tok_attribute='Ort',
-                                   operator=Operators.EQUALS,
-                                   tok_value='Zittau')
-            rule2 = TokenStateRule(tok_attribute='Fachlich geprüft',
-                                   operator=Operators.EQUALS,
-                                   tok_value=True)
+        print(f'TEXT: {vertex_text}')
+        print(f'RULES: {rules_with_matching_syncloud}')
 
-            if rule1.apply_rule(token=self.token) and \
-                    rule2.apply_rule(token=self.token):
-                self.token.change_value\
-                    (key='Unterschrift Zittau', value=True)
-                return
-
-        dresden = 'Dresden'
-        if dresden in vertex_text and schicken in vertex_text:
-            # no rule applied
-            self.token.change_value(key='Ort', value=dresden)
-            return
-
-        goerlitz = 'Görlitz'
-        if goerlitz in vertex_text and schicken in vertex_text:
-            # no rule applied
-            self.token.change_value(key='Ort', value=goerlitz)
-            return
-
-
-
+        for rule in rules_with_matching_syncloud:
+            self.token = rule.check_and_modify(token=self.token)

@@ -2,6 +2,9 @@ from typing import Dict, Any, Optional
 
 from pedantic import overrides, pedantic_class
 
+from src.models.token_state_modification import \
+    TokenStateModification
+
 
 @pedantic_class
 class Token:
@@ -22,11 +25,14 @@ class Token:
         if key not in self.attributes:
             self.attributes[key] = value
 
-    def change_value(self, key: str, value: Any) -> None:
+    def change_value(self, modification: TokenStateModification) -> None:
+        key = modification.get_key()
+        value = modification.get_value()
+
         if key in self.attributes.keys():
             val_before = self.attributes[key]
             self.attributes[key] = value
-            print(f'{key}: {val_before} -> {value}')
+            print(f'Token changed: {key}: {val_before} -> {value}')
         else:
             raise RuntimeError(
                 f'ERROR: key {key} not in token attributes')
@@ -72,4 +78,7 @@ class Token:
         return True
 
     def __str__(self) -> str:
-        return "token attribues: " + str(self.attributes)
+        return "token attributes: " + str(self.attributes)
+
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -84,7 +84,7 @@ class XMLReader:
     def query(self, element_name: BPMNEnum) -> List[Element]:
         """
         access all <elementnames> of xml file with XPath syntax
-        .// means: in whole xml document (doesnt care about depth)
+        .// means: in whole xml text (doesnt care about depth)
         https://docs.python.org/3/library/xml.etree.elementtree.html#elementtree-xpath
         optional, you can specifiy a list of elements
         that are ignored
