@@ -7,16 +7,16 @@ from pedantic import pedantic_class
 
 @pedantic_class
 class SynonymComposite:
-    def __init__(self, word: str = '', synset: Optional[Synset] = None) -> None:
-        if word == '' and synset is None:
+    def __init__(self, word: str = None, synset: Optional[Synset] = None) -> None:
+        if (word is None or word == '') and synset is None:
             raise ValueError(
-                'word and synset parameter cannot both be empty/none')
+                'word and synset parameter cannot both be none')
 
         self.word = word
         self.synset = synset
 
     @classmethod
-    def from_str(cls, word: str = '') -> 'SynonymComposite':
+    def from_str(cls, word: str = None) -> 'SynonymComposite':
         return cls(word=word, synset=None)
 
     @classmethod
@@ -33,7 +33,7 @@ class SynonymComposite:
             synset = self.tagged_word_to_synset(tagged_word=tagged_word)
             return self._synset_comparison(synsets_to_check=synset)
         # check synonyms via simple text compare
-        if self.word != '':
+        if self.word is not None:
             return tagged_word[0] == self.word
 
     def tagged_word_to_synset(self,
@@ -41,7 +41,7 @@ class SynonymComposite:
         word = tagged_word[0]
         word_type = self.get_wordnet_pos(treebank_tag=tagged_word[1])
 
-        if word == '':
+        if word is None or word == '':
             raise ValueError(f'tagged word cannot be '
                              f'empty when checking synonyms')
 

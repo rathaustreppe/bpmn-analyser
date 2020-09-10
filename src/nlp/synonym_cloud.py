@@ -23,7 +23,7 @@ class SynonymCloud:
         self.syncloud = syncloud
 
     @classmethod
-    def from_list(cls, text:List[Union[str,Synset]]):
+    def from_list(cls, text:List[Union[str,Synset]]) -> 'SynonymCloud':
         syn_composites = []
         for word in text:
             if isinstance(word, str):
@@ -35,6 +35,7 @@ class SynonymCloud:
             else:
                 raise ValueError(f'bad data type in list {text}: '
                                  f'{word} has type {type(word)}.')
+        return cls(syncloud=syn_composites)
 
     def are_synonyms(self, chunk: nltk.tree.Tree) -> bool:
 
