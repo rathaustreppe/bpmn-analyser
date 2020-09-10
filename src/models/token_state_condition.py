@@ -47,7 +47,8 @@ class TokenStateCondition:
         """
         if self._tok_attribute == '':
             raise KeyError(
-                f'tok_attribute cannot be empty')
+                f'tok_attribute cannot be empty string. Accessing token {token}'
+                f' while checking TokenStateCondition: {self}')
 
         if self._tok_attribute not in token:
             raise KeyError(
@@ -58,3 +59,9 @@ class TokenStateCondition:
             return True
         else:
             return False
+
+    def __str__(self) -> str:
+        return f'{self._tok_attribute}{self._operator.value}{self._tok_value}'
+
+    def __repr__(self) -> str:
+        return self.__str__()

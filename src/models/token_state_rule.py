@@ -20,9 +20,10 @@ class TokenStateRule:
         self.token_state_modifications = state_modifications
 
     def _check_conditions(self, token: Token) -> bool:
-        for condition in self.token_state_conditions:
-            if not condition.check_condition(token=token):
-                return False
+        if len(self.token_state_conditions) > 0:
+            for condition in self.token_state_conditions:
+                if not condition.check_condition(token=token):
+                    return False
         return True
 
     def _apply_modifications(self, token: Token) -> Token:
@@ -34,3 +35,11 @@ class TokenStateRule:
         if self._check_conditions(token=token):
             token = self._apply_modifications(token=token)
         return token
+
+    def __str__(self) -> str:
+        return f'TokenStateRule:[SynCloud:{self.synonym_cloud}' \
+               f' Conditions: {self.token_state_conditions}' \
+               f' Modifications: {self.token_state_modifications}]'
+
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -7,7 +7,8 @@ from pedantic import pedantic_class
 
 @pedantic_class
 class SynonymComposite:
-    def __init__(self, word: str = None, synset: Optional[Synset] = None) -> None:
+    def __init__(self, word: str = None,
+                 synset: Optional[Synset] = None) -> None:
         if (word is None or word == '') and synset is None:
             raise ValueError(
                 'word and synset parameter cannot both be none')
@@ -75,3 +76,12 @@ class SynonymComposite:
             return wordnet.ADV
         else:
             return ''
+
+    def __str__(self) -> str:
+        if self.synset is not None:
+            return self.synset.__str__()
+        else:
+            return self.word
+
+    def __repr__(self) -> str:
+        return self.__str__()

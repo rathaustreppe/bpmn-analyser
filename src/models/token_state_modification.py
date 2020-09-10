@@ -19,3 +19,9 @@ class TokenStateModification:
 
     def get_value(self) -> Any:
         return self.value
+
+    def __str__(self) -> str:
+        return f'{self.key}=={self.value}'
+
+    def __repr__(self) -> str:
+        return self.__str__()

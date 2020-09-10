@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import nltk
 from pedantic import pedantic_class
@@ -10,8 +10,11 @@ class Chunker:
     A class that contains logic to preprocess text and find chunks of text.
     """
 
-    def __init__(self, chunk_grams: str = '') -> None:
+    def __init__(self, chunk_grams: str = '',
+                 tagged_words_bypass: Optional[
+                     List[Tuple[str, str]]] = None) -> None:
         self.grammars = chunk_grams
+        self.tagged_words_bypass = tagged_words_bypass
         if chunk_grams == '':
             self._set_init_grammars()
 
@@ -25,8 +28,8 @@ class Chunker:
         # they have no space before them (except tab-spaces) - and are correctly
         # aligned with tabulator
         self.grammars = r"""
-        NN_VB_NN:       {<NN.?>+<VB.?><TO>?<DT>?<NN.?>+}
-        VB_NN_TO_NN:    {<VB.?>+<NN.?><TO>?<NN.?>+}
+        VB_NN_TO_NN:    {<VB.?>+<NN.?><TO><NN.?>+}
+        NN_VB_NN:       {<NN.?><VB.?><NN.?>}
         """
 
     def find_chunk(self, text: str) -> nltk.tree.Tree:
@@ -52,8 +55,7 @@ class Chunker:
 
         return chunks[0]
 
-    @staticmethod
-    def preprocess(text: str) -> List[Tuple[str, str]]:
+    def preprocess(self, text: str) -> List[Tuple[str, str]]:
         # Sentence Tokenizing.
         # from 'long sentence1. long sentence' to
         # [long sentence1', 'long sentence2']
@@ -68,7 +70,7 @@ class Chunker:
 
         # Lowercase Normalisation
         # from ["Long", "Sentence"] to ["long", "sentence"]
-        sentence = [word.lower() for word in sentence]
+        # sentence = [word.lower() for word in sentence]
 
         # Optional: Stop word removal
         # # from [["long", "to", "bar"]] to [["long", "bar"]]
@@ -86,6 +88,18 @@ class Chunker:
         #     return [lemmatizer.lemmatize(word=word) for word in sentence]
         # lemmatizer = nltk.stem.WordNetLemmatizer()
         # sentences= [lemmatize_sentence(sent,lemmatizer) for sent in sentences]
+
+        # sadly there are words, that a pos tagger always classifies wrong.
+        # We correct them here.
+        def check_bypass(tuple_to_check: Tuple[str, str]) -> Tuple[str, str]:
+            if self.tagged_words_bypass is not None:
+                for bypass_tuple in self.tagged_words_bypass:
+                    if tuple_to_check[0] == bypass_tuple[0]:
+                        return tuple_to_check[0], bypass_tuple[1]
+            return tuple_to_check
+
+        for idx, tagged_word in enumerate(tagged_sentence):
+            tagged_sentence[idx] = check_bypass(tuple_to_check=tagged_word)
 
         return tagged_sentence
 

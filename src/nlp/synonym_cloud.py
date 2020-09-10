@@ -23,7 +23,7 @@ class SynonymCloud:
         self.syncloud = syncloud
 
     @classmethod
-    def from_list(cls, text:List[Union[str,Synset]]) -> 'SynonymCloud':
+    def from_list(cls, text: List[Union[str, Synset]]) -> 'SynonymCloud':
         syn_composites = []
         for word in text:
             if isinstance(word, str):
@@ -46,12 +46,19 @@ class SynonymCloud:
         if chunk_len != len(self.syncloud):
             raise Exception(f'length of chunk {chunk} with length:{chunk_len} '
                             f' and syncloud {self.syncloud} with length'
-                            f' {len(self.syncloud)}) do not match.')
+                            f' {len(self.syncloud)} do not match.')
 
         # check for syonyms
         for idx, composite in enumerate(self.syncloud):
             chunk_word = chunk.leaves()[idx]
-            if not composite.are_synonyms(tagged_word=chunk_word): # may not work? not tagged enough
+            if not composite.are_synonyms(
+                    tagged_word=chunk_word):  # may not work? not tagged enough
                 return False
 
         return True
+
+    def __str__(self) -> str:
+        return self.syncloud.__str__()
+
+    def __repr__(self) -> str:
+        return self.__str__()
