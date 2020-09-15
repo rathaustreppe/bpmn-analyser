@@ -15,19 +15,13 @@ class BPMNActivity(BPMNElement):
     def __init__(self, id: str, name: str,
                  sequenceFlowIn: Optional[BPMNSequenceFlow] = None,
                  sequenceFlowOut: Optional[BPMNSequenceFlow] = None) -> None:
-        super().__init__(id=id, name=name)
-        self.__sequenceFlowIn = sequenceFlowIn
-        self.__sequenceFlowOut = sequenceFlowOut
+        super().__init__(id=id)
+        self.name = name
+        self.sequenceFlowIn = sequenceFlowIn
+        self.sequenceFlowOut = sequenceFlowOut
 
-        if self.__sequenceFlowIn is not None:
-            self.__sequenceFlowIn.set_target(target=self)
+        if self.sequenceFlowIn is not None:
+            self.sequenceFlowIn.target = self
 
-        if self.__sequenceFlowOut is not None:
-            self.__sequenceFlowOut.set_source(source=self)
-
-    def set_sequenceFlowIn(self, sequenceFlow:BPMNSequenceFlow) -> None:
-        self.__sequenceFlowIn = sequenceFlow
-
-    def set_sequenceFlowOut(self,sequenceFlow: BPMNSequenceFlow) -> None:
-        self.__sequenceFlowOut = sequenceFlow
-
+        if self.sequenceFlowOut is not None:
+            self.sequenceFlowOut.source = self

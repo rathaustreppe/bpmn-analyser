@@ -25,9 +25,3 @@ class IBPMNFactory(ABC):
                             element: Element,
                             elem_type: BPMNEnum) -> BPMNElement:
         pass
-
-    @abstractmethod
-    def create_bpmn_flow(self, flow: Element,
-                         elem_type: BPMNEnum.SEQUENCEFLOW,
-                         elements: List[BPMNElement]) -> BPMNSequenceFlow:
-        pass

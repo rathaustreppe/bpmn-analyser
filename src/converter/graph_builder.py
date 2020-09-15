@@ -1,19 +1,18 @@
 from typing import Tuple, List, Optional
 
 from igraph import Graph, VertexSeq, Vertex
-from pedantic import pedantic_class
 
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
     BPMNElement
-from src.converter.bpmn_models.bpmn_endevent import \
+from src.converter.bpmn_models.event.bpmn_endevent import \
     BPMNEndEvent
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
-from src.converter.bpmn_models.bpmn_startevent import \
+from src.converter.bpmn_models.event.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
@@ -81,37 +80,33 @@ class GraphBuilder:
             element_name=BPMNEnum.SEQUENCEFLOW)
         sequence_flows_list: List[BPMNSequenceFlow] = []
         for sequence_flow in sequence_flows:
-            sequence_flow_obj = factory.create_bpmn_flow(
-                flow=sequence_flow,
+            sequence_flow_obj = factory.create_bpmn_element(
+                element=sequence_flow,
                 elem_type=BPMNEnum.SEQUENCEFLOW,
-                elements=bpmn_elements)
+                src_tgt_elements=bpmn_elements)
             sequence_flows_list.append(sequence_flow_obj)
 
         # Update references of sequence flows in bpmn-elements
         for sequence_flow in sequence_flows_list:
             # class where flow points to
-            if isinstance(sequence_flow.get_source(),
+            if isinstance(sequence_flow.source,
                           BPMNStartEvent):
-                sequence_flow.get_source().set_sequenceFlow(
-                    sequence_flow=sequence_flow)
+                sequence_flow.source.sequenceFlow = sequence_flow
                 continue
 
-            if isinstance(sequence_flow.get_target(),
+            if isinstance(sequence_flow.target,
                           BPMNEndEvent):
-                sequence_flow.get_target().set_sequenceFlow(
-                    sequence_flow=sequence_flow)
+                sequence_flow.target.sequenceFlow = sequence_flow
                 continue
 
-            if isinstance(sequence_flow.get_source(),
+            if isinstance(sequence_flow.source,
                           BPMNActivity):
-                sequence_flow.get_source().set_sequenceFlowOut(
-                    sequenceFlow=sequence_flow)
+                sequence_flow.source.sequenceFlowOut = sequence_flow
                 continue
 
-            if isinstance(sequence_flow.get_target(),
+            if isinstance(sequence_flow.target,
                           BPMNActivity):
-                sequence_flow.get_target().set_sequenceFlowIn(
-                    sequenceFlow=sequence_flow)
+                sequence_flow.target.sequenceFlowIn = sequence_flow
                 continue
 
         return bpmn_elements, sequence_flows_list
@@ -147,11 +142,11 @@ class GraphBuilder:
             Returns:
                 None: but side effect on graph
             """
-            _name = element.get_name()
+            _name = element.name
             self.graph.vs[idx][
                 BPMNEnum.NAME.value] = GraphText(text=_name)
             self.graph.vs[idx][
-                BPMNEnum.ID.value] = element.get_id()
+                BPMNEnum.ID.value] = element.id
 
         # generate vertices for activity, start-and endEvent
         # does not preserve order of the given list
@@ -184,8 +179,8 @@ class GraphBuilder:
 
         # generate edges
         for sequence_flow in sequence_flows:
-            source_id = sequence_flow.get_source().get_id()
-            target_id = sequence_flow.get_target().get_id()
+            source_id = sequence_flow.source.id
+            target_id = sequence_flow.target.id
 
             # search vertex-list of graph for
             # source and target-ids
