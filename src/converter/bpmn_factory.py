@@ -114,6 +114,9 @@ class BPMNFactory(IBPMNFactory):
         # Reject earlier or raise exception?
 
         id = sequence_flow.get('id')
+        name = sequence_flow.get('name')
+        if name is None:
+            name = ''
         source_ref = sequence_flow.get('sourceRef')
         target_ref = sequence_flow.get('targetRef')
 
@@ -137,6 +140,6 @@ class BPMNFactory(IBPMNFactory):
 
         # Sequence Flow can only point to one source and target
         # so far!
-        return BPMNSequenceFlow(id=id,
+        return BPMNSequenceFlow(id=id, name=name,
                                 source=sequence_sources[0],
                                 target=sequence_targets[0])

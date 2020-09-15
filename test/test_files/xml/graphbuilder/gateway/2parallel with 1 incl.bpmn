@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_1pikwb9" name="startendevent">
+      <outgoing>Flow_01vvih9</outgoing>
+    </startEvent>
+    <task id="Activity_165pxf3" name="X">
+      <incoming>Flow_01vvih9</incoming>
+      <outgoing>Flow_0xji56c</outgoing>
+    </task>
+    <sequenceFlow id="Flow_0xji56c" sourceRef="Activity_165pxf3" targetRef="Gateway_1tpscx7" />
+    <sequenceFlow id="Flow_01vvih9" sourceRef="Event_1pikwb9" targetRef="Activity_165pxf3" />
+    <sequenceFlow id="Flow_1lkczam" sourceRef="Gateway_0iwmwc2" targetRef="Event_1ftzj1s" />
+    <endEvent id="Event_1ftzj1s" name="startendevent">
+      <incoming>Flow_1lkczam</incoming>
+    </endEvent>
+    <parallelGateway id="Gateway_1tpscx7">
+      <incoming>Flow_0xji56c</incoming>
+      <outgoing>Flow_1470gl7</outgoing>
+      <outgoing>Flow_1ldyb6w</outgoing>
+    </parallelGateway>
+    <parallelGateway id="Gateway_0iwmwc2">
+      <incoming>Flow_0fdiu7h</incoming>
+      <incoming>Flow_1cy888a</incoming>
+      <outgoing>Flow_1lkczam</outgoing>
+    </parallelGateway>
+    <task id="Activity_0qscc5h" name="A">
+      <incoming>Flow_1470gl7</incoming>
+      <outgoing>Flow_1cy888a</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1470gl7" sourceRef="Gateway_1tpscx7" targetRef="Activity_0qscc5h" />
+    <task id="Activity_1hvy193" name="C">
+      <incoming>Flow_0z9ng9s</incoming>
+      <outgoing>Flow_0sc0dgk</outgoing>
+    </task>
+    <task id="Activity_1gtvds7" name="B">
+      <incoming>Flow_0qb2kuf</incoming>
+      <outgoing>Flow_00mkk9r</outgoing>
+    </task>
+    <exclusiveGateway id="Gateway_1pp3y42">
+      <incoming>Flow_1ldyb6w</incoming>
+      <outgoing>Flow_0z9ng9s</outgoing>
+      <outgoing>Flow_0qb2kuf</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_0z9ng9s" name="c" sourceRef="Gateway_1pp3y42" targetRef="Activity_1hvy193" />
+    <sequenceFlow id="Flow_0qb2kuf" name="b" sourceRef="Gateway_1pp3y42" targetRef="Activity_1gtvds7" />
+    <exclusiveGateway id="Gateway_1x2jo1y">
+      <incoming>Flow_0sc0dgk</incoming>
+      <incoming>Flow_00mkk9r</incoming>
+      <outgoing>Flow_0fdiu7h</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_0sc0dgk" sourceRef="Activity_1hvy193" targetRef="Gateway_1x2jo1y" />
+    <sequenceFlow id="Flow_00mkk9r" sourceRef="Activity_1gtvds7" targetRef="Gateway_1x2jo1y" />
+    <sequenceFlow id="Flow_0fdiu7h" sourceRef="Gateway_1x2jo1y" targetRef="Gateway_0iwmwc2" />
+    <sequenceFlow id="Flow_1cy888a" sourceRef="Activity_0qscc5h" targetRef="Gateway_0iwmwc2" />
+    <sequenceFlow id="Flow_1ldyb6w" sourceRef="Gateway_1tpscx7" targetRef="Gateway_1pp3y42" />
+  </process>

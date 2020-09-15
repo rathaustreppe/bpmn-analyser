@@ -1,3 +1,4 @@
+import os
 from typing import List, Tuple
 
 import pytest
@@ -9,6 +10,13 @@ from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
 from src.nlp.synonym_cloud import SynonymCloud
+
+
+@pytest.fixture(scope='module', autouse=True)
+def xml_folders_path():
+    pytest_root = os.path.dirname(os.path.abspath(__file__))
+    working_dict = os.path.join(pytest_root,'test_files','xml')
+    return working_dict
 
 
 @pytest.fixture(scope='function', autouse=True)

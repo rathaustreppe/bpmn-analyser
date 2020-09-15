@@ -17,15 +17,13 @@ class TestIntegration:
         # if graph_pointer does not hold after 100 steps
         return Token(attributes=None)
 
-    def test_bill_process(self, bill_process_chunker,
+    def test_bill_process(self, xml_folders_path,
+                          bill_process_chunker,
                           bill_process_ruleset,
                           bill_process_init_token,
                           bill_process_solution_token):
-        pytest_root = os.path.dirname(os.path.abspath(__file__))
-        working_dict = os.path.join(pytest_root,
-                                    'test_files',
-                                    'xml')
-        xml_file_path = os.path.join(working_dict,
+
+        xml_file_path = os.path.join(xml_folders_path,
                                      'bill_process_no_def.bpmn')
 
         converter = Converter()

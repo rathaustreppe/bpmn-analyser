@@ -48,9 +48,8 @@ class Converter:
         self.xml_reader.prepare_dom()
 
         self.xml_tree = self.xml_reader.parse_to_dom()
-        self.graph_builder = GraphBuilder \
-            (xml_reader=self.xml_reader,
-             bpmn_factory=BPMNFactory())
+        self.graph_builder = GraphBuilder(xml_reader=self.xml_reader,
+                                          bpmn_factory=BPMNFactory())
 
         # convert all xml-elements into python objects
         bpmn_elements, sequence_flows = \

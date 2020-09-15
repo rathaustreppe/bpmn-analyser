@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_1pikwb9" name="startendevent">
+      <outgoing>Flow_01vvih9</outgoing>
+    </startEvent>
+    <task id="Activity_11s4ixg" name="A">
+      <incoming>Flow_13rwdrl</incoming>
+      <outgoing>Flow_0qrl689</outgoing>
+    </task>
+    <sequenceFlow id="Flow_13rwdrl" name="a" sourceRef="Gateway_1tpscx7" targetRef="Activity_11s4ixg" />
+    <task id="Activity_165pxf3" name="X">
+      <incoming>Flow_01vvih9</incoming>
+      <outgoing>Flow_0xji56c</outgoing>
+    </task>
+    <sequenceFlow id="Flow_0xji56c" sourceRef="Activity_165pxf3" targetRef="Gateway_1tpscx7" />
+    <task id="Activity_0zq0d4s" name="B">
+      <incoming>Flow_1bf85h6</incoming>
+      <outgoing>Flow_1amrrrq</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1bf85h6" name="b" sourceRef="Gateway_1tpscx7" targetRef="Activity_0zq0d4s" />
+    <sequenceFlow id="Flow_01vvih9" sourceRef="Event_1pikwb9" targetRef="Activity_165pxf3" />
+    <sequenceFlow id="Flow_0qrl689" sourceRef="Activity_11s4ixg" targetRef="Gateway_0iwmwc2" />
+    <sequenceFlow id="Flow_1amrrrq" sourceRef="Activity_0zq0d4s" targetRef="Gateway_0iwmwc2" />
+    <sequenceFlow id="Flow_1lkczam" sourceRef="Gateway_0iwmwc2" targetRef="Event_1ftzj1s" />
+    <endEvent id="Event_1ftzj1s" name="startendevent">
+      <incoming>Flow_1lkczam</incoming>
+    </endEvent>
+    <inclusiveGateway id="Gateway_0iwmwc2">
+      <incoming>Flow_0qrl689</incoming>
+      <incoming>Flow_1amrrrq</incoming>
+      <incoming>Flow_1eikm26</incoming>
+      <outgoing>Flow_1lkczam</outgoing>
+    </inclusiveGateway>
+    <task id="Activity_0hivik2" name="C">
+      <incoming>Flow_1yg5h27</incoming>
+      <outgoing>Flow_1eikm26</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1yg5h27" name="c" sourceRef="Gateway_1tpscx7" targetRef="Activity_0hivik2" />
+    <sequenceFlow id="Flow_1eikm26" sourceRef="Activity_0hivik2" targetRef="Gateway_0iwmwc2" />
+    <inclusiveGateway id="Gateway_1tpscx7">
+      <incoming>Flow_0xji56c</incoming>
+      <outgoing>Flow_13rwdrl</outgoing>
+      <outgoing>Flow_1bf85h6</outgoing>
+      <outgoing>Flow_1yg5h27</outgoing>
+    </inclusiveGateway>
+  </process>

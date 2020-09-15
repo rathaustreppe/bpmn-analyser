@@ -102,6 +102,9 @@ class XMLReader:
 
         Returns:
         """
+        if self.xml_dom is None:
+            raise ValueError('XML-DOM of XML-Reader is None. Use parse_to_dom '
+                             'to initiate.')
         elements_in_file = []
         for element in self.xml_dom.findall(
                 './/' + element_name.value):
