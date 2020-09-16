@@ -3,6 +3,7 @@ from typing import List
 from nltk.corpus import wordnet as wn
 
 from src.converter.converter import Converter
+from src.converter.xml_reader import XMLReader
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 
@@ -25,7 +26,7 @@ solution_token = Token(attributes=init_attributes)
 # Ruleset for modifying a token. These are real-life constraints. E.g. you can
 # only sign a (physical) paper, if it is in front of you.
 # Rule 1: ML signs: only in Goerlitz
-# synonymcloud: 'ML' is fixed, 'signs' has synonyms
+# synonymcloud: 'ML' is fixed, 'signs' has synonyms, 'bill' has synonyms
 syncloud_r1 = SynonymCloud.from_list(text=['ML',
                                            wn.synset('sign.v.01'),
                                            wn.synset('bill.n.02'),

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="S" name="SE">
+      <outgoing>F1</outgoing>
+    </startEvent>
+    <endEvent id="E" name="EE">
+      <incoming>F6</incoming>
+    </endEvent>
+    <exclusiveGateway id="GW1">
+      <incoming>F1</incoming>
+      <outgoing>F2</outgoing>
+      <outgoing>F3</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="F1" sourceRef="S" targetRef="GW1" />
+    <task id="A1" name="act">
+      <incoming>F2</incoming>
+      <outgoing>F4</outgoing>
+    </task>
+    <sequenceFlow id="F2" name="cond1" sourceRef="GW1" targetRef="A1" />
+    <task id="A2" name="Bact">
+      <incoming>F3</incoming>
+      <outgoing>F5</outgoing>
+    </task>
+    <sequenceFlow id="F3" name="cond2" sourceRef="GW1" targetRef="A2" />
+    <exclusiveGateway id="GW2">
+      <incoming>F4</incoming>
+      <incoming>F5</incoming>
+      <outgoing>F6</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="F5" sourceRef="A2" targetRef="GW2" />
+    <sequenceFlow id="F6" sourceRef="GW2" targetRef="E" />
+    <sequenceFlow id="F4" sourceRef="A1" targetRef="GW2" />
+  </process>

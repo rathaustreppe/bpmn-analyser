@@ -1,14 +1,14 @@
 import os
 
 from src.converter.converter import Converter
+from src.converter.xml_reader import XMLReader
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 
 
 class TestIntegration:
 
-    def run_pointer(self,
-                    graph_pointer: GraphPointer) -> Token:
+    def run_pointer(self, graph_pointer: GraphPointer) -> Token:
         for i in range(100):
             ret = graph_pointer.runstep_graph()
             if ret == 1:

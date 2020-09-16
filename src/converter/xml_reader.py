@@ -81,7 +81,7 @@ class XMLReader:
             print(e)
         return self.xml_dom
 
-    def query(self, element_name: BPMNEnum) -> List[Element]:
+    def query(self, element_type: BPMNEnum) -> List[Element]:
         """
         access all <elementnames> of xml file with XPath syntax
         .// means: in whole xml text (doesnt care about depth)
@@ -98,7 +98,7 @@ class XMLReader:
         elementname: 'world'
         Returns: [<world id=456>] with 'world' beeing an object
         Args:
-            element_name (str): elementname of bpmn-specification
+            element_type (BPMNEnum): elementname of bpmn-specification
 
         Returns:
         """
@@ -107,7 +107,7 @@ class XMLReader:
                              'to initiate.')
         elements_in_file = []
         for element in self.xml_dom.findall(
-                './/' + element_name.value):
+                './/' + element_type.value):
             # We dont need to preserve which sequence flow is
             # incomming and outgoing. This is stored in
             # sourceRef and targetRef of each sequenceFlow.

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from xml.etree.ElementTree import Element
 
 from pedantic import pedantic_class
@@ -22,6 +22,6 @@ class IBPMNFactory(ABC):
     # This not: <task></task>'
     @abstractmethod
     def create_bpmn_element(self,
-                            element: Element,
-                            elem_type: BPMNEnum) -> BPMNElement:
+                            element: Element, elem_type: BPMNEnum,
+                            src_tgt_elements: Optional[List[BPMNElement]] = None) -> BPMNElement:
         pass
