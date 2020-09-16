@@ -12,3 +12,6 @@ class BPMNEnum(Enum):
     ID = 'id'
     NAME = 'name'
     PROCESS = 'process'
+    PARALLGATEWAY_TEXT = '<AND>'
+    EXCLGATEWAY_TEXT = '<XOR>'
+    INCLGATEWAY_TEXT = '<OR>'

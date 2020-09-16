@@ -1,9 +1,8 @@
-from typing import Tuple, List, Optional
+from typing import List, Optional
 
 from igraph import Graph, VertexSeq, Vertex
 from pedantic import pedantic_class
 
-from src.converter.bpmn_models import bpmn_model
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -23,17 +22,17 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.converter.i_bpmn_factory import IBPMNFactory
-from src.converter.xml_reader import XMLReader
 from src.models.graph_text import GraphText
 
 
 @pedantic_class
-
 class GraphConverter:
-    def __init__(self, bpmn_model: BPMNModel, graph: Optional[Graph] = None) -> None:
+    def __init__(self, bpmn_model: BPMNModel,
+                 graph: Optional[Graph] = None) -> None:
         self.graph = graph
         self.bpmn_model = bpmn_model
+        if self.graph is None:
+            self.graph = Graph()
 
     def put_vertex_in_graph(self, element: BPMNElement, idx: int) -> None:
         """
@@ -52,11 +51,11 @@ class GraphConverter:
         # gateways get a special name in the graph
         if isinstance(element, BPMNGateway):
             if isinstance(element, BPMNParallelGateway):
-                _name = '<AND>'
+                _name = BPMNEnum.PARALLGATEWAY_TEXT.value
             elif isinstance(element, BPMNExclusiveGateway):
-                _name = '<XOR>'
+                _name = BPMNEnum.EXCLGATEWAY_TEXT.value
             elif isinstance(element, BPMNInclusiveGateway):
-                _name = '<OR>'
+                _name = BPMNEnum.INCLGATEWAY_TEXT.value
             else:
                 raise ValueError(f'type {type(element)} of '
                                  f'gateway {element} is not implemented')
@@ -74,8 +73,8 @@ class GraphConverter:
         # In every other case we would wrongfully overwrite an existing vertex.
         if len(self.graph.vs[idx].attributes()) == 0:
             _write_vertex()
-        elif len(self.graph.vs[idx].attributes()) >= 1 and self.graph.vs[idx][
-            'id'] is None:
+        elif len(self.graph.vs[idx].attributes()) >= 1 and \
+                self.graph.vs[idx]['id'] is None:
             _write_vertex()
         else:
             raise IndexError(f'trying to overwrite existing vertex '
@@ -83,9 +82,13 @@ class GraphConverter:
                              f'element {element} (name: {_name}) at index {idx}')
 
     def put_vertices_in_graph(self, bpmn_elements: List[BPMNElement]) -> None:
-        # generate vertices for activity, start-and endEvent and gateways
-        # does not preserve order of the given list
-        # (list is 1-dimensional, graph is 2-dimensional)
+        """
+        generate vertices for activity, start-and endEvent and gateways.
+        Manages indices of vertices and prevents overwriting of existing
+        vertices. Does not map list index to graph index.
+        (list is 1-dimensional, graph is 2-dimensional)
+        """
+
         # idx starts with 1, because startEvent takes first index == 0
         idx = 1
         for elem in bpmn_elements:
@@ -131,7 +134,11 @@ class GraphConverter:
             vtx_src_idx = vertex_source.index
             vtx_tgt_idx = vertex_target.index
 
-            # generate edge in graph
+            # generate edge in graph only if no edge present
+            for edge in self.graph.es:
+                if edge.source == vtx_src_idx and edge.target == vtx_tgt_idx:
+                    raise ValueError(f'cannot put edge {edge} of sequenceflow '
+                                     f'{sequence_flow} twice in graph')
             self.graph.add_edge(source=vtx_src_idx, target=vtx_tgt_idx)
 
     @staticmethod
@@ -140,6 +147,12 @@ class GraphConverter:
         for vertex in vertices:
             if vertex[BPMNEnum.ID.value] == vertex_id:
                 return vertex
+
+    def init_graph(self, number_of_vertices: int) -> None:
+        if self.graph is None:
+            self.graph = Graph()
+        self.graph = self.graph.as_directed()
+        self.graph.add_vertices(number_of_vertices)
 
     def build_graph(self) -> Graph:
         #
@@ -158,9 +171,7 @@ class GraphConverter:
         if self.bpmn_model is None:
             raise ValueError(f'BPMN-Model of GraphConverter {self} is None.')
 
-        self.graph = Graph()
-        self.graph = self.graph.as_directed()
-        self.graph.add_vertices(len(self.bpmn_model.bpmn_elements))
+        self.init_graph(number_of_vertices=len(self.bpmn_model.bpmn_elements))
 
         self.put_vertices_in_graph(bpmn_elements=self.bpmn_model.bpmn_elements)
         self.put_edges_in_graph(sequence_flows=self.bpmn_model.sequence_flows)
