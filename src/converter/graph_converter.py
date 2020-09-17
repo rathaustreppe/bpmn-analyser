@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from igraph import Graph, VertexSeq, Vertex
+from igraph import Graph, VertexSeq, Vertex, Edge
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_activity import \
@@ -134,12 +134,32 @@ class GraphConverter:
             vtx_src_idx = vertex_source.index
             vtx_tgt_idx = vertex_target.index
 
-            # generate edge in graph only if no edge present
+            # generate edge in graph only if edge not present
             for edge in self.graph.es:
                 if edge.source == vtx_src_idx and edge.target == vtx_tgt_idx:
                     raise ValueError(f'cannot put edge {edge} of sequenceflow '
                                      f'{sequence_flow} twice in graph')
-            self.graph.add_edge(source=vtx_src_idx, target=vtx_tgt_idx)
+
+            # We generate a new edge here. By using **kwds we can assign
+            # a the BPMNEnum.NAME.value (== name) and BPMNEnum.ID.value attribute to the edge.
+            # Unfortunately, we cannot pass BPMNEnum.XYZ.value as parameter.
+            # Instead we have to use the value (== name and id). With a small test
+            # we make sure BPMNEnum.NAME and BPMNEnum.ID is untouched and we can savely use
+            # 'name' as parameter.
+            if BPMNEnum.NAME.value != 'name':
+                raise ValueError(f'BPMNEnum.NAME.value was changed from "name" '
+                                 f'to {BPMNEnum.NAME.value}. One cannot generate '
+                                 f'named edges without changing the parameter.')
+
+            if BPMNEnum.ID.value != 'id':
+                raise ValueError(f'BPMNEnum.ID.value was changed from "id" '
+                                 f'to {BPMNEnum.ID.value}. One cannot generate '
+                                 f'edges without changing the parameter.')
+
+            self.graph.add_edge(source=vtx_src_idx,
+                                target=vtx_tgt_idx,
+                                name=sequence_flow.name, # BPMNEnum.NAME.value
+                                id = sequence_flow.id) # BPMNEnum.ID.value
 
     @staticmethod
     def find_vertex(vertices: VertexSeq, vertex_id: str) -> Vertex:

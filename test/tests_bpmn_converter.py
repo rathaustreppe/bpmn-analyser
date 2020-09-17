@@ -366,3 +366,14 @@ class TestBPMNConverter:
         gateway_2 = self.find_by_id(elements=gateways, id='GW2')
         assert len(gateway_2.sequence_flows_in) == 2
         assert len(gateway_2.sequence_flows_out) == 1
+
+    def test_named_edge(self):
+        model = self.create_model(filename='S_to_E_named_edge.bpmn')
+
+        bpmn_elements = model.bpmn_elements
+        sequene_flows = model.sequence_flows
+
+        assert len(bpmn_elements) == 2
+        assert len(sequene_flows) == 1
+
+        assert sequene_flows[0].name == 'named'
