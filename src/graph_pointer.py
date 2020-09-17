@@ -1,9 +1,12 @@
 from typing import List
 
+import igraph
 from igraph import Edge, Graph
 from pedantic import pedantic_class
 
+from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
 from src.models.graph_text import GraphText
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
@@ -28,6 +31,7 @@ class GraphPointer:
         self.token = token
         self.__pointer = -1
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
+        self.previous_element: igraph.Vertex = None
 
     def get_token(self) -> Token:
         return self.token
@@ -147,3 +151,29 @@ class GraphPointer:
 
         for rule in rules_with_matching_syncloud:
             self.token = rule.check_and_modify(token=self.token)
+
+
+    
+    def _next_step(self):
+        # set current
+        current = None
+        if type(self.previous_element) == BPMNActivity:
+            next_edges = self.previous_element.out_edges()
+            if len(next_edges) == 1:
+                current = next_edges[0].target
+        elif isinstance(self.previous_element, BPMNGateway):
+            current = self.stackhandler.next_element()
+        else:
+            raise Exception(f'Previous element {self.previous_element} is either'
+                            f'activity or gateway, not {type(self.previous_element)}')
+
+        # check current
+        if type(current) == BPMNActivity:
+            pass
+            #text analysis & rule checking & TS Changing
+        elif isinstance(current, BPMNGateway):
+            pass
+            # check Conditions of every branch
+            # stackhandler.check_gateway(gateway, branchvertices)
+
+        self.previous_element = current
