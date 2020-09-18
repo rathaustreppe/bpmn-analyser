@@ -16,12 +16,12 @@
       <incoming>F2</incoming>
       <outgoing>F4</outgoing>
     </task>
-    <sequenceFlow id="F2" name="cond1" sourceRef="GW1" targetRef="A1" />
+    <sequenceFlow id="F2" sourceRef="GW1" targetRef="A1" />
     <task id="A2" name="Bact">
       <incoming>F3</incoming>
       <outgoing>F5</outgoing>
     </task>
-    <sequenceFlow id="F3" name="cond2" sourceRef="GW1" targetRef="A2" />
+    <sequenceFlow id="F3" sourceRef="GW1" targetRef="A2" />
     <exclusiveGateway id="GW2">
       <incoming>F4</incoming>
       <incoming>F5</incoming>

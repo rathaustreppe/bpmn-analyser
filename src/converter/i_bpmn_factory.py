@@ -18,7 +18,7 @@ class IBPMNFactory(ABC):
     # with valid xml + valid bpmn strings.The program is
     # designed that a factory is only instantiated when the
     # xml is conform to XML and BPMN standard.
-    # This is okay: <task id="" name=""></task>'
+    # This is okay: <task id="" condition=""></task>'
     # This not: <task></task>'
     @abstractmethod
     def create_bpmn_element(self,

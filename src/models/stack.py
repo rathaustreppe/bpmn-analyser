@@ -1,22 +1,23 @@
-from typing import List
-
-import igraph
+from typing import List, TypeVar, Generic
 from pedantic import pedantic_class
+
+T = TypeVar('T')
 
 
 @pedantic_class
 class Stack:
-    def __init__(self, stack: List[igraph.Vertex]) -> None:
+    def __init__(self, stack: List[Generic[T]]) -> None:
         self.stack = stack
 
-    def push(self, element: igraph.Vertex) -> None:
+    def push(self, element: T) -> None:
         self.stack.push(element)
 
-    def pop(self) -> igraph.Vertex:
+    def pop(self) -> T:
         return self.stack.pop()
 
-    def top(self) -> igraph.Vertex:
-        return self.stack[len(self.stack) - 1]
+    def top(self) -> T:
+        if len(self.stack) > 0:
+            return self.stack[len(self.stack) - 1]
 
     def empty(self) -> None:
         self.stack = []

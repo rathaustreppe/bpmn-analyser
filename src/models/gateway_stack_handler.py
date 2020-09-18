@@ -37,12 +37,13 @@ class GatewayStackHandler:
 
         if num_outgoing > num_incoming:
             # opening gateway
-            # We need to push them and their branches.
+            # We need to push them and their branches on the stack.
             self.push_gateway(gateway=gateway, branch_vertices=branch_vertices)
 
         elif num_incoming > num_outgoing:
             # closing gateway
-            # If it is a closing gateway, we can take it from the stack.
+            # If it is a closing gateway, we check if we can take it
+            # from the stack.
             self.pop_gateway(branch_vertices=branch_vertices)
 
         else:

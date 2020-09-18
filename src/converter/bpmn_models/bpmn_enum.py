@@ -15,3 +15,4 @@ class BPMNEnum(Enum):
     PARALLGATEWAY_TEXT = '<AND>'
     EXCLGATEWAY_TEXT = '<XOR>'
     INCLGATEWAY_TEXT = '<OR>'
+    CONDITION = 'condition'

@@ -79,7 +79,7 @@ class GraphConverter:
         else:
             raise IndexError(f'trying to overwrite existing vertex '
                              f'{self.graph.vs[idx]} with '
-                             f'element {element} (name: {_name}) at index {idx}')
+                             f'element {element} (condition: {_name}) at index {idx}')
 
     def put_vertices_in_graph(self, bpmn_elements: List[BPMNElement]) -> None:
         """
@@ -141,14 +141,14 @@ class GraphConverter:
                                      f'{sequence_flow} twice in graph')
 
             # We generate a new edge here. By using **kwds we can assign
-            # a the BPMNEnum.NAME.value (== name) and BPMNEnum.ID.value attribute to the edge.
+            # a the BPMNEnum.CONDITION.value (== condition) and BPMNEnum.ID.value attribute to the edge.
             # Unfortunately, we cannot pass BPMNEnum.XYZ.value as parameter.
-            # Instead we have to use the value (== name and id). With a small test
-            # we make sure BPMNEnum.NAME and BPMNEnum.ID is untouched and we can savely use
-            # 'name' as parameter.
-            if BPMNEnum.NAME.value != 'name':
-                raise ValueError(f'BPMNEnum.NAME.value was changed from "name" '
-                                 f'to {BPMNEnum.NAME.value}. One cannot generate '
+            # Instead we have to use the value (== condition and id). With a small test
+            # we make sure BPMNEnum.CONDITION and BPMNEnum.ID is untouched and we can savely use
+            # 'condition' as parameter.
+            if BPMNEnum.CONDITION.value != 'condition':
+                raise ValueError(f'BPMNEnum.CONDITION.value was changed from "condition" '
+                                 f'to {BPMNEnum.CONDITION.value}. One cannot generate '
                                  f'named edges without changing the parameter.')
 
             if BPMNEnum.ID.value != 'id':
@@ -158,7 +158,7 @@ class GraphConverter:
 
             self.graph.add_edge(source=vtx_src_idx,
                                 target=vtx_tgt_idx,
-                                name=sequence_flow.name, # BPMNEnum.NAME.value
+                                condition=sequence_flow.condition, # BPMNEnum.CONDITION.value
                                 id = sequence_flow.id) # BPMNEnum.ID.value
 
     @staticmethod

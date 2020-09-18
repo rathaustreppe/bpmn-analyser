@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Generic, TypeVar
 
 import pytest
 
@@ -18,6 +18,7 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.converter.xml_reader import XMLReader
+from src.models.token_state_condition import TokenStateCondition
 
 
 class TestBPMNConverter:
@@ -251,12 +252,12 @@ class TestBPMNConverter:
         assert flow_1.target.id == 'GW1'
 
         flow_2 = self.find_by_id(elements=model.sequence_flows, id='F2')
-        assert flow_2.name == 'cond1'
+        assert flow_2.condition is None
         assert flow_2.source.id == 'GW1'
         assert flow_2.target.id == 'A1'
 
         flow_3 = self.find_by_id(elements=model.sequence_flows, id='F3')
-        assert flow_3.name == 'cond2'
+        assert flow_3.condition is None
         assert flow_3.source.id == 'GW1'
         assert flow_3.target.id == 'A2'
 
@@ -297,12 +298,12 @@ class TestBPMNConverter:
         assert flow_1.target.id == 'GW1'
 
         flow_2 = self.find_by_id(elements=model.sequence_flows, id='F2')
-        assert flow_2.name == 'cond1'
+        assert flow_2.condition is None
         assert flow_2.source.id == 'GW1'
         assert flow_2.target.id == 'A1'
 
         flow_3 = self.find_by_id(elements=model.sequence_flows, id='F3')
-        assert flow_3.name == 'cond2'
+        assert flow_3.condition is None
         assert flow_3.source.id == 'GW1'
         assert flow_3.target.id == 'A2'
 
@@ -342,12 +343,12 @@ class TestBPMNConverter:
         assert flow_1.target.id == 'GW1'
 
         flow_2 = self.find_by_id(elements=model.sequence_flows, id='F2')
-        assert flow_2.name == 'cond1'
+        assert flow_2.condition is None
         assert flow_2.source.id == 'GW1'
         assert flow_2.target.id == 'A1'
 
         flow_3 = self.find_by_id(elements=model.sequence_flows, id='F3')
-        assert flow_3.name == 'cond2'
+        assert flow_3.condition is None
         assert flow_3.source.id == 'GW1'
         assert flow_3.target.id == 'A2'
 
@@ -367,7 +368,7 @@ class TestBPMNConverter:
         assert len(gateway_2.sequence_flows_in) == 2
         assert len(gateway_2.sequence_flows_out) == 1
 
-    def test_named_edge(self):
+    def test_conditional_edge(self):
         model = self.create_model(filename='S_to_E_named_edge.bpmn')
 
         bpmn_elements = model.bpmn_elements
@@ -376,4 +377,18 @@ class TestBPMNConverter:
         assert len(bpmn_elements) == 2
         assert len(sequene_flows) == 1
 
-        assert sequene_flows[0].name == 'named'
+        assert sequene_flows[0].condition ==\
+               TokenStateCondition.from_string(condition='attr==42')
+
+    def test_conditional_edge_gateway(self):
+        model = self.create_model(filename='conditional_edge_exclusive_gateway.bpmn')
+
+        sequence_flows = model.sequence_flows
+        assert len(sequence_flows) == 6
+
+        cond_flow_1 = self.find_by_id(elements=sequence_flows, id='F2')
+        cond_flow_2 = self.find_by_id(elements=sequence_flows, id='F3')
+
+        assert cond_flow_1.condition == TokenStateCondition.from_string(condition='k1==v1')
+        assert cond_flow_2.condition == TokenStateCondition.from_string(condition='k1==v2')
+

@@ -73,3 +73,50 @@ class TestTokenStateCondition:
     def test_rule_normal(self, example_token):
         assert self.example_rule.check_condition(
             token=self.example_token)
+
+    def test_from_string_equals(self):
+        condition = 'k1==v1'
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc._tok_attribute == 'k1'
+        assert tsc._operator == Operators.EQUALS
+        assert tsc._tok_value == 'v1'
+
+    def test_from_string_different_lenghts(self):
+        # testing all combinations of different string lengths
+        short_a = 'a'
+        long_a = 'aaa'
+        empty = ''
+        attributes = [short_a, long_a, empty]
+
+        short_val = '1'
+        long_val = '1000'
+        values = [short_val, long_val, empty]
+
+        equals = Operators.EQUALS
+        greaterthen = Operators.GREATERTHEN
+        operators = [equals, greaterthen]
+
+        for attr in attributes:
+            for operator in operators:
+                for value in values:
+                    if attr == empty or value == empty:
+                        with pytest.raises(ValueError):
+                            TokenStateCondition.from_string(
+                                condition=f'{attr}{operator.value}{value}')
+                    else:
+                        tsc = TokenStateCondition.from_string(condition=f'{attr}{operator.value}{value}')
+                        assert tsc._tok_attribute == attr
+                        assert tsc._operator == operator
+                        assert tsc._tok_value == value
+
+    def test_from_string_greaterthen(self):
+        condition = 'attr>42'
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc._tok_attribute == 'attr'
+        assert tsc._operator == Operators.GREATERTHEN
+        assert tsc._tok_value == '42'
+
+    def test_from_string_operator_not_implemented(self):
+        condition = 'attr(42'
+        with pytest.raises(ValueError):
+            TokenStateCondition.from_string(condition=condition)

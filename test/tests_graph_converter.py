@@ -11,6 +11,7 @@ from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.graph_converter import GraphConverter
 from src.converter.xml_reader import XMLReader
+from src.models.token_state_condition import TokenStateCondition, Operators
 
 
 class TestGraphConverter:
@@ -208,7 +209,7 @@ class TestGraphConverter:
         with pytest.raises(ValueError):
             gc.put_edges_in_graph(sequence_flows=[flow])
 
-    def test_put_named_edge_in_graph(self):
+    def test_conditional_edge_in_graph(self):
         model = self.create_model(filename='S_to_E_named_edge.bpmn')
         gc = self.create_converter(bpmn_model=model)
 
@@ -225,7 +226,8 @@ class TestGraphConverter:
         assert len(gc.graph.es) == 1
 
         edge = gc.graph.es[0]
-        assert edge['name'] == sequene_flows[0].name
+        assert edge[BPMNEnum.CONDITION.value] == sequene_flows[0].condition
+
 
     def test_parallel_gateway_integration(self):
         model = self.create_model(filename='min_parallel_gateway.bpmn')

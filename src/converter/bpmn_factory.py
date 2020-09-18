@@ -21,6 +21,7 @@ from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_startevent import \
     BPMNStartEvent
+from src.models.token_state_condition import TokenStateCondition
 
 
 @pedantic_class
@@ -114,9 +115,11 @@ class BPMNFactory(IBPMNFactory):
         # Reject earlier or raise exception?
 
         id = sequence_flow.get('id')
-        name = sequence_flow.get('name')
-        if name is None:
-            name = ''
+        # name tag in xml is treated as a condition.
+        condition = sequence_flow.get('name')
+        if condition != None:
+            condition = TokenStateCondition.from_string(condition=condition)
+
         source_ref = sequence_flow.get('sourceRef')
         target_ref = sequence_flow.get('targetRef')
 
@@ -138,8 +141,6 @@ class BPMNFactory(IBPMNFactory):
             if source_ref == target.id:
                 sequence_sources.append(target)
 
-        # Sequence Flow can only point to one source and target
-        # so far!
-        return BPMNSequenceFlow(id=id, name=name,
+        return BPMNSequenceFlow(id=id, condition=condition,
                                 source=sequence_sources[0],
                                 target=sequence_targets[0])
