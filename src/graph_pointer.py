@@ -1,12 +1,13 @@
 from typing import List
 
 import igraph
-from igraph import Edge, Graph
+from igraph import Graph
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
+from src.models.gateway_stack_handler import GatewayStackHandler
 from src.models.graph_text import GraphText
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
@@ -29,9 +30,10 @@ class GraphPointer:
                  chunker: Chunker) -> None:
         self.graph = graph
         self.token = token
-        self.__pointer = -1
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
         self.previous_element: igraph.Vertex = None
+        self.current: igraph.Vertex = None
+        self.stackhandler = GatewayStackHandler()
 
     def get_token(self) -> Token:
         return self.token
@@ -47,41 +49,28 @@ class GraphPointer:
             0 if the the step was performed successfully but
             the end of the graph is not reached yet
         """
-        if self.__pointer < -1:
-            raise RuntimeError(
-                f'GraphPointer.__pointer {self.__pointer} '
-                f'is set horribly wrong.')
 
-        if self.__pointer == -1:
+        if self.previous_element is None:
             # case: init, first call of runstep_graph
-            # set pointer to first vertex of graph and
-            # change the state of the token
-            self.__set_start_vertex()
-            self.__change_token_state()
-            return 0
+            # We know it must be a BPMNStartEvent (otherwise contradicting
+            # BPMNSpecification) so we can perform text analysis on it.
+            # ToDo: implement text analysis on start-and endevents
+            self.current = self.__find_start_vertex()
+            # matching_rules = self._text_analysis(current=self.current)
+            # self._modify_token_with_rules(matching_rules=matching_rules)
+            self.previous_element = self.current
+        else:
+            self._next_step()
 
-        # all other cases: decide what to to by outgoing edges
-        edges_ids = self.graph.incident(self.__pointer, mode='OUT')
-
-        # if there are no edges left, we are done
-        if len(edges_ids) == 0:
+        # if current element is a endEvent, we reached the end of the graph
+        # endEvents are the only BPMN-Element with no outgoing edges
+        # (compare to activities, gateways and startEvents)
+        if len(self.current.out_edges()) == 0:
             return 1
-
-        # if there is one outgoing edge, set pointer to it
-        # and change token state
-        if len(edges_ids) == 1:
-            # get the vertex the edge points to
-            edge: Edge = self.graph.es[edges_ids[0]]
-            vertex_id = edge.target
-
-            self.change_pointer(vertex_id=vertex_id)
-            self.__change_token_state()
+        else:
             return 0
 
-        if len(edges_ids) > 1:
-            print('Token-Algo is not implemented for this case')
-
-    def __set_start_vertex(self) -> None:
+    def __find_start_vertex(self) -> igraph.Vertex:
         """
         Define the entry point of the graph from where
         the graph is read. Can only process directed graphs
@@ -113,67 +102,71 @@ class GraphPointer:
             raise RuntimeError(
                 'ERROR: graph has multiple starting points')
 
-        vertex_id = incidence_list.index([])
+        vertex_id_in_graph = incidence_list.index([])
 
-        # set inner pointer to starting vertex
-        self.change_pointer(vertex_id=vertex_id)
+        # treat this vertex as current vertex
+        return self.graph.vs[vertex_id_in_graph]
 
-    def change_pointer(self, vertex_id: int) -> None:
-        """
-        Changes the pointer to another vertex.
-        Args:
-            vertex_id (int): The ID of the vertex given by igraph-lib.
-        """
-        if vertex_id is None or vertex_id < 0:
-            raise RuntimeError(
-                'ERROR: vertex_id is invalid'
-                '(None or smaller than 0')
-        self.__pointer = vertex_id
 
-    def __change_token_state(self) -> None:
-        # we call this function whenever the pointer has changed
+    def _text_analysis(self, current: igraph.Vertex) -> List[TokenStateRule]:
         # analyzes text and updates token
-        # we apply rules (==change token state), when their synonymclouds are
-        # matching and their conditions are true
+        vertex_text: GraphText = current[BPMNEnum.NAME.value]
 
-        vertex = self.graph.vs[self.__pointer]
-        vertex_text: GraphText = vertex[BPMNEnum.NAME.value]
-
-        # no handling of start and end events implemented yet, skip them
+        # no handling of start and end events implemented yet, skip them by
+        # finding no rule per default
         if vertex_text.get_text() == 'startendevent':
-            return
+            return []
 
-        rules_with_matching_syncloud = self.rule_finder.find_rules(
-            text=vertex_text)
+        matching_rules = self.rule_finder.find_rules(text=vertex_text)
 
         print(f'TEXT: {vertex_text}')
-        print(f'RULES: {rules_with_matching_syncloud}')
+        print(f'MATCHING RULES: {matching_rules}')
 
-        for rule in rules_with_matching_syncloud:
+        return matching_rules
+
+    def _modify_token_with_rules(self,
+                                 matching_rules: List[TokenStateRule]) -> Token:
+        # we apply rules (==change token state), when their synonymclouds are
+        # matching and their conditions are true
+        for rule in matching_rules:
             self.token = rule.check_and_modify(token=self.token)
+        return self.token
 
+    def _next_step(self) -> None:
+        gateway_texts = [BPMNEnum.PARALLGATEWAY_TEXT.value,
+                         BPMNEnum.EXCLGATEWAY_TEXT.value,
+                         BPMNEnum.INCLGATEWAY_TEXT.value]
+        if self.previous_element[BPMNEnum.NAME.value] in gateway_texts:
+            # previous_element was gateway
+            self.current = self.stackhandler.next_vertex()
 
-    
-    def _next_step(self):
-        # set current
-        current = None
-        if type(self.previous_element) == BPMNActivity:
+        else:
+            # previous_element was activity or startEvent
             next_edges = self.previous_element.out_edges()
             if len(next_edges) == 1:
-                current = next_edges[0].target
-        elif isinstance(self.previous_element, BPMNGateway):
-            current = self.stackhandler.next_element()
+                self.current = self.graph.vs[next_edges[0].target]
+
+        # check current type
+        if self.current[BPMNEnum.NAME.value] in gateway_texts:
+            # current is gateway
+            # collect branch_vertices and check their conditions
+            outgoing_edges = self.current.out_edges()
+            conditions_meet_edges = []
+            for edge in outgoing_edges:
+                if edge[BPMNEnum.CONDITION.value].check_condition(
+                        token=self.token):
+                    conditions_meet_edges.append(edge)
+
+            # get first vertex of edges
+            branch_vertices = [self.graph.vs[edge.target] for edge in conditions_meet_edges]
+
+            # tell stackhandler to modify stack according to gateway
+            self.stackhandler.check_gateway_stack(gateway=self.current,
+                                                  branch_vertices=branch_vertices)
         else:
-            raise Exception(f'Previous element {self.previous_element} is either'
-                            f'activity or gateway, not {type(self.previous_element)}')
+            # current is no gateway --> is activity
+            # text analysis & rule checking & token changing
+            matching_rules = self._text_analysis(current=self.current)
+            self._modify_token_with_rules(matching_rules=matching_rules)
 
-        # check current
-        if type(current) == BPMNActivity:
-            pass
-            #text analysis & rule checking & TS Changing
-        elif isinstance(current, BPMNGateway):
-            pass
-            # check Conditions of every branch
-            # stackhandler.check_gateway(gateway, branchvertices)
-
-        self.previous_element = current
+        self.previous_element = self.current

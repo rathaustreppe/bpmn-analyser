@@ -32,14 +32,16 @@ class TestGraphPointer:
         graph = igraph.Graph()
         graph = graph.as_directed()
 
-        graph.add_vertices(5)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4)])
+        graph.add_vertices(7)
+        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text="send bill to Zittau")
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='startendevent')
+        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
+        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text="send bill to Zittau")
+        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
+        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
+        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text='startendevent')
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -54,14 +56,16 @@ class TestGraphPointer:
         graph = igraph.Graph()
         graph = graph.as_directed()
 
-        graph.add_vertices(5)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4)])
+        graph.add_vertices(7)
+        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='startendevent')
+        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
+        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
+        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
+        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
+        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text='startendevent')
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -78,16 +82,17 @@ class TestGraphPointer:
         graph = igraph.Graph()
         graph = graph.as_directed()
 
-        graph.add_vertices(6)
-        graph.add_edges(
-            [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
+        graph.add_vertices(8)
+        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5),(5, 6), (6, 7)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text="send bill to Zittau")
-        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='startendevent')
+        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
+        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
+        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
+        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text="ML signs bill")
+        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text="send bill to Zittau")
+        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[7][BPMNEnum.NAME.value] = GraphText(text='startendevent')
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -104,13 +109,15 @@ class TestGraphPointer:
 
         graph = igraph.Graph()
         graph = graph.as_directed()
-        graph.add_vertices(4)
-        graph.add_edges([(0, 1), (1, 2), (2, 3)])
+        graph.add_vertices(6)
+        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text='ML signs bill')
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text='startendevent')
+        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text='Zittau checks contract')
+        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text='Zittau signs bill')
+        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text='ML signs bill')
+        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text='send bill to Dresden')
+        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text='startendevent')
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,

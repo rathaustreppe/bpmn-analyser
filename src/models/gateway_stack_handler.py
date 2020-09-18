@@ -15,7 +15,7 @@ class GatewayStackHandler:
     gateway and come together in a closing gateway.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.stack = Stack(stack=[])
 
     def check_gateway_stack(self, gateway: igraph.Vertex,

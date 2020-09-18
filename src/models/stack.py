@@ -1,4 +1,4 @@
-from typing import List, TypeVar, Generic
+from typing import Sequence, TypeVar, Generic
 from pedantic import pedantic_class
 
 T = TypeVar('T')
@@ -6,7 +6,7 @@ T = TypeVar('T')
 
 @pedantic_class
 class Stack:
-    def __init__(self, stack: List[Generic[T]]) -> None:
+    def __init__(self, stack: Sequence[T]) -> None:
         self.stack = stack
 
     def push(self, element: T) -> None:
