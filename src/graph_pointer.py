@@ -5,6 +5,8 @@ from igraph import Graph
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.exception.graph_exception import GraphNotDirectedError, \
+    GraphHasNoStartError, GraphHasMultipleStartsError
 from src.models.gateway_stack_handler import GatewayStackHandler
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
@@ -29,7 +31,6 @@ class GraphPointer:
         self.token = token
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
         self.previous_element: igraph.Vertex = None
-        self.current: igraph.Vertex = None
         self.stack_handler = GatewayStackHandler()
 
     def runstep_graph(self) -> int:
@@ -48,10 +49,10 @@ class GraphPointer:
             # case: init, first call of runstep_graph
             # We know it must be a BPMNStartEvent (otherwise contradicting
             # BPMNSpecification) so we can perform text analysis on it.
-            self.current = self.__find_start_vertex()
-            matching_rules = self._text_analysis(vertex=self.current)
+            current = self.find_start_vertex()
+            matching_rules = self._text_analysis(vertex=current)
             self._modify_token_with_rules(matching_rules=matching_rules)
-            self.previous_element = self.current
+            self.previous_element = current
             return 0
         else:
             # if previous element was a endEvent, we reached the end of the graph
@@ -65,7 +66,7 @@ class GraphPointer:
 
 
 
-    def __find_start_vertex(self) -> igraph.Vertex:
+    def find_start_vertex(self) -> igraph.Vertex:
         """
         Find the entry point of the graph from where
         the graph is read. Can only process directed graphs
@@ -75,7 +76,7 @@ class GraphPointer:
 
         # cannot find a start of a non-directed graph
         if not self.graph.is_directed():
-            raise RuntimeError('ERROR: graph is not directed')
+            raise GraphNotDirectedError(graph=self.graph)
 
         # get the incidence list of all vertices
         # if one and only one vertex has no incident edge,
@@ -89,10 +90,10 @@ class GraphPointer:
         # because this is equal to the vertex_id (see
         # documentation of igraph.graph.get_inclist)
         if (incidence_list.count([])) == 0:
-            raise RuntimeError('ERROR: graph has no starting point')
+            raise GraphHasNoStartError(graph=self.graph)
 
         elif (incidence_list.count([])) > 1:
-            raise RuntimeError('ERROR: graph has multiple starting points')
+            raise GraphHasMultipleStartsError(graph=self.graph)
 
         else:
             vertex_id_in_graph = incidence_list.index([])
@@ -142,7 +143,7 @@ class GraphPointer:
             if len(next_edges) == 1:
                 return self.graph.vs[next_edges[0].target]
 
-    def get_first_vertex_of_all_branches(self, branches:List[igraph.Edge]):
+    def get_first_vertex_of_all_branches(self, branches:List[igraph.Edge]) -> List[igraph.Vertex]:
         return [self.graph.vs[edge.target] for edge in branches]
 
     def _next_step(self) -> None:
@@ -154,17 +155,22 @@ class GraphPointer:
         gateway_texts = BPMNEnum.GATEWAY_TEXTS.value
 
         current = self.find_current_element()
+        current_name_tag = current[BPMNEnum.NAME.value]
 
-        if current[BPMNEnum.NAME.value] in gateway_texts:
+        if current_name_tag in gateway_texts:
             # current is gateway
             # Collect all the branches a gateway branches into it and check
             # their conditions. If they are true, we can branch into them.
             # All those edges that meet the condition will be put on the stack.
             # This way we make sure to process all branches.
+            # If it is a parallel gateway, all branches are used.
             outgoing_edges = current.out_edges()
-            conditions_meet_edges = [edge for edge in outgoing_edges
-                                     if edge[BPMNEnum.CONDITION.value].
-                                         check_condition(token=self.token)]
+            if current_name_tag == BPMNEnum.PARALLGATEWAY_TEXT.value:
+                conditions_meet_edges = outgoing_edges
+            else:
+                conditions_meet_edges = [edge for edge in outgoing_edges
+                                         if edge[BPMNEnum.CONDITION.value].
+                                             check_condition(token=self.token)]
 
             branch_vertices = self.get_first_vertex_of_all_branches(
                 branches=conditions_meet_edges)
