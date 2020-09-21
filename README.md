@@ -1,4 +1,4 @@
-# BPMN-Analyser
+# BPMN-Analyser [![Build Status](https://travis-ci.com/rathaustreppe/bpmn-analyser.svg?branch=master)](https://travis-ci.com/rathaustreppe/bpmn-analyser) [![Coverage Status](https://coveralls.io/repos/github/rathaustreppe/bpmn-analyser/badge.svg)](https://coveralls.io/github/rathaustreppe/bpmn-analyser)
 
 Semantic analysis of BPMN-charts.
 Research project with token based semantic checks of BPMN-diagrams.
