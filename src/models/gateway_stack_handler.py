@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import igraph
 from pedantic import pedantic_class
@@ -11,12 +11,12 @@ from src.models.stack import Stack
 class GatewayStackHandler:
     """
     Class that knows how to put BPMN-Gateways (or their respective vertices)
-    in a stack. Used to keep track of multiple paths that split up after each
+    in a stack. Used to keep track of multiple branches that split up after each
     gateway and come together in a closing gateway.
     """
 
     def __init__(self) -> None:
-        self.stack = Stack(stack=[])
+        self.stack: Stack[igraph.Vertex] = Stack()
 
     def check_gateway_stack(self, gateway: igraph.Vertex,
                             branch_vertices: List[igraph.Vertex]) -> None:
@@ -44,7 +44,16 @@ class GatewayStackHandler:
             # closing gateway
             # If it is a closing gateway, we check if we can take it
             # from the stack.
-            self.pop_gateway(branch_vertices=branch_vertices)
+            # If we can take it from the stack, we put the following branch_vertex
+            # onto the stack. Because BPMN-Specification, only one vertex
+            # follows a closing gateway.
+            if len(branch_vertices) == 1:
+                self.pop_gateway(branch_vertex=branch_vertices[0])
+            else:
+                raise ValueError(
+                    f'Closing gateway {gateway} has not exactly 1 outgoing '
+                    f'branch vertex. Found: {len(branch_vertices)}. '
+                    f'This contradicts BPMN-specification.')
 
         else:
             raise ValueError(f'Gateway {gateway} has same number of incoming '
@@ -53,38 +62,48 @@ class GatewayStackHandler:
 
     def push_gateway(self, gateway: igraph.Vertex,
                      branch_vertices: List[igraph.Vertex]) -> None:
-        # gateway at bottom, branch_vertices on top
-        self.stack.push(gateway)
+        """
+        Pushes an opening gateway and its branches on the stack. Before a
+        gateway can be removed again, all of its branches must be removed before.
+        So in the stack, the gateway is below its branches. This way we make
+        sure every branch is processed before removing the gateway.
+        """
+        if len(branch_vertices) <= 1:
+            raise ValueError(f'The opening gateway: {gateway} cannot have '
+                             f'only 1 or 0 outgoing edges. This contradicts '
+                             f'BPMN-specification.')
+        self.stack.push(item=gateway)
         for vertex in branch_vertices:
-            self.stack.push(vertex)
+            self.stack.push(item=vertex)
 
-    def pop_gateway(self, branch_vertices: List[igraph.Vertex]) -> None:
-        # If a opening gateway of the same type is on top of stack, this means
-        # that all branches of the opening gateway were processed. So we can
-        # safely delete the opening gateway. But to know which vertex follows
-        # a closing gateway (it can only be one (BPMN Specification)) we put
-        # the following vertex on the stack.
-        # If we reach a closing gateway, but non-gateway vertices are on top of
-        # the stack, this means not all branches of the opening gateway are
-        # processed yet. We still return None, because GraphPointer works
-        # step-wise and could not handle a returned vertex. But this method is
-        # side-effect free - next time calling the
-        # GatwayStackHandler.next_vertex() function you will get the vertex.
+    def pop_gateway(self, branch_vertex: igraph.Vertex) -> None:
+        """
+        Tries to remove a gateway from the stack. This only works, when every
+        branch_vertex of this gateway is processed and removed first.
+        Still, we need the vertex that comes after the gateway to push it on
+        the stack after removing the gateway. So every calling class (e.g.
+        GraphPointer) knows what comes next after removing a closing gateway.
+        If top of stack is not a gateway, not all branches of a gateway were
+        processed. Call GatewayStackHandler.next_stack_element() to get the vertex.
+        """
         top_of_stack = self.stack.top()
+
+        if top_of_stack is None:
+            raise IndexError(f'cannot pop from an empty stack')
+
         gateway_texts = [BPMNEnum.PARALLGATEWAY_TEXT.value,
                          BPMNEnum.EXCLGATEWAY_TEXT.value,
                          BPMNEnum.INCLGATEWAY_TEXT.value]
-        if top_of_stack[BPMNEnum.NAME.value] in gateway_texts:
-            self.stack.pop()
-            if len(branch_vertices) == 1:
-                self.stack.push(branch_vertices[0])
-            else:
-                raise ValueError(f'BPMN-Specification-Contradiction found: '
-                                 f'number of outgoing edges of a bpmn-gateway '
-                                 f'can only be 1. Was: {len(branch_vertices)}')
-        else:
-            raise ValueError(f'you can only call this method if the top of '
-                             f'the stack is a gateway type. Was: {top_of_stack}')
 
-    def next_vertex(self) -> igraph.Vertex:
-        return self.stack.pop()
+        if top_of_stack[BPMNEnum.NAME.value] in gateway_texts:
+            # remove opening gateway from stack
+            self.stack.pop()
+            # add following vertex on stack
+            self.stack.push(item=branch_vertex)
+
+
+    def next_stack_element(self) -> Optional[igraph.Vertex]:
+        if self.stack.top() is not None:
+            return self.stack.pop()
+        else:
+            return None

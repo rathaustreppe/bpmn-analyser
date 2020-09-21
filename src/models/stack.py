@@ -1,23 +1,27 @@
-from typing import Sequence, TypeVar, Generic
+from typing import List
+from typing import TypeVar, Generic
+
 from pedantic import pedantic_class
 
 T = TypeVar('T')
 
 
 @pedantic_class
-class Stack:
-    def __init__(self, stack: Sequence[T]) -> None:
-        self.stack = stack
+class Stack(Generic[T]):
+    def __init__(self) -> None:
+        self.items: List[T] = []
 
-    def push(self, element: T) -> None:
-        self.stack.push(element)
+    def push(self, item: T) -> None:
+        self.items.append(item)
 
     def pop(self) -> T:
-        return self.stack.pop()
+        return self.items.pop()
+
+    def empty(self) -> bool:
+        return not self.items
 
     def top(self) -> T:
-        if len(self.stack) > 0:
-            return self.stack[len(self.stack) - 1]
-
-    def empty(self) -> None:
-        self.stack = []
+        if len(self.items) > 0:
+            return self.items[len(self.items)-1]
+        else:
+            return None

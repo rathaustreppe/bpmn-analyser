@@ -131,14 +131,13 @@ class GraphPointer:
         for rule in matching_rules:
             self.token = rule.check_and_modify(token=self.token)
         return self.token
-
     def _next_step(self) -> None:
         gateway_texts = [BPMNEnum.PARALLGATEWAY_TEXT.value,
                          BPMNEnum.EXCLGATEWAY_TEXT.value,
                          BPMNEnum.INCLGATEWAY_TEXT.value]
         if self.previous_element[BPMNEnum.NAME.value] in gateway_texts:
             # previous_element was gateway
-            self.current = self.stackhandler.next_vertex()
+            self.current = self.stackhandler.next_stack_element()
 
         else:
             # previous_element was activity or startEvent
@@ -170,3 +169,4 @@ class GraphPointer:
             self._modify_token_with_rules(matching_rules=matching_rules)
 
         self.previous_element = self.current
+
