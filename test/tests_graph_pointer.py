@@ -22,7 +22,7 @@ class TestGraphPointer:
         for _ in range(100):
             ret = graph_pointer.runstep_graph()
             if ret == 1:
-                return graph_pointer.get_token()
+                return graph_pointer.token
         # if graph_pointer does not hold after 100 steps
         return Token(attributes=None)
 

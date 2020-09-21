@@ -128,7 +128,7 @@ for graph_pointer in graph_pointer_list:
         ret = graph_pointer.runstep_graph()
         if ret == 1:
             # compare tokens
-            return_token = graph_pointer.get_token()
+            return_token = graph_pointer.token
 
             print(return_token)
             print(solution_token)

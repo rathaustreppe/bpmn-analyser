@@ -16,3 +16,7 @@ class BPMNEnum(Enum):
     EXCLGATEWAY_TEXT = '<XOR>'
     INCLGATEWAY_TEXT = '<OR>'
     CONDITION = 'condition'
+    # enhanced readability of string-checking of multiple gateways
+    GATEWAY_TEXTS = [PARALLGATEWAY_TEXT,
+                     EXCLGATEWAY_TEXT,
+                     INCLGATEWAY_TEXT]

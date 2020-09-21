@@ -20,6 +20,13 @@ class RuleFinder:
         the TokenStateRules that >may< be applied to the Token -> you still need
         to check the TokenStateConditions beforehand.
         """
+
+        # no handling of start and end events implemented yet, skip them by
+        # finding no rule per default
+        # ToDo: No handling of start and end events implemented
+        if text == 'startendevent':
+            return []
+
         chunk = self.chunker.find_chunk(text=text)
 
         matching_rules = []
