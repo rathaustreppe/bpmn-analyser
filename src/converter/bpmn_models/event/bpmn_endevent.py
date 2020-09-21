@@ -11,5 +11,5 @@ from src.converter.bpmn_models.event.bpmn_event import \
 
 @pedantic_class
 class BPMNEndEvent(BPMNEvent):
-    def __init__(self, id:str, name: str, sequenceFlow: Optional[BPMNSequenceFlow] = None) -> None:
-        super().__init__(name=name, id=id, sequenceFlow=sequenceFlow)
+    def __init__(self, id:str, name: str, sequence_flow: Optional[BPMNSequenceFlow] = None) -> None:
+        super().__init__(name=name, id=id, sequence_flow=sequence_flow)

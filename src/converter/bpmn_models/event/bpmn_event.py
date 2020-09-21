@@ -10,7 +10,7 @@ from src.converter.bpmn_models.bpmn_sequenceflow import \
 
 @pedantic_class
 class BPMNEvent(BPMNElement):
-    def __init__(self, id:str, name: str, sequenceFlow: Optional[BPMNSequenceFlow] = None) -> None:
+    def __init__(self, id:str, name: str, sequence_flow: Optional[BPMNSequenceFlow] = None) -> None:
         super().__init__(id=id)
         self.name = name
-        self.sequenceFlow = sequenceFlow
+        self.sequenceFlow = sequence_flow

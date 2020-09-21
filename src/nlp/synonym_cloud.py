@@ -44,7 +44,7 @@ class SynonymCloud:
 
         chunk_len = len(chunk.leaves())
         if chunk_len != len(self.syncloud):
-            raise Exception(f'length of chunk {chunk} with length:{chunk_len} '
+            raise ValueError(f'length of chunk {chunk} with length:{chunk_len} '
                             f' and syncloud {self.syncloud} with length'
                             f' {len(self.syncloud)} do not match.')
 

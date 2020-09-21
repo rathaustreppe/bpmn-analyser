@@ -65,10 +65,7 @@ class GraphPointer:
         # if current element is a endEvent, we reached the end of the graph
         # endEvents are the only BPMN-Element with no outgoing edges
         # (compare to activities, gateways and startEvents)
-        if len(self.current.out_edges()) == 0:
-            return 1
-        else:
-            return 0
+        return 1 if len(self.current.out_edges()) == 0 else 0
 
     def __find_start_vertex(self) -> igraph.Vertex:
         """
@@ -131,6 +128,7 @@ class GraphPointer:
         for rule in matching_rules:
             self.token = rule.check_and_modify(token=self.token)
         return self.token
+
     def _next_step(self) -> None:
         gateway_texts = [BPMNEnum.PARALLGATEWAY_TEXT.value,
                          BPMNEnum.EXCLGATEWAY_TEXT.value,

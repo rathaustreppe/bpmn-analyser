@@ -94,19 +94,16 @@ class GraphConverter:
         for elem in bpmn_elements:
             if isinstance(elem, BPMNStartEvent):
                 self.put_vertex_in_graph(element=elem, idx=0)
-                continue
 
             elif isinstance(elem, BPMNEndEvent):
                 # end event => id = last index => len-1
                 idx_end = len(bpmn_elements) - 1
                 self.put_vertex_in_graph(element=elem, idx=idx_end)
-                continue
 
             elif isinstance(elem, BPMNActivity) or isinstance(elem,
                                                               BPMNGateway):
                 self.put_vertex_in_graph(element=elem, idx=idx)
                 idx += 1
-                continue
 
             elif isinstance(elem, BPMNSequenceFlow):
                 raise ValueError(f'BPMNSequenceflow {elem} cannot be '

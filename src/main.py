@@ -14,12 +14,15 @@ from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
 from src.nlp.synonym_cloud import SynonymCloud
 
+contract_checked = 'contract checked'
+wn_synset_bill = wn.synset('bill.n.02')
+
 # solution token
 init_attributes = {
     'place': 'Dresden',
     'signature ML': True,
     'signature Zittau': True,
-    'contract checked': True
+    contract_checked: True
 }
 solution_token = Token(attributes=init_attributes)
 
@@ -29,7 +32,7 @@ solution_token = Token(attributes=init_attributes)
 # synonymcloud: 'ML' is fixed, 'signs' has synonyms, 'bill' has synonyms
 syncloud_r1 = SynonymCloud.from_list(text=['ML',
                                            wn.synset('sign.v.01'),
-                                           wn.synset('bill.n.02'),
+                                           wn_synset_bill,
                                            ])
 cond_r1 = TokenStateCondition(tok_attribute='place',
                               operator=Operators.EQUALS,
@@ -46,7 +49,7 @@ places = ['Zittau', 'Goerlitz', 'Dresden']
 tsr_2 = []
 for place in places:
     syncloud = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
-                                            wn.synset('bill.n.02'),
+                                            wn_synset_bill,
                                             'to', place])
     modification = TokenStateModification(key='place', value=place)
     tsr = TokenStateRule(state_conditions=[],
@@ -62,7 +65,7 @@ syncloud_r3 = SynonymCloud.from_list(text=['Zittau',
 cond_r3 = TokenStateCondition(tok_attribute='place',
                               operator=Operators.EQUALS,
                               tok_value='Zittau')
-modification_r3 = TokenStateModification(key='contract checked', value=True)
+modification_r3 = TokenStateModification(key=contract_checked, value=True)
 tsr_3 = TokenStateRule(state_conditions=[cond_r3],
                        state_modifications=[modification_r3],
                        synonym_cloud=syncloud_r3)
@@ -71,12 +74,12 @@ tsr_3 = TokenStateRule(state_conditions=[cond_r3],
 # synonymcloud: 'Zittau' is fixed, 'signs' has synonyms
 syncloud_r4 = SynonymCloud.from_list(text=['Zittau',
                                            wn.synset('sign.v.01'),
-                                           wn.synset('bill.n.02'),
+                                           wn_synset_bill,
                                            ])
 cond1_r4 = TokenStateCondition(tok_attribute='place',
                                operator=Operators.EQUALS,
                                tok_value='Zittau')
-cond2_r4 = TokenStateCondition(tok_attribute='contract checked',
+cond2_r4 = TokenStateCondition(tok_attribute=contract_checked,
                                operator=Operators.EQUALS,
                                tok_value=True)
 modification_r4 = TokenStateModification(key='signature Zittau', value=True)

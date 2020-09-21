@@ -271,7 +271,6 @@ class TestGraphConverter:
         gc.put_edges_in_graph(sequence_flows=sequence_flows)
 
         vertices = gc.graph.vs
-        edges = gc.graph.es
 
         # test edges of opening gateway
         gate_open_vtx = self.find_vertex_by_id(vertices=vertices, id='GW1')

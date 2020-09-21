@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 
 from igraph import Graph, VertexSeq, Vertex
 from pedantic import pedantic_class
@@ -40,7 +40,7 @@ class BPMNConverter:
 
     def make_element(self, element_type: BPMNEnum,
                      src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
-            List[BPMNElement]:
+            List[Union[BPMNElement, BPMNSequenceFlow]]:
         # """
         # Searches all element_types in XML-DOM and returns corresponding
         # BPMN-Objects.
@@ -120,7 +120,6 @@ class BPMNConverter:
         """
         sequence_flows = self.make_element(element_type=BPMNEnum.SEQUENCEFLOW,
                                            src_tgt_elements=bpmn_elements)
-        sequence_flows: [BPMNSequenceFlow]
         # update bidirectional references of sequence flows in bpmn-elements
         return self.set_sequence_flows_references(sequence_flows=sequence_flows)
 

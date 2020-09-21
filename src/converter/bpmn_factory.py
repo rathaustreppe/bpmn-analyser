@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Any, Union
 from xml.etree.ElementTree import Element
 
 from pedantic import pedantic_class
@@ -59,40 +59,40 @@ class BPMNFactory(IBPMNFactory):
             )
 
     def _create_end_event(self, element: Element) -> BPMNEndEvent:
-        id, name = self._create_bpmn_element(element=element)
-        return BPMNEndEvent(id=id, name=name, sequenceFlow=None)
+        id_, name = self._create_bpmn_element(element=element)
+        return BPMNEndEvent(id=id_, name=name, sequence_flow=None)
 
     def _create_start_event(self, element: Element) -> BPMNStartEvent:
-        id, name = self._create_bpmn_element(element=element)
-        return BPMNStartEvent(id=id, name=name, sequenceFlow=None)
+        id_, name = self._create_bpmn_element(element=element)
+        return BPMNStartEvent(id=id_, name=name, sequence_flow=None)
 
     def _create_bpmn_element(self, element: Element) -> Tuple[str, str]:
-        id = element.get('id')
+        id_ = element.get('id')
         name = element.get('name')
-        return id, name
+        return id_, name
 
     def _create_activity(self, element: Element) -> BPMNActivity:
-        id, name = self._create_bpmn_element(element=element)
-        return BPMNActivity(id=id,
+        id_, name = self._create_bpmn_element(element=element)
+        return BPMNActivity(id=id_,
                             name=name,
-                            sequenceFlowIn=None,
-                            sequenceFlowOut=None)
+                            sequence_flow_in=None,
+                            sequence_flow_out=None)
 
     def _create_parallel_gateway(self, element: Element) -> BPMNParallelGateway:
-        id = element.get('id')
-        return BPMNParallelGateway(id=id,
+        id_ = element.get('id')
+        return BPMNParallelGateway(id=id_,
                                    sequence_flows_in=None,
                                    sequence_flows_out=None)
 
     def _create_inclusive_gateway(self, element: Element) -> BPMNInclusiveGateway:
-        id = element.get('id')
-        return BPMNInclusiveGateway(id=id,
+        id_ = element.get('id')
+        return BPMNInclusiveGateway(id=id_,
                                     sequence_flows_in=None,
                                     sequence_flows_out=None)
 
     def _create_exclusive_gateway(self, element: Element) -> BPMNExclusiveGateway:
-        id = element.get('id')
-        return BPMNExclusiveGateway(id=id,
+        id_ = element.get('id')
+        return BPMNExclusiveGateway(id=id_,
                                     sequence_flows_in=None,
                                     sequence_flows_out=None)
 
@@ -114,7 +114,7 @@ class BPMNFactory(IBPMNFactory):
         # ToDo: What should happen if sourceRef == '' or elements.id == '' ??
         # Reject earlier or raise exception?
 
-        id = sequence_flow.get('id')
+        id_ = sequence_flow.get('id')
         # name tag in xml is treated as a condition.
         condition = sequence_flow.get('name')
         if condition != None:
@@ -141,6 +141,6 @@ class BPMNFactory(IBPMNFactory):
             if source_ref == target.id:
                 sequence_sources.append(target)
 
-        return BPMNSequenceFlow(id=id, condition=condition,
+        return BPMNSequenceFlow(id=id_, condition=condition,
                                 source=sequence_sources[0],
                                 target=sequence_targets[0])

@@ -9,11 +9,10 @@ from src.models.token import Token
 class TestIntegration:
 
     def run_pointer(self, graph_pointer: GraphPointer) -> Token:
-        for i in range(100):
+        for _ in range(100):
             ret = graph_pointer.runstep_graph()
             if ret == 1:
                 return graph_pointer.get_token()
-            i += 1
         # if graph_pointer does not hold after 100 steps
         return Token(attributes=None)
 
