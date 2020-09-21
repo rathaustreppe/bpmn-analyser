@@ -8,7 +8,6 @@ from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
 from src.models.gateway_stack_handler import GatewayStackHandler
-from src.models.graph_text import GraphText
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
@@ -107,11 +106,11 @@ class GraphPointer:
 
     def _text_analysis(self, current: igraph.Vertex) -> List[TokenStateRule]:
         # analyzes text and updates token
-        vertex_text: GraphText = current[BPMNEnum.NAME.value]
+        vertex_text = current[BPMNEnum.NAME.value]
 
         # no handling of start and end events implemented yet, skip them by
         # finding no rule per default
-        if vertex_text.get_text() == 'startendevent':
+        if vertex_text == 'startendevent':
             return []
 
         matching_rules = self.rule_finder.find_rules(text=vertex_text)

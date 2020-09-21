@@ -25,7 +25,6 @@ from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
-from src.models.graph_text import GraphText
 
 
 @pedantic_class

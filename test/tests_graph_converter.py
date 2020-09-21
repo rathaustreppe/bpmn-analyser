@@ -85,7 +85,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == activity.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == activity.name
+        assert vertex[BPMNEnum.NAME.value] == activity.name
 
     def test_overwrite_existing_vertex(self):
         model = self.create_model(filename='A.bpmn')
@@ -111,7 +111,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == start_event.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == start_event.name
+        assert vertex[BPMNEnum.NAME.value] == start_event.name
 
     def test_put_end_event_in_graph(self):
         model = self.create_model(filename='E.bpmn')
@@ -125,7 +125,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == end_event.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == end_event.name
+        assert vertex[BPMNEnum.NAME.value] == end_event.name
 
     def test_put_parallel_gateway_in_graph(self):
         model = self.create_model(filename='parallel_gateway.bpmn')
@@ -139,7 +139,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == gateway.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == BPMNEnum.PARALLGATEWAY_TEXT.value
+        assert vertex[BPMNEnum.NAME.value] == BPMNEnum.PARALLGATEWAY_TEXT.value
 
     def test_put_exclusive_gateway_in_graph(self):
         model = self.create_model(filename='exclusive_gateway.bpmn')
@@ -153,7 +153,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == gateway.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == BPMNEnum.EXCLGATEWAY_TEXT.value
+        assert vertex[BPMNEnum.NAME.value] == BPMNEnum.EXCLGATEWAY_TEXT.value
 
     def test_put_inclusive_gateway_in_graph(self):
         model = self.create_model(filename='inclusive_gateway.bpmn')
@@ -167,7 +167,7 @@ class TestGraphConverter:
 
         vertex = gc.graph.vs[0]
         assert vertex[BPMNEnum.ID.value] == gateway.id
-        assert vertex[BPMNEnum.NAME.value].get_text() == BPMNEnum.INCLGATEWAY_TEXT.value
+        assert vertex[BPMNEnum.NAME.value] == BPMNEnum.INCLGATEWAY_TEXT.value
 
     def test_put_edge_in_graph(self):
         model = self.create_model(filename='S_to_E.bpmn')

@@ -2,7 +2,6 @@ from typing import List
 
 from pedantic import pedantic_class
 
-from src.models.graph_text import GraphText
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
 
@@ -13,7 +12,7 @@ class RuleFinder:
         self.chunker = chunker
         self.ruleset = ruleset
 
-    def find_rules(self, text: GraphText) -> List[TokenStateRule]:
+    def find_rules(self, text: str) -> List[TokenStateRule]:
         """
         With a given text, this function finds TokenStateRules that have a
         SynonymCloud that is synonym to the given text. This means, the given
@@ -21,7 +20,7 @@ class RuleFinder:
         the TokenStateRules that >may< be applied to the Token -> you still need
         to check the TokenStateConditions beforehand.
         """
-        chunk = self.chunker.find_chunk(text=text.get_text())
+        chunk = self.chunker.find_chunk(text=text)
 
         matching_rules = []
         for rule in self.ruleset:

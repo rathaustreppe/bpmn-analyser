@@ -22,7 +22,6 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.models.graph_text import GraphText
 
 
 @pedantic_class
@@ -63,7 +62,7 @@ class GraphConverter:
             _name = element.name
 
         def _write_vertex():
-            self.graph.vs[idx][BPMNEnum.NAME.value] = GraphText(text=_name)
+            self.graph.vs[idx][BPMNEnum.NAME.value] = _name
             self.graph.vs[idx][BPMNEnum.ID.value] = element.id
 
         # creates new vertex with name and id without overwriting existing vertex

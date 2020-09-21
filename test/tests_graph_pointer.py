@@ -5,7 +5,6 @@ import pytest
 
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.graph_pointer import GraphPointer
-from src.models.graph_text import GraphText
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 
@@ -41,13 +40,13 @@ class TestGraphPointer:
         graph.add_vertices(7)
         graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text=self.ml_signs_bill)
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_zittau)
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text=self.zittau_checks_contract)
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text=self.zittau_signs_bill)
-        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_dresden)
-        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
+        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
+        graph.vs[1][BPMNEnum.NAME.value] = self.ml_signs_bill
+        graph.vs[2][BPMNEnum.NAME.value] = self.send_bill_to_zittau
+        graph.vs[3][BPMNEnum.NAME.value] = self.zittau_checks_contract
+        graph.vs[4][BPMNEnum.NAME.value] = self.zittau_signs_bill
+        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_dresden
+        graph.vs[6][BPMNEnum.NAME.value] = self.startendevent_placeholder
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -65,13 +64,13 @@ class TestGraphPointer:
         graph.add_vertices(7)
         graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text=self.zittau_checks_contract)
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text=self.zittau_signs_bill)
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text=self.ml_signs_bill)
-        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_dresden)
-        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
+        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
+        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
+        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
+        graph.vs[3][BPMNEnum.NAME.value] = "send bill to Goerlitz"
+        graph.vs[4][BPMNEnum.NAME.value] = self.ml_signs_bill
+        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_dresden
+        graph.vs[6][BPMNEnum.NAME.value] = self.startendevent_placeholder
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -91,14 +90,14 @@ class TestGraphPointer:
         graph.add_vertices(8)
         graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5),(5, 6), (6, 7)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text=self.zittau_checks_contract)
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text=self.zittau_signs_bill)
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text="send bill to Goerlitz")
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text=self.ml_signs_bill)
-        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_zittau)
-        graph.vs[6][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_dresden)
-        graph.vs[7][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
+        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
+        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
+        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
+        graph.vs[3][BPMNEnum.NAME.value] = "send bill to Goerlitz"
+        graph.vs[4][BPMNEnum.NAME.value] = self.ml_signs_bill
+        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_zittau
+        graph.vs[6][BPMNEnum.NAME.value] = self.send_bill_to_dresden
+        graph.vs[7][BPMNEnum.NAME.value] = self.startendevent_placeholder
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
@@ -118,12 +117,12 @@ class TestGraphPointer:
         graph.add_vertices(6)
         graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
 
-        graph.vs[0][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
-        graph.vs[1][BPMNEnum.NAME.value] = GraphText(text=self.zittau_checks_contract)
-        graph.vs[2][BPMNEnum.NAME.value] = GraphText(text=self.zittau_signs_bill)
-        graph.vs[3][BPMNEnum.NAME.value] = GraphText(text=self.ml_signs_bill)
-        graph.vs[4][BPMNEnum.NAME.value] = GraphText(text=self.send_bill_to_dresden)
-        graph.vs[5][BPMNEnum.NAME.value] = GraphText(text=self.startendevent_placeholder)
+        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
+        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
+        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
+        graph.vs[3][BPMNEnum.NAME.value] = self.ml_signs_bill
+        graph.vs[4][BPMNEnum.NAME.value] = self.send_bill_to_dresden
+        graph.vs[5][BPMNEnum.NAME.value] = self.startendevent_placeholder
 
         graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
                                      ruleset=bill_process_ruleset,
