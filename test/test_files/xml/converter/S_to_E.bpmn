@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="S" name="SE">
+      <outgoing>F</outgoing>
+    </startEvent>
+    <sequenceFlow id="F" sourceRef="S" targetRef="E" />
+    <endEvent id="E" name="EE">
+      <incoming>F</incoming>
+    </endEvent>
+  </process>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="S" name="SE">
+      <outgoing>F1</outgoing>
+    </startEvent>
+    <task id="a1" name="A1">
+      <incoming>F1</incoming>
+      <outgoing>F2</outgoing>
+    </task>
+    <sequenceFlow id="F1" sourceRef="S" targetRef="a1" />
+    <task id="a2" name="A2">
+      <incoming>F2</incoming>
+      <outgoing>F3</outgoing>
+    </task>
+    <sequenceFlow id="F2" sourceRef="a1" targetRef="a2" />
+    <task id="a3" name="A3">
+      <incoming>F3</incoming>
+      <outgoing>F4</outgoing>
+    </task>
+    <sequenceFlow id="F3" sourceRef="a2" targetRef="a3" />
+    <endEvent id="E" name="EE">
+      <incoming>F4</incoming>
+    </endEvent>
+    <sequenceFlow id="F4" sourceRef="a3" targetRef="E" />
+  </process>

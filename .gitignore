@@ -7,3 +7,4 @@
 venv38
 build_requirements.bat
 src/schnell.py
+.coverage

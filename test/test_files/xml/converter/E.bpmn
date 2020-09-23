@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <endEvent id="E" name="EE" />
+  </process>

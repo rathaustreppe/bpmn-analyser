@@ -8,6 +8,11 @@ from src.nlp.synonym_cloud import SynonymCloud
 
 class TestSynonymCloud:
 
+    wn_synset_mail = wn.synset('mail.v.02')
+    wn_synset_contract = wn.synset('contract.n.01')
+    wn_synset_cluster = wn.synset('cluster.n.01')
+    wn_synset_package = wn.synset('package.n.01')
+
     @staticmethod
     def tuple_to_str(tuple_list: List[Tuple[str, str]]):
         text = []
@@ -44,18 +49,18 @@ class TestSynonymCloud:
         assert len(syncl.syncloud) == 0
 
     def test_constructor_single_synset(self):
-        synset = [wn.synset('mail.v.02')]
+        synset = [self.wn_synset_mail]
         syncl = SynonymCloud.from_list(text=synset)
 
         assert len(syncl.syncloud) == 1
 
         assert isinstance(syncl.syncloud[0].synset, Synset)
-        assert syncl.syncloud[0].synset == wn.synset('mail.v.02')
+        assert syncl.syncloud[0].synset == self.wn_synset_mail
         assert syncl.syncloud[0].word == ''
 
     def test_constructor_double_synset(self):
-        synset1 = wn.synset('mail.v.02')
-        synset2 = wn.synset('contract.n.01')
+        synset1 = self.wn_synset_mail
+        synset2 = self.wn_synset_contract
         list_words = [synset1, synset2]
         syncl = SynonymCloud.from_list(text=list_words)
 
@@ -71,7 +76,7 @@ class TestSynonymCloud:
 
     def test_constructor_mix(self):
         word1 = 'hello'
-        synset = wn.synset('contract.n.01')
+        synset = self.wn_synset_contract
         word2 = 'checking'
         list_words = [word1, synset, word2]
         syncl = SynonymCloud.from_list(text=list_words)
@@ -109,7 +114,7 @@ class TestSynonymCloud:
         assert syncl.are_synonyms(chunk=chunk) is False
 
     def test_equal_synonyms(self, nn_word, nn_chunker):
-        synset = wn.synset('contract.n.01')
+        synset = self.wn_synset_contract
         syncl = SynonymCloud.from_list(text=[synset])
         text = self.tuple_to_str(nn_word)
         chunk = nn_chunker.find_chunk(text=text)
@@ -124,9 +129,9 @@ class TestSynonymCloud:
 
     def test_multiple_synoynms(self, nn_vb_nn_chunker):
         # every word is synonym and is in one chunk
-        synsets = [wn.synset('cluster.n.01'),
+        synsets = [self.wn_synset_cluster,
                    wn.synset('permit.v.01'),
-                   wn.synset('package.n.01')]
+                   self.wn_synset_package]
         syncl = SynonymCloud.from_list(text=synsets)
         text = self.tuple_to_str([('bunch', 'NN'),
                                   ('allow', 'VB'),
@@ -164,9 +169,9 @@ class TestSynonymCloud:
 
     def test_fixed_words_and_synonyms_in_complex_chunk(self, nn_vb_nn_chunker):
         # mix of synonyms and fixed words
-        synsets = [wn.synset('cluster.n.01'),
+        synsets = [self.wn_synset_cluster,
                    'permit',
-                   wn.synset('package.n.01')]
+                   self.wn_synset_package]
         syncl = SynonymCloud.from_list(text=synsets)
         text = self.tuple_to_str([('bunch', 'NN'),
                                   ('running', 'VB'),
@@ -175,9 +180,9 @@ class TestSynonymCloud:
         assert syncl.are_synonyms(chunk=chunk) is False
 
     def test_fixed_words_and_synonyms_in_complex_chunk2(self, nn_vb_nn_chunker):
-        synsets = [wn.synset('cluster.n.01'),
+        synsets = [self.wn_synset_cluster,
                    'allow',
-                   wn.synset('package.n.01')]
+                   self.wn_synset_package]
         syncl = SynonymCloud.from_list(text=synsets)
         text = self.tuple_to_str([('bunch', 'NN'),
                                   ('allow', 'VB'),

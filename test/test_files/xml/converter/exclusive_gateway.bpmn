@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <exclusiveGateway id="gw1" />
+  </process>

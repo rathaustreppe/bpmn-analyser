@@ -67,11 +67,8 @@ class Token:
         """
         if len(self.attributes) == len(other.attributes):
             for key in self.attributes.keys():
-                if key in other.attributes.keys() and \
-                        self.attributes[key] == \
-                        other.attributes[key]:
-                    pass
-                else:
+                if key not in other.attributes.keys() or \
+                        self.attributes[key] != other.attributes[key]:
                     return False
         else:
             return False

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from xml.etree.ElementTree import Element
 
 from pedantic import pedantic_class
@@ -18,16 +18,10 @@ class IBPMNFactory(ABC):
     # with valid xml + valid bpmn strings.The program is
     # designed that a factory is only instantiated when the
     # xml is conform to XML and BPMN standard.
-    # This is okay: <task id="" name=""></task>'
+    # This is okay: <task id="" condition=""></task>'
     # This not: <task></task>'
     @abstractmethod
     def create_bpmn_element(self,
-                            element: Element,
-                            elem_type: BPMNEnum) -> BPMNElement:
-        pass
-
-    @abstractmethod
-    def create_bpmn_flow(self, flow: Element,
-                         elem_type: BPMNEnum.SEQUENCEFLOW,
-                         elements: List[BPMNElement]) -> BPMNSequenceFlow:
+                            element: Element, elem_type: BPMNEnum,
+                            src_tgt_elements: Optional[List[BPMNElement]] = None) -> BPMNElement:
         pass

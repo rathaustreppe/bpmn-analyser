@@ -61,7 +61,7 @@ class TestToken:
             tsm = TokenStateModification(key=k1, value=v1)
             empty_token.change_value(modification=tsm)
 
-    def test_get_nonexisting_key(selff, empty_token):
+    def test_get_nonexisting_key(self, empty_token):
         with pytest.raises(KeyError):
             empty_token.get_attribute(key='k42')
 
