@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Union
 from typing import TypeVar, Generic
 
 from pedantic import pedantic_class
@@ -20,7 +20,7 @@ class Stack(Generic[T]):
     def empty(self) -> bool:
         return not self.items
 
-    def top(self) -> T:
+    def top(self) -> Optional[T]:
         if len(self.items) > 0:
             return self.items[len(self.items)-1]
         else:

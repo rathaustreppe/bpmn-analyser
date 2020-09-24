@@ -20,3 +20,4 @@ class BPMNEnum(Enum):
     GATEWAY_TEXTS = [PARALLGATEWAY_TEXT,
                      EXCLGATEWAY_TEXT,
                      INCLGATEWAY_TEXT]
+    TYPE = 'type'

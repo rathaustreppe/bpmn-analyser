@@ -45,10 +45,10 @@ class BPMNConverter:
         # BPMN-Objects.
         # Args:
         #     element_type(BPMNEnum): abc
-        #     src_tgt_elements (Optional[List[src.converter.bpmn_models.bpmn_element.BPMNElement]]): abc
+        #     src_tgt_elements (Optional[List[BPMNElement]]): abc
         #
         # Returns:
-        #     List[src.converter.bpmn_models.bpmn_element.BPMNElement]: abc
+        #     List[Union[BPMNElement,BPMNSequenceFlow]]: abc
         # """
         elements = self.xml_reader.query(element_type=element_type)
         bpmn_objects = []

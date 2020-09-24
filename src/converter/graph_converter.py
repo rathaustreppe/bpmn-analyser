@@ -62,8 +62,9 @@ class GraphConverter:
             _name = element.name
 
         def _write_vertex():
-            self.graph.vs[idx][BPMNEnum.NAME.value] = _name
             self.graph.vs[idx][BPMNEnum.ID.value] = element.id
+            self.graph.vs[idx][BPMNEnum.TYPE.value] = element.__class__.__name__
+            self.graph.vs[idx][BPMNEnum.NAME.value] = _name
 
         # creates new vertex with name and id without overwriting existing vertex
         # There are two cases when writing vertex is ok:
