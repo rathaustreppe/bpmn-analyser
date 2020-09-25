@@ -95,14 +95,14 @@ class TestBPMNConverter:
         assert len(start_event) == 1
         assert start_event[0].id == 'S'
         assert start_event[0].name == 'SE'
-        assert start_event[0].sequenceFlow.id == 'F'
+        assert start_event[0].sequence_flow.id == 'F'
 
         end_event = self.find_elems(elements=model.bpmn_elements,
                                    type=BPMNEndEvent)
         assert len(end_event) == 1
         assert end_event[0].id == 'E'
         assert end_event[0].name == 'EE'
-        assert end_event[0].sequenceFlow.id == 'F'
+        assert end_event[0].sequence_flow.id == 'F'
 
         assert len(model.sequence_flows) == 1
         assert model.sequence_flows[0].id == 'F'
@@ -120,22 +120,22 @@ class TestBPMNConverter:
         assert len(start_event) == 1
         assert start_event[0].id == 'S'
         assert start_event[0].name == 'SE'
-        assert start_event[0].sequenceFlow.id == 'F1'
+        assert start_event[0].sequence_flow.id == 'F1'
 
         end_event = self.find_elems(elements=model.bpmn_elements,
                                    type=BPMNEndEvent)
         assert len(end_event) == 1
         assert end_event[0].id == 'E'
         assert end_event[0].name == 'EE'
-        assert end_event[0].sequenceFlow.id == 'F2'
+        assert end_event[0].sequence_flow.id == 'F2'
 
         activity = self.find_elems(elements=model.bpmn_elements,
                                    type=BPMNActivity)
         assert len(activity) == 1
         assert activity[0].id == 'A'
         assert activity[0].name == 'Act'
-        assert activity[0].sequenceFlowIn.id == 'F1'
-        assert activity[0].sequenceFlowOut.id == 'F2'
+        assert activity[0].sequence_flow_in.id == 'F1'
+        assert activity[0].sequence_flow_out.id == 'F2'
 
         assert len(model.sequence_flows) == 2
         flow_1 = self.find_by_id(elements=model.sequence_flows, id='F1')
@@ -157,14 +157,14 @@ class TestBPMNConverter:
         assert len(start_event) == 1
         assert start_event[0].id == 'S'
         assert start_event[0].name == 'SE'
-        assert start_event[0].sequenceFlow.id == 'F1'
+        assert start_event[0].sequence_flow.id == 'F1'
 
         end_event = self.find_elems(elements=model.bpmn_elements,
                                    type=BPMNEndEvent)
         assert len(end_event) == 1
         assert end_event[0].id == 'E'
         assert end_event[0].name == 'EE'
-        assert end_event[0].sequenceFlow.id == 'F4'
+        assert end_event[0].sequence_flow.id == 'F4'
 
         activities = self.find_elems(elements=model.bpmn_elements,
                                      type=BPMNActivity)
@@ -172,18 +172,18 @@ class TestBPMNConverter:
 
         activity_1 = self.find_by_id(elements=activities, id='a1')
         assert activity_1.name == 'A1'
-        assert activity_1.sequenceFlowIn.id == 'F1'
-        assert activity_1.sequenceFlowOut.id == 'F2'
+        assert activity_1.sequence_flow_in.id == 'F1'
+        assert activity_1.sequence_flow_out.id == 'F2'
 
         activity_2 = self.find_by_id(elements=activities, id='a2')
         assert activity_2.name == 'A2'
-        assert activity_2.sequenceFlowIn.id == 'F2'
-        assert activity_2.sequenceFlowOut.id == 'F3'
+        assert activity_2.sequence_flow_in.id == 'F2'
+        assert activity_2.sequence_flow_out.id == 'F3'
 
         activity_3 = self.find_by_id(elements=activities, id='a3')
         assert activity_3.name == 'A3'
-        assert activity_3.sequenceFlowIn.id == 'F3'
-        assert activity_3.sequenceFlowOut.id == 'F4'
+        assert activity_3.sequence_flow_in.id == 'F3'
+        assert activity_3.sequence_flow_out.id == 'F4'
 
         assert len(model.sequence_flows) == 4
         flow_1 = self.find_by_id(elements=model.sequence_flows, id='F1')

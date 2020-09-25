@@ -1,10 +1,18 @@
-from typing import List
+from typing import List, Tuple
 
 import igraph
 import pytest
 
+from src.converter.bpmn_models.bpmn_activity import BPMNActivity
+from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.bpmn_models.bpmn_model import BPMNModel
+from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
+from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
+    BPMNParallelGateway
+from src.exception.gateway_exception import OpeningGatewayBranchError
+from src.exception.stack_exception import EmptyStackPopException
 from src.models.gateway_stack_handler import GatewayStackHandler
 
 
@@ -53,95 +61,52 @@ class TestGatewayStackHandler:
         if graph.vs[0][BPMNEnum.NAME.value] == gateway_text:
             return graph.vs[0]
 
+
+    def link_elements(self, source: BPMNElement,
+                      target: BPMNElement) -> Tuple[BPMNElement, BPMNElement]:
+        linking_flow = BPMNSequenceFlow(id='f1', condition=None,
+                                        source=source, target=target)
+        source.sequence_flow_out = linking_flow
+        target.sequence_flow_in = linking_flow
+        return (source, target)
+
     def test_push_gateway_0_branches(self, stack_handler):
-        graph = self.example_graph(num_of_branches=0)
-        branch_vertices = self.branch_vertices_from_graph(graph=graph)
-        opening_gateway = self.find_gateway(graph=graph)
-
-        with pytest.raises(ValueError):
-            stack_handler.push_gateway(gateway=opening_gateway,
-                                       branch_vertices=branch_vertices)
-
-    def test_push_gateway_1_branches(self, stack_handler):
-        graph = self.example_graph(num_of_branches=1)
-        branch_vertices = self.branch_vertices_from_graph(graph=graph)
-        opening_gateway = self.find_gateway(graph=graph)
-
-        with pytest.raises(ValueError):
-            stack_handler.push_gateway(gateway=opening_gateway,
-                                       branch_vertices=branch_vertices)
+        # error here: gateway always needs at least 1 branch
+        gateway = BPMNParallelGateway(id='0',
+                                      sequence_flows_in=None,
+                                      sequence_flows_out=None)
+        with pytest.raises(OpeningGatewayBranchError):
+            stack_handler.push_gateway(gateway=gateway,
+                                       branch_elements=[])
 
     def test_push_gateway_2_branches(self, stack_handler):
-        graph = self.example_graph(num_of_branches=2)
-        branch_vertices = self.branch_vertices_from_graph(graph=graph)
-        opening_gateway = self.find_gateway(graph=graph)
+        # no error here: check if pushing a correct gateway works
+        # generate gateway and add two outgoing branches to it
+        gateway = BPMNParallelGateway(id='0')
+        element1 = BPMNActivity(id='a1', name='act1')
+        element2 = BPMNActivity(id='a2', name='act2')
+        gateway, element1 = self.link_elements(source=gateway, target=element1)
+        gateway, element2 = self.link_elements(source=gateway, target=element2)
+        branch_elements = [element1, element2]
 
-        stack_handler.push_gateway(gateway=opening_gateway,
-                                   branch_vertices=branch_vertices)
+        stack_handler.push_gateway(gateway=gateway,
+                                   branch_elements=branch_elements)
 
         # both branches should be on top of stack = 2x pop and
         # should be different
         top1 = stack_handler.stack.pop()
         top2 = stack_handler.stack.pop()
-        assert top1 in branch_vertices
-        assert top2 in branch_vertices
+        assert top1 in branch_elements
+        assert top2 in branch_elements
         assert top1 != top2
 
         # after popping branches, opening gateway is on top
-        assert stack_handler.stack.pop() == graph.vs[0]
+        assert stack_handler.stack.pop() == gateway
+
 
     def test_pop_gateway_empty_stack(self, stack_handler):
-        graph = self.example_graph(num_of_branches=2)
-        branch_vertices = self.branch_vertices_from_graph(graph=graph)
-        with pytest.raises(IndexError):
-            stack_handler.pop_gateway(branch_vertex=branch_vertices[0])
+        # error here: popping from an empty stack
+        branch_element = BPMNActivity(id='42', name='space')
+        with pytest.raises(EmptyStackPopException):
+            stack_handler.pop_gateway(branch_element=branch_element)
 
-    def test_pop_gateway_1_following_branch(self, stack_handler):
-        graph = self.example_graph(num_of_branches=1)
-        opening_gateway = self.find_gateway(graph=graph)
-        opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
-        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
-        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
-
-        stack_handler.stack.push(item=opening_gateway)
-
-        branch_vertex = self.branch_vertices_from_graph(graph=graph)[0]
-
-        # using branch_vertex from the graph above makes no sense in
-        # real life. But we can use them now to check if pushing the next
-        # branch_vertex works.
-        stack_handler.pop_gateway(branch_vertex=branch_vertex)
-        assert stack_handler.next_stack_element() == branch_vertex
-
-    def test_pop_gateway_vertex_on_top(self, stack_handler):
-        graph = self.example_graph(num_of_branches=1)
-        opening_gateway = self.find_gateway(graph=graph)
-        opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
-        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
-        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
-        branch_vertex = self.branch_vertices_from_graph(graph=graph)[0]
-
-        stack_handler.stack.push(item=opening_gateway)
-        stack_handler.stack.push(item=branch_vertex)
-
-        stack_handler.pop_gateway(branch_vertex=branch_vertex)
-
-        assert stack_handler.next_stack_element() == branch_vertex
-
-    def test_check_gateway_opening_gateway(self, stack_handler):
-        # 0 incoming edges, but 2 outgoing == opening gate
-        graph = self.example_graph(num_of_branches=2)
-        opening_gateway = self.find_gateway(graph=graph)
-        opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
-        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
-        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
-        branch_vertices = self.branch_vertices_from_graph(graph=graph)
-
-        stack_handler.check_gateway_stack(gateway=opening_gateway,
-                                          branch_vertices=branch_vertices)
-
-        # check for both branch vertices
-        assert stack_handler.next_stack_element() in branch_vertices
-        assert stack_handler.next_stack_element() in branch_vertices
-        # check for gateway
-        assert stack_handler.next_stack_element() == opening_gateway

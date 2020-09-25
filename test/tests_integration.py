@@ -1,6 +1,8 @@
 import os
+import unittest
 
 import igraph
+import pytest
 
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.converter import Converter
@@ -38,9 +40,9 @@ class TestIntegration:
         xml_file_path = os.path.join(xml_folders_path, filename)
 
         converter = Converter()
-        graph = converter.convert(rel_path_to_bpmn=xml_file_path)
+        model = converter.convert(rel_path_to_bpmn=xml_file_path)
 
-        graph_pointer = GraphPointer(graph=graph,
+        graph_pointer = GraphPointer(model=model,
                                      token=init_token,
                                      ruleset=ruleset,
                                      chunker=chunker)
@@ -128,7 +130,7 @@ class TestIntegration:
         assert return_token != bill_process_solution_token
         assert return_token.get_attribute(key='signature ML') == False
 
-
+    @unittest.skip
     def test_interlaced_gateways(self, xml_folders_path,
                                  nn_chunker):
 

@@ -13,4 +13,4 @@ class BPMNEvent(BPMNElement):
     def __init__(self, id:str, name: str, sequence_flow: Optional[BPMNSequenceFlow] = None) -> None:
         super().__init__(id=id)
         self.name = name
-        self.sequenceFlow = sequence_flow
+        self.sequence_flow = sequence_flow

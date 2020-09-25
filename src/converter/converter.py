@@ -7,6 +7,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_converter import BPMNConverter
+from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.graph_converter import GraphConverter
 from src.converter.xml_reader import XMLReader
 
@@ -27,7 +28,7 @@ class Converter:
         if xml_reader is None:
             self.xml_reader = XMLReader()
 
-    def convert(self, rel_path_to_bpmn: str) -> Graph:
+    def convert(self, rel_path_to_bpmn: str) -> BPMNModel:
         """
         Does all the stuff:
         reading xml, parsing to elementtree and putting
@@ -61,6 +62,7 @@ class Converter:
                           BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]
 
         bpmn_model = bpmn_converter.create_all_bpmn_objects(bpmn_types=all_bpmn_types)
+        return bpmn_model
 
-        graph_converter = GraphConverter(bpmn_model=bpmn_model)
-        return graph_converter.build_graph()
+        # graph_converter = GraphConverter(bpmn_model=bpmn_model)
+        # return graph_converter.build_graph()

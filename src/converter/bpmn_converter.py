@@ -70,17 +70,17 @@ class BPMNConverter:
             # check StartEvents (can only be sources) and EndEvents (can only
             # be targets)
             if isinstance(sequence_flow.source, BPMNStartEvent):
-                sequence_flow.source.sequenceFlow = sequence_flow
+                sequence_flow.source.sequence_flow = sequence_flow
 
             if isinstance(sequence_flow.target, BPMNEndEvent):
-                sequence_flow.target.sequenceFlow = sequence_flow
+                sequence_flow.target.sequence_flow = sequence_flow
 
             # check activities
             if isinstance(sequence_flow.source, BPMNActivity):
-                sequence_flow.source.sequenceFlowOut = sequence_flow
+                sequence_flow.source.sequence_flow_out = sequence_flow
 
             if isinstance(sequence_flow.target, BPMNActivity):
-                sequence_flow.target.sequenceFlowIn = sequence_flow
+                sequence_flow.target.sequence_flow_in = sequence_flow
 
             # check gateways
             if isinstance(sequence_flow.source, BPMNGateway):
