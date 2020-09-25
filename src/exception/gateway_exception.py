@@ -1,7 +1,5 @@
 from typing import List
 
-import igraph
-
 from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway

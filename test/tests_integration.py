@@ -1,12 +1,7 @@
 import os
 import unittest
 
-import igraph
-import pytest
-
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.converter import Converter
-from src.converter.xml_reader import XMLReader
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification

@@ -1,14 +1,12 @@
 from typing import Optional
 from xml.etree.ElementTree import Element
 
-from igraph import Graph
 from pedantic import pedantic_class
 
+from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_models.bpmn_model import BPMNModel
-from src.converter.graph_converter import GraphConverter
 from src.converter.xml_reader import XMLReader
 
 
@@ -19,7 +17,7 @@ class Converter:
     a IGraph.Graph out ouf them.
     """
 
-    def __init__(self,xml_reader: Optional[XMLReader] = None,
+    def __init__(self, xml_reader: Optional[XMLReader] = None,
                  xml_tree: Optional[Element] = None,
                  graph_builder: Optional[BPMNConverter] = None) -> None:
         self.xml_tree = xml_tree
@@ -32,7 +30,7 @@ class Converter:
         """
         Does all the stuff:
         reading xml, parsing to elementtree and putting
-        it back together to a Graph.
+        it back together to a BPMNModel.
         Does not pay attention to xml and bpmn specification.
         Before calling this function make sure that your
         bpmn.xml is conform to xml-standard and
@@ -54,15 +52,11 @@ class Converter:
         self.xml_tree = self.xml_reader.parse_to_dom()
 
         bpmn_converter = BPMNConverter(xml_reader=self.xml_reader,
-                                   bpmn_factory=BPMNFactory())
+                                       bpmn_factory=BPMNFactory())
 
-        # convert all xml-elements into python objects
+        # convert all xml-elements into BPMNElements of BPMNModel
         all_bpmn_types = [BPMNEnum.STARTEVENT, BPMNEnum.ENDEVENT,
                           BPMNEnum.ACTIVITY, BPMNEnum.PARALLGATEWAY,
                           BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]
 
-        bpmn_model = bpmn_converter.create_all_bpmn_objects(bpmn_types=all_bpmn_types)
-        return bpmn_model
-
-        # graph_converter = GraphConverter(bpmn_model=bpmn_model)
-        # return graph_converter.build_graph()
+        return bpmn_converter.create_all_bpmn_objects(bpmn_types=all_bpmn_types)

@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 from typing import TypeVar, Generic
 
 from pedantic import pedantic_class

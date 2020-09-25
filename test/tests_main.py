@@ -17,7 +17,6 @@ from test.tests_stack import TestStack
 from test.tests_xml_reader import TestXMLReader
 from test.tests_bpmn_converter import TestBPMNConverter
 from test.tests_bpmn_factory import TestBPMNFactory
-from test.tests_graph_converter import TestGraphConverter
 
 # NLP
 from test.tests_chunker import TestChunker

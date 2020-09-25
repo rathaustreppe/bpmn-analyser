@@ -8,8 +8,6 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_element import \
     BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.converter.bpmn_models.bpmn_sequenceflow import \
-    BPMNSequenceFlow
 
 
 @pedantic_class

@@ -1,14 +1,10 @@
-from typing import List, Tuple
+from typing import Tuple
 
-import igraph
 import pytest
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_element import BPMNElement
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
-from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.exception.gateway_exception import OpeningGatewayBranchError
@@ -23,52 +19,13 @@ class TestGatewayStackHandler:
         return GatewayStackHandler()
 
     @staticmethod
-    def example_graph(num_of_branches: int) -> igraph.Graph:
-        graph = igraph.Graph()
-        graph = graph.as_directed()
-        graph.add_vertices(
-            num_of_branches + 2)  # +2=opening and closing gateway
-
-        for id in range(num_of_branches):
-            idx = id + 1
-            graph.add_edges([(0, idx)])  # every branch to opening gateway
-            graph.add_edges(
-                [(idx, num_of_branches + 1)])  # every branch to closing
-
-        graph.vs[0][BPMNEnum.NAME.value] = 'open'
-
-        for id in range(num_of_branches):
-            idx = id + 1  # opening gateway has idx=0
-            graph.vs[idx][BPMNEnum.NAME.value] = f'Vertex{idx}'
-
-        graph.vs[num_of_branches + 1][BPMNEnum.NAME.value] = 'closing'
-        return graph
-
-    @staticmethod
-    def branch_vertices_from_graph(graph: igraph.Graph) -> List[igraph.Vertex]:
-        # function is closly connected to inner workings of example_graph() !!!
-        num_vertices = len(graph.vs)
-        branch_vertices = []
-        for id in range(num_vertices - 2):  # -2=leave gateways out
-            idx = id + 1
-            branch_vertices.append(graph.vs[idx])
-        return branch_vertices
-
-    @staticmethod
-    def find_gateway(graph: igraph.Graph,
-                     gateway_text: str = 'open') -> igraph.Vertex:
-        # function is closly connected to inner workings of example_graph() !!!
-        if graph.vs[0][BPMNEnum.NAME.value] == gateway_text:
-            return graph.vs[0]
-
-
-    def link_elements(self, source: BPMNElement,
+    def link_elements(source: BPMNElement,
                       target: BPMNElement) -> Tuple[BPMNElement, BPMNElement]:
         linking_flow = BPMNSequenceFlow(id='f1', condition=None,
                                         source=source, target=target)
         source.sequence_flow_out = linking_flow
         target.sequence_flow_in = linking_flow
-        return (source, target)
+        return source, target
 
     def test_push_gateway_0_branches(self, stack_handler):
         # error here: gateway always needs at least 1 branch
@@ -103,10 +60,8 @@ class TestGatewayStackHandler:
         # after popping branches, opening gateway is on top
         assert stack_handler.stack.pop() == gateway
 
-
     def test_pop_gateway_empty_stack(self, stack_handler):
         # error here: popping from an empty stack
         branch_element = BPMNActivity(id='42', name='space')
         with pytest.raises(EmptyStackPopException):
             stack_handler.pop_gateway(branch_element=branch_element)
-

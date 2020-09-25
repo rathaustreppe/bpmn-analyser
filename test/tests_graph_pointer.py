@@ -1,9 +1,7 @@
 import os
 import unittest
-from copy import copy
 from typing import List, Tuple
 
-import igraph
 import pytest
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
@@ -20,7 +18,6 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.converter.converter import Converter
-from src.exception.WrongTypeException import WrongTypeException
 from src.exception.gateway_exception import ExclusiveGatewayBranchError
 from src.exception.model_exception import NoStartEventError, \
     MultipleStartEventsError
@@ -121,7 +118,7 @@ class TestGraphPointer:
                                 flows=[sequence_flow_1, sequence_flow_2])
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
-        flows = graph_pointer.get_condition_fulfilling_sequence_flows(
+        flows = graph_pointer.condition_fulfilling_sequence_flows(
             flows_to_check=model.sequence_flows)
         assert len(flows) == 2
         assert flows[0].id != flows[1].id
@@ -139,7 +136,7 @@ class TestGraphPointer:
                                 flows=[sequence_flow_1, sequence_flow_2])
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
-        flows = graph_pointer.get_condition_fulfilling_sequence_flows(
+        flows = graph_pointer.condition_fulfilling_sequence_flows(
             flows_to_check=model.sequence_flows)
 
         assert len(flows) == 2
