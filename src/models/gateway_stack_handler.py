@@ -4,6 +4,7 @@ import igraph
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
 from src.models.stack import Stack
 
 
@@ -91,11 +92,8 @@ class GatewayStackHandler:
         if top_of_stack is None:
             raise IndexError(f'cannot pop from an empty stack')
 
-        gateway_texts = [BPMNEnum.PARALLGATEWAY_TEXT.value,
-                         BPMNEnum.EXCLGATEWAY_TEXT.value,
-                         BPMNEnum.INCLGATEWAY_TEXT.value]
-
-        if top_of_stack[BPMNEnum.NAME.value] in gateway_texts:
+        if top_of_stack[BPMNEnum.TYPE.value] == BPMNGateway.__name__ and \
+            top_of_stack[BPMNEnum.GATEWAY_OPEN.value]:
             # remove opening gateway from stack
             self.stack.pop()
             # add following vertex on stack

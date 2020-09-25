@@ -50,7 +50,7 @@ class Chunker:
             raise ValueError(
                 f'no chunk in text {text} found. Used grammars: {self.grammars}')
         elif len(chunks) > 1:
-            raise ValueError(f'{len(chunks)} chunks found in text,'
+            raise ValueError(f'{len(chunks)} chunks found in text {text},'
                              f'instead of only one. Found chunks: {chunks}')
 
         return chunks[0]

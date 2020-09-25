@@ -47,8 +47,10 @@ class GraphConverter:
             raise ValueError(f'BPMNSequenceflow {element} cannot be treated as '
                              f'vertex. Use it as an edge instead.')
 
-        # gateways get a special name in the graph
+        # gateways get a special name in the graph. And we define the is_opening
+        # state here.
         if isinstance(element, BPMNGateway):
+            is_opening = element.is_opening_gateway()
             if isinstance(element, BPMNParallelGateway):
                 _name = BPMNEnum.PARALLGATEWAY_TEXT.value
             elif isinstance(element, BPMNExclusiveGateway):
@@ -63,14 +65,16 @@ class GraphConverter:
 
         def _write_vertex():
             self.graph.vs[idx][BPMNEnum.ID.value] = element.id
-            self.graph.vs[idx][BPMNEnum.TYPE.value] = element.__class__.__name__
             self.graph.vs[idx][BPMNEnum.NAME.value] = _name
+            self.graph.vs[idx][BPMNEnum.TYPE.value] = element.__class__.__name__
+            if isinstance(element, BPMNGateway):
+                self.graph.vs[idx][BPMNEnum.GATEWAY_OPEN.value] = is_opening
 
-        # creates new vertex with name and id without overwriting existing vertex
-        # There are two cases when writing vertex is ok:
-        # The vertex at idx is fresh without attributes.
-        # OR the vertex at idx has attributes, but they have the value None.
-        # In every other case we would wrongfully overwrite an existing vertex.
+        # creates new vertex with name and id without overwriting existing
+        # vertex. There are two cases when writing vertex is ok: The vertex at
+        # idx is fresh without attributes. OR the vertex at idx has
+        # attributes, but they have the value None. In every other case we
+        # would wrongfully overwrite an existing vertex.
         if len(self.graph.vs[idx].attributes()) == 0:
             _write_vertex()
         elif len(self.graph.vs[idx].attributes()) >= 1 and \
@@ -144,9 +148,10 @@ class GraphConverter:
             # we make sure BPMNEnum.CONDITION and BPMNEnum.ID is untouched and we can savely use
             # 'condition' as parameter.
             if BPMNEnum.CONDITION.value != 'condition':
-                raise ValueError(f'BPMNEnum.CONDITION.value was changed from "condition" '
-                                 f'to {BPMNEnum.CONDITION.value}. One cannot generate '
-                                 f'named edges without changing the parameter.')
+                raise ValueError(
+                    f'BPMNEnum.CONDITION.value was changed from "condition" '
+                    f'to {BPMNEnum.CONDITION.value}. One cannot generate '
+                    f'named edges without changing the parameter.')
 
             if BPMNEnum.ID.value != 'id':
                 raise ValueError(f'BPMNEnum.ID.value was changed from "id" '
@@ -155,8 +160,9 @@ class GraphConverter:
 
             self.graph.add_edge(source=vtx_src_idx,
                                 target=vtx_tgt_idx,
-                                condition=sequence_flow.condition, # BPMNEnum.CONDITION.value
-                                id = sequence_flow.id) # BPMNEnum.ID.value
+                                condition=sequence_flow.condition,
+                                # BPMNEnum.CONDITION.value
+                                id=sequence_flow.id)  # BPMNEnum.ID.value
 
     @staticmethod
     def find_vertex(vertices: VertexSeq, vertex_id: str) -> Vertex:

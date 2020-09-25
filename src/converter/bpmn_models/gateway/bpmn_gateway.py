@@ -30,3 +30,8 @@ class BPMNGateway(BPMNElement):
 
     def add_sequence_flow_out(self, flow: BPMNSequenceFlow) -> None:
         self.sequence_flows_out.append(flow)
+
+    def is_opening_gateway(self) -> bool:
+        num_outflows = len(self.sequence_flows_out)
+        num_inflows = len(self.sequence_flows_in)
+        return num_inflows < num_outflows

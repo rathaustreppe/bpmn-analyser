@@ -4,6 +4,7 @@ import igraph
 import pytest
 
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
 from src.models.gateway_stack_handler import GatewayStackHandler
 
 
@@ -99,13 +100,15 @@ class TestGatewayStackHandler:
         graph = self.example_graph(num_of_branches=1)
         opening_gateway = self.find_gateway(graph=graph)
         opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
+        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
+        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
 
         stack_handler.stack.push(item=opening_gateway)
 
         branch_vertex = self.branch_vertices_from_graph(graph=graph)[0]
 
         # using branch_vertex from the graph above makes no sense in
-        # real life. But we can use them know to check if pushing the next
+        # real life. But we can use them now to check if pushing the next
         # branch_vertex works.
         stack_handler.pop_gateway(branch_vertex=branch_vertex)
         assert stack_handler.next_stack_element() == branch_vertex
@@ -114,6 +117,8 @@ class TestGatewayStackHandler:
         graph = self.example_graph(num_of_branches=1)
         opening_gateway = self.find_gateway(graph=graph)
         opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
+        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
+        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
         branch_vertex = self.branch_vertices_from_graph(graph=graph)[0]
 
         stack_handler.stack.push(item=opening_gateway)
@@ -128,6 +133,8 @@ class TestGatewayStackHandler:
         graph = self.example_graph(num_of_branches=2)
         opening_gateway = self.find_gateway(graph=graph)
         opening_gateway[BPMNEnum.NAME.value] = BPMNEnum.PARALLGATEWAY_TEXT.value
+        opening_gateway[BPMNEnum.TYPE.value] = BPMNGateway.__name__
+        opening_gateway[BPMNEnum.GATEWAY_OPEN.value] = True
         branch_vertices = self.branch_vertices_from_graph(graph=graph)
 
         stack_handler.check_gateway_stack(gateway=opening_gateway,
