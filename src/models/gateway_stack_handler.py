@@ -7,6 +7,8 @@ from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
+from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
+    BPMNParallelGateway
 from src.exception.gateway_exception import OpeningGatewayBranchError, \
     ClosingGatewayBranchError
 from src.exception.stack_exception import EmptyStackPopException
@@ -22,7 +24,7 @@ class GatewayStackHandler:
     """
 
     def __init__(self) -> None:
-        self.stack: Stack[BPMNElement] = Stack()
+        self.stack: Stack[Union[BPMNElement, BPMNParallelGateway, BPMNActivity]] = Stack()
 
     def check_gateway_stack(self, gateway: BPMNGateway,
                             branch_elements: List[BPMNElement]) -> None:

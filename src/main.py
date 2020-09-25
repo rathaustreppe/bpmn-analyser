@@ -109,7 +109,7 @@ chunker = Chunker(chunk_grams=chunk_grams,
 path_to_bpmn = r'converter/bpmn-files/bill_process.bpmn'
 
 converter = Converter()
-g = converter.convert(rel_path_to_bpmn=path_to_bpmn)
+bpmn_model = converter.convert(rel_path_to_bpmn=path_to_bpmn)
 
 init_attributes = {
     "place": "Zittau",
@@ -118,7 +118,7 @@ init_attributes = {
     "contract checked": False
 }
 t = Token(attributes=init_attributes)
-gp = GraphPointer(graph=g, token=t, ruleset=ruleset, chunker=chunker)
+gp = GraphPointer(model=bpmn_model, token=t, ruleset=ruleset, chunker=chunker)
 
 # checking students solution
 graph_pointer_list: List[GraphPointer] = [gp]

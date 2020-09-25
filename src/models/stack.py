@@ -8,7 +8,7 @@ from src.exception.stack_exception import EmptyStackPopException
 T = TypeVar('T')
 
 
-@pedantic_class
+#@pedantic_class
 class Stack(Generic[T]):
     def __init__(self) -> None:
         self.items: List[T] = []

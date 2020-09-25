@@ -1,6 +1,5 @@
 from typing import Tuple, List, Optional, Union
 
-from igraph import Graph, VertexSeq, Vertex
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models import bpmn_model
@@ -31,11 +30,9 @@ from src.converter.xml_reader import XMLReader
 class BPMNConverter:
     def __init__(self,
                  xml_reader: XMLReader,
-                 bpmn_factory: IBPMNFactory,
-                 graph: Optional[Graph] = None) -> None:
+                 bpmn_factory: IBPMNFactory) -> None:
         self.xml_reader = xml_reader
         self.bpmn_factory = bpmn_factory
-        self.graph = graph
 
     def make_element(self, element_type: BPMNEnum,
                      src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
