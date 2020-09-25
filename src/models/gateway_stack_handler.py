@@ -85,11 +85,12 @@ class GatewayStackHandler:
             raise EmptyStackPopException()
 
         if isinstance(top_of_stack, BPMNGateway) and \
-                not top_of_stack.is_opening_gateway():
+                top_of_stack.is_opening_gateway():
             # remove opening gateway from stack
             self.stack.pop()
             # add following vertex on stack
             self.stack.push(item=branch_element)
+
 
     def next_stack_element(self) -> \
             Optional[Union[BPMNGateway, BPMNActivity, BPMNStartEvent,
@@ -98,3 +99,10 @@ class GatewayStackHandler:
             return self.stack.pop()
         else:
             return None
+
+
+    def top_of_stack_is_gateway(self) -> bool:
+        return isinstance(self.stack.top(), BPMNGateway)
+
+    def top_of_stack_is_activity(self) -> bool:
+        return isinstance(self.stack.top(), BPMNActivity)

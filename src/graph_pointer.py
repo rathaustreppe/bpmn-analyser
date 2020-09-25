@@ -202,20 +202,31 @@ class GraphPointer:
         current = self.find_current_element()
 
         if isinstance(current, BPMNGateway):
-            # current is gateway:
-            # Collect all the branches a gateway branches into it and check
-            # their conditions. If they are true, we can branch into them.
-            # All those BPMNElements that meet the condition will be
-            # put on the stack.This way we make sure to process all branches.
-            conditions_meet_flows = \
-                self.collect_conditional_sequence_flows_of_gateway(gateway=
-                                                                   current)
-            branch_elements = self.first_element_of_all_branches(
-                branches=conditions_meet_flows)
+            if current.is_opening_gateway():
+                # Collect all the branches a gateway branches into it and check
+                # their conditions. If they are true, we can branch into them.
+                # All those BPMNElements that meet the condition will be
+                # put on the stack.This way we make sure to process all branches.
+                conditions_meet_flows = \
+                    self.collect_conditional_sequence_flows_of_gateway(gateway=
+                                                                       current)
+                branch_elements = self.first_element_of_all_branches(
+                    branches=conditions_meet_flows)
 
-            self.stack_handler.check_gateway_stack(gateway=current,
-                                                   branch_elements=branch_elements)
-
+                self.stack_handler.check_gateway_stack(gateway=current,
+                                                       branch_elements=branch_elements)
+            else:
+                # current is closing gateway
+                if self.stack_handler.top_of_stack_is_gateway():
+                    # all branches were processed. Remove gateway from stack
+                    # and put the following element of the closing gateway
+                    # on the stack
+                    self.stack_handler.pop_gateway(branch_element=current.sequence_flows_out[0].target)
+                if self.stack_handler.top_of_stack_is_activity():
+                    # not all branches were processed. Reverting back to the
+                    # opening gateway and start again.
+                    self.previous_element = self.stack_handler.stack.top().sequence_flow_in.source
+                    return
         else:
             # current is no gateway, therefore perform text analysis &
             # rule checking & token changing

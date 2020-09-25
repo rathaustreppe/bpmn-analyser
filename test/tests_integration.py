@@ -125,7 +125,6 @@ class TestIntegration:
         assert return_token != bill_process_solution_token
         assert return_token.get_attribute(key='signature ML') == False
 
-    @unittest.skip
     def test_interlaced_gateways(self, xml_folders_path,
                                  nn_chunker):
 

@@ -234,63 +234,75 @@ class TestGraphPointer:
         assert len(flows) == 1
         assert flows[0].id == id_of_cond_flow
 
-    @unittest.skip
-    def test_next_step_with_parallel_gateway(self, xml_folders_path,
-                                             example_token, nn_chunker):
+
+    def test_next_step_parallel_gateway(self,
+                                        xml_folders_path,
+                                        example_token,
+                                        nn_chunker):
         xml_file_path = os.path.join(xml_folders_path,
                                      'converter',
                                      'min_parallel_gateway.bpmn')
         converter = Converter()
-        graph = converter.convert(rel_path_to_bpmn=xml_file_path)
-        graph_pointer = self.graph_pointer(model=graph, token=example_token,
+        bpmnmodel = converter.convert(rel_path_to_bpmn=xml_file_path)
+        graph_pointer = self.graph_pointer(model=bpmnmodel,
+                                           token=example_token,
                                            chunker=nn_chunker)
 
-        # first call for init startevent
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[BPMNEnum.NAME.value] == 'SE'
+        # first call for startEvent-processing
+        # startevents leave nothing on stack
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element.name == 'SE'
         assert graph_pointer.stack_handler.stack.empty()
 
-        # next call to find opening gateway --> check stack
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[
-                   BPMNEnum.NAME.value] == BPMNEnum.PARALLGATEWAY_TEXT.value
-        assert graph_pointer.stack_handler.stack.top()[BPMNEnum.NAME.value] in [
-            'act', 'Bact']
+        # next call to find opening gateway
+        # gateways leave their outgoing sequence_flows on stack
+        # on of the two branches is on top
+        # 2 branches + 1 gateway = 3 elements on stack
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element.id == 'GW1'
+        assert graph_pointer.stack_handler.stack.top().id in ['A1', 'A2']
+        assert len(graph_pointer.stack_handler.stack) == 3
 
-        # next call to go into first branch
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[BPMNEnum.NAME.value] in ['act',
-                                                                       'Bact']
-        assert graph_pointer.stack_handler.stack.top()[BPMNEnum.NAME.value] in [
-            'act', 'Bact']
+        # next call to process top of stack (BPMNActivity)
+        # and leave it as the previous element
+        # and leave the second branch (with different ID) on top
+        first_activity = graph_pointer.stack_handler.stack.top()
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element == first_activity
+        assert len(graph_pointer.stack_handler.stack) == 2
+        assert graph_pointer.stack_handler.stack.top().id != first_activity.id
 
-        # next call to go into adjacent of first branch == closing gateway
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[
-                   BPMNEnum.NAME.value] == BPMNEnum.PARALLGATEWAY_TEXT.value
-        assert graph_pointer.stack_handler.stack.top()[BPMNEnum.NAME.value] in [
-            'act', 'Bact']
+        # next call to find the closing gateway, deciding to not process it
+        # because the second activity is on top, instead reverting back to
+        # the original opening gateway as previous to start from there again
+        second_activity = graph_pointer.stack_handler.stack.top()
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element.id == 'GW1'
+        assert len(graph_pointer.stack_handler.stack) == 2
+        assert graph_pointer.stack_handler.stack.top().id == second_activity.id
 
-        # next call to finish first branch and ask stack to go into second branch
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[BPMNEnum.NAME.value] in ['act',
-                                                                       'Bact']
-        assert graph_pointer.stack_handler.stack.top()[
-                   BPMNEnum.NAME.value] == BPMNEnum.PARALLGATEWAY_TEXT.value
+        # next call to ask the stack, pop the activity, process it and leave
+        # it as previous element
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element == second_activity
+        assert len(graph_pointer.stack_handler.stack) == 1
+        assert graph_pointer.stack_handler.top_of_stack_is_gateway()
 
-        # next call to go adjacent of second branch == closing gateway
-        # but stack is empty --> finishing gateway and taking it from stack
-        # but putting adjacent of closing gateway on stack
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[
-                   BPMNEnum.NAME.value] == BPMNEnum.PARALLGATEWAY_TEXT.value
-        assert graph_pointer.stack_handler.stack.top()[
-                   BPMNEnum.NAME.value] == 'EE'
+        # next call to find closing gateway, checking the stack, anhilate with
+        # open gateway and leave closing gateway as previous element. puts the
+        # endEvent on stack
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element.id == 'GW2'
+        assert len(graph_pointer.stack_handler.stack) == 1
+        assert graph_pointer.stack_handler.stack.top().name == 'EE'
 
-        # next call to go into endevent and clear stack
-        graph_pointer.runstep_graph()
-        assert graph_pointer.previous_element[BPMNEnum.NAME.value] == 'EE'
-        assert graph_pointer.stack_handler.stack.empty()
+        # next call to ask stack for help, pops EndEvent, leaving stack empty,
+        # processing endEvent and leave it as previous element
+        graph_pointer._next_step()
+        assert graph_pointer.previous_element.name == 'EE'
+        assert len(graph_pointer.stack_handler.stack) == 0
 
-        # next call to to find out it reached the end of the graph (returns 1)
-        assert graph_pointer.runstep_graph() == 1
+        # next call to find endevent as previous element and returning 1,
+        # meaning it finished
+        ret = graph_pointer.runstep_graph()
+        assert ret == 1
