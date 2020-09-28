@@ -15,8 +15,8 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.exception.gateway_exception import ExclusiveGatewayBranchError
-from src.exception.model_exception import MultipleStartEventsError, \
+from src.exception.gateway_errors import ExclusiveGatewayBranchError
+from src.exception.model_errors import MultipleStartEventsError, \
     NoStartEventError
 from src.models.stack import Stack
 from src.models.token import Token

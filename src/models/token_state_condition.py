@@ -3,12 +3,16 @@ from typing import Any
 
 from pedantic import pedantic_class
 
+from src.exception.token_state_errors import \
+    MissingOperatorInConditionError, \
+    MissingAttributeInConditionError, MissingValueInConditionError, \
+    MissingAttributeInTokenError
 from src.models.token import Token
 
 
 class Operators(Enum):
     EQUALS = '=='
-    GREATERTHEN = '>'
+    GREATER_THEN = '>'
 
 
 @pedantic_class
@@ -17,6 +21,7 @@ class TokenStateCondition:
     This class defines a single condition that is checked
     before a token state can change.
     """
+
     def __init__(self, tok_attribute: str = '',
                  operator: Operators = Operators.EQUALS,
                  tok_value: Any = None) -> None:
@@ -37,26 +42,26 @@ class TokenStateCondition:
 
     @classmethod
     def from_string(cls, condition: str) -> 'TokenStateCondition':
-        # parses 'attr=42' to constructor call of TSCondition
+        # parses 'attr=42' to constructor call of TokenStateCondition
         operator = ''
         # find operator
         for op in Operators:
             if condition.find(op.value) != -1:
                 operator = op
         if operator == '':
-            raise ValueError(f'operator in string >{condition}< is not implemented')
+            raise MissingOperatorInConditionError(text=condition)
 
         # find attr
         op_pos = condition.find(operator.value)
         attribute = condition[0:op_pos]
         if attribute == '':
-            raise ValueError(f'attribute before operator in string >{condition}< not found')
+            raise MissingAttributeInConditionError(text=condition)
 
         # find value
         op_str_ending = op_pos + len(operator.value)
         value = condition[op_str_ending:len(condition)]
         if value == '':
-            raise ValueError(f'value after operator in string >{condition}< not found')
+            raise MissingValueInConditionError(text=condition)
 
         return TokenStateCondition(tok_attribute=attribute,
                                    operator=operator,
@@ -73,14 +78,10 @@ class TokenStateCondition:
              bool: True if condition applied to token is okay.
              False if token does not comply with condition
         """
-        if self._tok_attribute == '':
-            raise KeyError(
-                f'tok_attribute cannot be empty string. Accessing token {token}'
-                f' while checking TokenStateCondition: {self}')
-
-        if self._tok_attribute not in token:
-            raise KeyError(
-                f'Token {token} does not have attribute {self._tok_attribute}')
+        if self._tok_attribute not in token or self._tok_attribute == '':
+            raise MissingAttributeInTokenError(
+                attribute=self._tok_attribute,
+                token=token)
 
         val = token.get_attribute(key=self._tok_attribute)
         return val == self._tok_value

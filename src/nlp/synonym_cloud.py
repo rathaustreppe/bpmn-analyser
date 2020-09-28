@@ -4,6 +4,8 @@ import nltk
 from nltk.corpus.reader import Synset
 from pedantic import pedantic_class
 
+from src.exception.language_processing_errors import EmptySynonymCloudError, \
+    ChunkSynonymCloudMismatch
 from src.nlp.synonym_composite import SynonymComposite
 
 
@@ -23,36 +25,32 @@ class SynonymCloud:
         self.syncloud = syncloud
 
     @classmethod
-    def from_list(cls, text: List[Union[str, Synset, 'SynonymCloud']]) -> 'SynonymCloud':
+    def from_list(cls, text: List[Union[str, Synset]]) -> 'SynonymCloud':
         syn_composites = []
         for word in text:
             if isinstance(word, str):
                 syn_comp = SynonymComposite.from_str(word=word)
                 syn_composites.append(syn_comp)
-            elif isinstance(word, Synset):
+            else:
+                # word is synset
                 syn_comp = SynonymComposite.from_synset(synset=word)
                 syn_composites.append(syn_comp)
-            else:
-                raise ValueError(f'bad data type in list {text}: '
-                                 f'{word} has type {type(word)}.')
         return cls(syncloud=syn_composites)
 
     def are_synonyms(self, chunk: nltk.tree.Tree) -> bool:
 
         if len(self.syncloud) == 0:
-            raise ValueError(f'syncloud {self} cannot be empty')
+            raise EmptySynonymCloudError(syncloud=self)
 
         chunk_len = len(chunk.leaves())
         if chunk_len != len(self.syncloud):
-            raise ValueError(f'length of chunk {chunk} with length:{chunk_len} '
-                            f' and syncloud {self.syncloud} with length'
-                            f' {len(self.syncloud)} do not match.')
+            raise ChunkSynonymCloudMismatch(synonym_cloud=self, chunk=chunk)
 
         # check for syonyms
         for idx, composite in enumerate(self.syncloud):
             chunk_word = chunk.leaves()[idx]
             if not composite.are_synonyms(
-                    tagged_word=chunk_word):  # may not work? not tagged enough
+                    tagged_word=chunk_word):
                 return False
 
         return True

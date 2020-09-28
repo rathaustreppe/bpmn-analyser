@@ -14,7 +14,7 @@ from src.converter.xml_reader import XMLReader
 class Converter:
     """
     Interface to read XML-BPMN2.0-files and building
-    a IGraph.Graph out ouf them.
+    a BPMNModel out of it.
     """
 
     def __init__(self, xml_reader: Optional[XMLReader] = None,
@@ -37,8 +37,6 @@ class Converter:
         bpmn2.0-standard and doesnt have bpmn-syntax errors.
         Use other and better tools to check this. For example
         bpmn-js-bpmnlint.
-                Returns:
-            Graph that equals the given BPMN-process
         """
         self.xml_reader.rel_path = rel_path_to_bpmn
 
@@ -54,7 +52,6 @@ class Converter:
         bpmn_converter = BPMNConverter(xml_reader=self.xml_reader,
                                        bpmn_factory=BPMNFactory())
 
-        # convert all xml-elements into BPMNElements of BPMNModel
         all_bpmn_types = [BPMNEnum.STARTEVENT, BPMNEnum.ENDEVENT,
                           BPMNEnum.ACTIVITY, BPMNEnum.PARALLGATEWAY,
                           BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]

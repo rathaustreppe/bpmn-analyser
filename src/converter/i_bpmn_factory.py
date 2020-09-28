@@ -12,14 +12,10 @@ from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 
 @pedantic_class
 class IBPMNFactory(ABC):
-    # Attention: BPMNFactory can only, by definition, work
-    # with valid xml + valid bpmn strings.The program is
-    # designed that a factory is only instantiated when the
-    # xml is conform to XML and BPMN standard.
-    # This is okay: <task id="" condition=""></task>'
-    # This not: <task></task>'
+
     @abstractmethod
     def create_bpmn_element(self,
                             element: Element, elem_type: BPMNEnum,
-                            src_tgt_elements: Optional[List[BPMNElement]] = None) -> BPMNElement:
+                            src_tgt_elements: Optional[
+                                List[BPMNElement]] = None) -> BPMNElement:
         pass

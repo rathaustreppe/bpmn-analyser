@@ -1,8 +1,7 @@
-from typing import Tuple, List, Optional, Union
+from typing import List, Optional, Union
 
 from pedantic import pedantic_class
 
-from src.converter.bpmn_models import bpmn_model
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -15,13 +14,7 @@ from src.converter.bpmn_models.event.bpmn_endevent import \
     BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import \
     BPMNStartEvent
-from src.converter.bpmn_models.gateway.bpmn_exclusive_gateway import \
-    BPMNExclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
-from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
-    BPMNInclusiveGateway
-from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
-    BPMNParallelGateway
 from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
 
@@ -37,16 +30,16 @@ class BPMNConverter:
     def make_element(self, element_type: BPMNEnum,
                      src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
             List[Union[BPMNElement, BPMNSequenceFlow]]:
-        # """
-        # Searches all element_types in XML-DOM and returns corresponding
-        # BPMN-Objects.
-        # Args:
-        #     element_type(BPMNEnum): abc
-        #     src_tgt_elements (Optional[List[BPMNElement]]): abc
-        #
-        # Returns:
-        #     List[Union[BPMNElement,BPMNSequenceFlow]]: abc
-        # """
+        """
+        Searches all element_types in XML-DOM and returns corresponding
+        BPMN-Objects.
+        Args:
+            element_type(BPMNEnum): abc
+            src_tgt_elements (Optional[List[BPMNElement]]): abc
+
+        Returns:
+            List[Union[BPMNElement,BPMNSequenceFlow]]: abc
+        """
         elements = self.xml_reader.query(element_type=element_type)
         bpmn_objects = []
         for element in elements:
@@ -61,7 +54,7 @@ class BPMNConverter:
             List[BPMNSequenceFlow]:
         """
         Method to tell source and target objects of sequenceflows to which
-        sequenceflow they belong. (bidirectional reference)
+        sequence_flow they belong. (bidirectional reference)
         """
         for sequence_flow in sequence_flows:
             # check StartEvents (can only be sources) and EndEvents (can only

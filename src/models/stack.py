@@ -3,7 +3,7 @@ from typing import TypeVar, Generic
 
 from pedantic import pedantic_class
 
-from src.exception.stack_exception import EmptyStackPopException
+from src.exception.stack_errors import EmptyStackPopError
 
 T = TypeVar('T')
 
@@ -23,16 +23,16 @@ class Stack(Generic[T]):
         if len(self.items) > 0:
             return self.items.pop()
         else:
-            raise EmptyStackPopException()
+            raise EmptyStackPopError()
 
     def empty(self) -> bool:
         return not self.items
 
     def top(self) -> Optional[T]:
         if len(self.items) > 0:
-            return self.items[len(self.items)-1]
+            return self.items[len(self.items) - 1]
         else:
             return None
 
-    def __len__(self) -> int:
-        return self.len()
+    # def __len__(self) -> int:
+    #     return self.len()

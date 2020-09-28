@@ -3,6 +3,9 @@ from typing import List, Tuple, Optional
 import nltk
 from pedantic import pedantic_class
 
+from src.exception.language_processing_errors import NoChunkFoundError, \
+    MultipleChunksFoundError
+
 
 @pedantic_class
 class Chunker:
@@ -33,9 +36,9 @@ class Chunker:
         """
 
     def find_chunk(self, text: str) -> nltk.tree.Tree:
-        text = self.preprocess(text=text)
+        preprocessed_text = self.preprocess(text=text)
         parser = nltk.RegexpParser(self.grammars)
-        parsed = parser.parse(text)
+        parsed = parser.parse(preprocessed_text)
 
         # S is the root terminal of every tree per default by NLTK.
         # So tt is the root of every chunk. And if no chunk was found,
@@ -47,13 +50,14 @@ class Chunker:
                   and chunk.label() != 'S']
 
         if len(chunks) == 0:
-            raise ValueError(
-                f'no chunk in text {text} found. Used grammars: {self.grammars}')
-        elif len(chunks) > 1:
-            raise ValueError(f'{len(chunks)} chunks found in text {text},'
-                             f'instead of only one. Found chunks: {chunks}')
+            raise NoChunkFoundError(pos_list=preprocessed_text, chunker=self)
 
-        return chunks[0]
+        elif len(chunks) > 1:
+            raise MultipleChunksFoundError(pos_list=preprocessed_text,
+                                           found_chunks=chunks,
+                                           chunker=self)
+        else:
+            return chunks[0]
 
     def preprocess(self, text: str) -> List[Tuple[str, str]]:
         # Sentence Tokenizing.
@@ -102,33 +106,3 @@ class Chunker:
             tagged_sentence[idx] = check_bypass(tuple_to_check=tagged_word)
 
         return tagged_sentence
-
-    # def extract_nn_vb_nn(chunk: nltk.tree.Tree, sample_word: str):
-    # verb = chunk.leaves()[0]
-    # wordtype = get_wordnet_pos(verb[1])
-    #
-    # word = verb[0]
-    # word = wordnet.synsets(word, wordtype)[0]
-    # vb_lemmas = set([lemma.name() for lemma in word.lemmas()])
-    #
-    # word_lemmas = list()
-    # for synset in wordnet.synsets(sample_word, wordtype):
-    #     for lemma in synset.lemmas():
-    #         word_lemmas.append(lemma.name())
-    # word_lemmas = set(word_lemmas)
-    #
-    # intersection_synonyms = word_lemmas.intersection(vb_lemmas)
-    # print(f'Chunk-Verb in Text: {vb_lemmas}')
-    # print(f'Lösungs-Synonyme: {word_lemmas}')
-    # print(f'union synonyms: {intersection_synonyms}')
-    # if len(intersection_synonyms) > 0:
-    #     print(f'ACCEPTED: {word}')
-    # else:
-    #     print(f'REJECTED: {word}')
-
-    #  if isinstance(chunk, nltk.tree.Tree):
-    #     if chunk.label() == 'VB_NN_TO_NN':
-    #         # chunk.draw()
-    #         print('1')
-    #     if chunk.label() == 'NN_VB_NN':
-    #         print('2')
