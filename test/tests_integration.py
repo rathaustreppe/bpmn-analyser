@@ -160,7 +160,8 @@ class TestIntegration:
         init_attibutes = {
             'act1': True, # True, because XOR branches into act1.
             'act2': False, # False, because XOR branches into act1 instead of act2
-            'act3': True # True, because AND branches into act3.
+            'act3': True, # True, because AND branches into act3.
+            'k1': 'v1' # part of init_token, therefore of solution_token as well
         }
         solution_token = Token(attributes=init_attibutes)
 

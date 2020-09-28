@@ -7,7 +7,7 @@ class WrongTypeException(Exception):
         super().__init__(self.message)
 
 class NotImplementedTypeException(Exception):
-    def __init__(self, object, obj_type):
-        self.message = f'object {object} of type {obj_type} is not supported' \
+    def __init__(self, object):
+        self.message = f'object {object} of type {type(object)} is not supported' \
                        f' in this function'
         super().__init__(self.message)
