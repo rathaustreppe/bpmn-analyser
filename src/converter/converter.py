@@ -35,7 +35,7 @@ class Converter:
         Before calling this function make sure that your
         bpmn.xml is conform to xml-standard and
         bpmn2.0-standard and doesnt have bpmn-syntax errors.
-        Use other and better tools to check this. For example
+        Use other and better tools to check this. For examples
         bpmn-js-bpmnlint.
         """
         self.xml_reader.rel_path = rel_path_to_bpmn
