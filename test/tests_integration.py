@@ -2,6 +2,7 @@ import os
 import unittest
 
 from src.converter.converter import Converter
+from src.examples.gateway_example import GatewayExample
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
@@ -166,3 +167,15 @@ class TestIntegration:
         solution_token = Token(attributes=init_attibutes)
 
         assert return_token == solution_token
+
+    def test_interlaced_gateways_2(self, xml_folders_path):
+        gateway_example = GatewayExample()
+
+        return_token = self.execute_process(filename='gateway_example.bpmn',
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=gateway_example.get_chunker(),
+                                            ruleset=gateway_example.get_ruleset(),
+                                            init_token=gateway_example.get_init_token())
+        solution_token = gateway_example.get_solution_token()
+
+        assert solution_token == return_token
