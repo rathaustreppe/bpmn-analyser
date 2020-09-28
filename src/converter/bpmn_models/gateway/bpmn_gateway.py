@@ -12,10 +12,10 @@ Metaclass for all BPMNGateways
 
 @pedantic_class
 class BPMNGateway(BPMNElement):
-    def __init__(self, id: str,
+    def __init__(self, id_: str,
                  sequence_flows_in: Optional[List[BPMNSequenceFlow]] = None,
                  sequence_flows_out: Optional[List[BPMNSequenceFlow]] = None) -> None:
-        super().__init__(id=id)#
+        super().__init__(id_=id_)
         self.sequence_flows_in = sequence_flows_in
         self.sequence_flows_out = sequence_flows_out
 

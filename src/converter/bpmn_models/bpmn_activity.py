@@ -12,10 +12,10 @@ from src.converter.bpmn_models.bpmn_sequenceflow import \
 
 @pedantic_class
 class BPMNActivity(BPMNElement):
-    def __init__(self, id: str, name: str,
+    def __init__(self, id_: str, name: str,
                  sequence_flow_in: Optional[BPMNSequenceFlow] = None,
                  sequence_flow_out: Optional[BPMNSequenceFlow] = None) -> None:
-        super().__init__(id=id)
+        super().__init__(id_=id_)
         self.name = name
         self.sequence_flow_in = sequence_flow_in
         self.sequence_flow_out = sequence_flow_out

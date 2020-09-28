@@ -92,11 +92,11 @@ class XMLReader:
         the <elementname> tag
         Example with exclude_ids: 123
         <hello>
-          <world id=123\>
-          <world id=456\>
+          <world id_=123\>
+          <world id_=456\>
         <\hello>
         elementname: 'world'
-        Returns: [<world id=456>] with 'world' beeing an object
+        Returns: [<world id_=456>] with 'world' beeing an object
         Args:
             element_type (BPMNEnum): elementname of bpmn-specification
 

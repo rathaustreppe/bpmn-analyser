@@ -60,40 +60,35 @@ class BPMNFactory(IBPMNFactory):
 
     def _create_end_event(self, element: Element) -> BPMNEndEvent:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNEndEvent(id=id_, name=name, sequence_flow=None)
+        return BPMNEndEvent(id_=id_, name=name, sequence_flow=None)
 
     def _create_start_event(self, element: Element) -> BPMNStartEvent:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNStartEvent(id=id_, name=name, sequence_flow=None)
+        return BPMNStartEvent(id_=id_, name=name, sequence_flow=None)
 
     def _create_bpmn_element(self, element: Element) -> Tuple[str, str]:
-        id_ = element.get('id')
-        name = element.get('name')
+        id_ = element.get(BPMNEnum.ID.value)
+        name = element.get(BPMNEnum.NAME.value)
         return id_, name
 
     def _create_activity(self, element: Element) -> BPMNActivity:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNActivity(id=id_,
-                            name=name,
-                            sequence_flow_in=None,
+        return BPMNActivity(id_=id_, name=name, sequence_flow_in=None,
                             sequence_flow_out=None)
 
     def _create_parallel_gateway(self, element: Element) -> BPMNParallelGateway:
-        id_ = element.get('id')
-        return BPMNParallelGateway(id=id_,
-                                   sequence_flows_in=None,
+        id_ = element.get(BPMNEnum.ID.value)
+        return BPMNParallelGateway(id_=id_, sequence_flows_in=None,
                                    sequence_flows_out=None)
 
     def _create_inclusive_gateway(self, element: Element) -> BPMNInclusiveGateway:
-        id_ = element.get('id')
-        return BPMNInclusiveGateway(id=id_,
-                                    sequence_flows_in=None,
+        id_ = element.get(BPMNEnum.ID.value)
+        return BPMNInclusiveGateway(id_=id_, sequence_flows_in=None,
                                     sequence_flows_out=None)
 
     def _create_exclusive_gateway(self, element: Element) -> BPMNExclusiveGateway:
-        id_ = element.get('id')
-        return BPMNExclusiveGateway(id=id_,
-                                    sequence_flows_in=None,
+        id_ = element.get(BPMNEnum.ID.value)
+        return BPMNExclusiveGateway(id_=id_, sequence_flows_in=None,
                                     sequence_flows_out=None)
 
 
@@ -111,12 +106,12 @@ class BPMNFactory(IBPMNFactory):
         Returns:
 
         """
-        # ToDo: What should happen if sourceRef == '' or elements.id == '' ??
+        # ToDo: What should happen if sourceRef == '' or elements.id_ == '' ??
         # Reject earlier or raise exception?
 
-        id_ = sequence_flow.get('id')
+        id_ = sequence_flow.get(BPMNEnum.ID.value)
         # name tag in xml is treated as a condition.
-        condition = sequence_flow.get('name')
+        condition = sequence_flow.get(BPMNEnum.NAME.value)
         if condition != None:
             condition = TokenStateCondition.from_string(condition=condition)
 
@@ -132,15 +127,15 @@ class BPMNFactory(IBPMNFactory):
         sequence_targets = []
         for source in elements:
             source: BPMNElement
-            if target_ref == source.id:
+            if target_ref == source.id_:
                 sequence_targets.append(source)
 
         sequence_sources = []
         for target in elements:
             target: BPMNElement
-            if source_ref == target.id:
+            if source_ref == target.id_:
                 sequence_sources.append(target)
 
-        return BPMNSequenceFlow(id=id_, condition=condition,
+        return BPMNSequenceFlow(id_=id_, condition=condition,
                                 source=sequence_sources[0],
                                 target=sequence_targets[0])

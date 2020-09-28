@@ -28,14 +28,14 @@ class TestBPMNFactory:
         elem = self.read_xml(string)
         bpmn = self.factory.create_bpmn_element(element=elem, elem_type=BPMNEnum.ACTIVITY)
         assert bpmn.name == ''
-        assert bpmn.id == ''
+        assert bpmn.id_ == ''
 
     def test_activity_normal_no_flow(self):
         string = r'<task id="1" name="a"></task>'
         elem = self.read_xml(string)
         bpmn = self.factory.create_bpmn_element(element=elem, elem_type=BPMNEnum.ACTIVITY)
         assert bpmn.name == 'a'
-        assert bpmn.id == '1'
+        assert bpmn.id_ == '1'
 
     def test_flow_normal(self):
         string_act1 = r'<task id="1" name="a"></task>'
@@ -45,9 +45,9 @@ class TestBPMNFactory:
         act2 = self.factory.create_bpmn_element(element=self.read_xml(string_act2), elem_type=BPMNEnum.ACTIVITY)
         flow = self.factory.create_bpmn_element(element=self.read_xml(string_flow), elem_type=BPMNEnum.SEQUENCEFLOW, src_tgt_elements=[act1,act2])
 
-        assert flow.id == 'f'
-        assert flow.source.id == '1'
-        assert flow.target.id == '2'
+        assert flow.id_ == 'f'
+        assert flow.source.id_ == '1'
+        assert flow.target.id_ == '2'
 
     def test_flow_empty_id(self):
         string_act1 = r'<task id="" name="a"></task>'
@@ -57,22 +57,22 @@ class TestBPMNFactory:
         act2 = self.factory.create_bpmn_element(element=self.read_xml(string_act2), elem_type=BPMNEnum.ACTIVITY)
         flow = self.factory.create_bpmn_element(element=self.read_xml(string_flow), elem_type=BPMNEnum.SEQUENCEFLOW, src_tgt_elements=[act1,act2])
 
-        assert flow.id == 'f'
-        assert flow.source.id == ''
-        assert flow.target.id == '2'
+        assert flow.id_ == 'f'
+        assert flow.source.id_ == ''
+        assert flow.target.id_ == '2'
 
     def test_start_event_normal(self):
         string = '<startEvent id="1" name="a"></startEvent>'
         start = self.factory.create_bpmn_element(element=self.read_xml(string), elem_type=BPMNEnum.STARTEVENT)
 
-        assert start.id == '1'
+        assert start.id_ == '1'
         assert start.name == 'a'
 
     def test_endevent_normal(self):
         string = '<startEvent id="1" name="a"></startEvent>'
         start = self.factory.create_bpmn_element(element=self.read_xml(string), elem_type=BPMNEnum.ENDEVENT)
 
-        assert start.id == '1'
+        assert start.id_ == '1'
         assert start.name == 'a'
 
     def test_parallel_gateway_constructor(self):
@@ -80,18 +80,18 @@ class TestBPMNFactory:
         gateway = self.factory.create_bpmn_element(element=self.read_xml(string), elem_type=BPMNEnum.PARALLGATEWAY)
 
         assert isinstance(gateway, BPMNParallelGateway)
-        assert gateway.id == '1'
+        assert gateway.id_ == '1'
 
     def test_inclusive_gateway_constructor(self):
         string = '<inclusiveGateway id="1"></inclusiveGateway>'
         gateway = self.factory.create_bpmn_element(element=self.read_xml(string), elem_type=BPMNEnum.INCLGATEWAY)
 
         assert isinstance(gateway, BPMNInclusiveGateway)
-        assert gateway.id == '1'
+        assert gateway.id_ == '1'
 
     def test_exclusive_gateway_constructor(self):
         string = '<exclusiveGateway id="1"></exclusiveGateway>'
         gateway = self.factory.create_bpmn_element(element=self.read_xml(string), elem_type=BPMNEnum.EXCLGATEWAY)
 
         assert isinstance(gateway, BPMNExclusiveGateway)
-        assert gateway.id == '1'
+        assert gateway.id_ == '1'

@@ -45,8 +45,8 @@ class TestGraphPointer:
 
     def link_elements(self, source: BPMNElement,
                       target: BPMNElement) -> Tuple[BPMNElement, BPMNElement, BPMNSequenceFlow]:
-        linking_flow = BPMNSequenceFlow(id='f1', condition=None,
-                                        source=source, target=target)
+        linking_flow = BPMNSequenceFlow(id_='f1', condition=None, source=source,
+                                        target=target)
 
         if isinstance(source, BPMNEvent):
             source.sequence_flow = linking_flow
@@ -66,7 +66,7 @@ class TestGraphPointer:
 
     def test_find_start_event_no_start(self):
         # error here: model has no start event
-        activity = BPMNActivity(id='42', name='space')
+        activity = BPMNActivity(id_='42', name='space')
         model = self.make_model(elements=[activity], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -75,8 +75,8 @@ class TestGraphPointer:
 
     def test_find_start_event_multiple_starts(self):
         # error here: model has multiple start events
-        start_1 = BPMNStartEvent(id='1', name='SE1')
-        start_2 = BPMNStartEvent(id='2', name='SE2')
+        start_1 = BPMNStartEvent(id_='1', name='SE1')
+        start_2 = BPMNStartEvent(id_='2', name='SE2')
         model = self.make_model(elements=[start_1, start_2], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -85,7 +85,7 @@ class TestGraphPointer:
 
     def test_find_start_event(self):
         # no error here: checks if it finds the single start event
-        start = BPMNStartEvent(id='1', name='SE')
+        start = BPMNStartEvent(id_='1', name='SE')
         model = self.make_model(elements=[start], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -94,7 +94,7 @@ class TestGraphPointer:
     def test_reached_end_event(self):
         # no error here: checks if previous element is end_event which only happens
         # if graph_pointer reached the end of the graph
-        end = BPMNEndEvent(id='1', name='EE')
+        end = BPMNEndEvent(id_='1', name='EE')
         model = self.make_model(elements=[end], flows=[])
         graph_pointer = self.graph_pointer(model=model)
         graph_pointer.stack.push(end)
@@ -110,7 +110,7 @@ class TestGraphPointer:
 
     def test_not_reached_end_event(self):
         # no error here: not reached end_event yet
-        act = BPMNActivity(id='1', name='act')
+        act = BPMNActivity(id_='1', name='act')
         model = self.make_model(elements=[act], flows=[])
         graph_pointer = self.graph_pointer(model=model)
         graph_pointer.previous_element = act
@@ -124,11 +124,11 @@ class TestGraphPointer:
         condition1 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value=v1)
-        sequence_flow_1 = BPMNSequenceFlow(id='1', condition=condition1)
+        sequence_flow_1 = BPMNSequenceFlow(id_='1', condition=condition1)
         condition2 = TokenStateCondition(tok_attribute=k2,
                                          operator=Operators.EQUALS,
                                          tok_value=v2)
-        sequence_flow_2 = BPMNSequenceFlow(id='2', condition=condition2)
+        sequence_flow_2 = BPMNSequenceFlow(id_='2', condition=condition2)
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
         graph_pointer = self.graph_pointer(model=model, token=example_token)
@@ -136,16 +136,16 @@ class TestGraphPointer:
         flows = graph_pointer.condition_fulfilling_sequence_flows(
             flows_to_check=model.sequence_flows)
         assert len(flows) == 2
-        assert flows[0].id != flows[1].id
-        assert flows[0].id == 0 or 1
+        assert flows[0].id_ != flows[1].id_
+        assert flows[0].id_ == 0 or 1
 
     def test_condition_fulfulling_sequence_flows_no_condition(self,
                                                               example_token):
         # no error here: check if flow without condition is accepted:
         # first flow with explicit none, second flow with implicit none.
         # just in case constructor changes
-        sequence_flow_1 = BPMNSequenceFlow(id='1', condition=None)
-        sequence_flow_2 = BPMNSequenceFlow(id='2')
+        sequence_flow_1 = BPMNSequenceFlow(id_='1', condition=None)
+        sequence_flow_2 = BPMNSequenceFlow(id_='2')
 
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
@@ -155,23 +155,23 @@ class TestGraphPointer:
             flows_to_check=model.sequence_flows)
 
         assert len(flows) == 2
-        assert flows[0].id != flows[1].id
-        assert flows[0].id == 0 or 1
+        assert flows[0].id_ != flows[1].id_
+        assert flows[0].id_ == 0 or 1
 
     def test_collect_conditional_sequence_flows_of_parallel_gateway(self):
         # no error here: checks if all sequence_flows make it through
-        sequence_flow_1 = BPMNSequenceFlow(id='1')
-        sequence_flow_2 = BPMNSequenceFlow(id='2')
+        sequence_flow_1 = BPMNSequenceFlow(id_='1')
+        sequence_flow_2 = BPMNSequenceFlow(id_='2')
         flows = [sequence_flow_1, sequence_flow_2]
-        gateway = BPMNParallelGateway(id='gw', sequence_flows_out=flows)
+        gateway = BPMNParallelGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
         graph_pointer = self.graph_pointer(model=model)
 
         flows = graph_pointer.collect_conditional_sequence_flows_of_gateway(
             gateway=gateway)
         assert len(flows) == 2
-        assert flows[0].id != flows[1].id
-        assert flows[0].id == 0 or 1
+        assert flows[0].id_ != flows[1].id_
+        assert flows[0].id_ == 0 or 1
 
 
     def test_collect_conditional_sequence_flows_of_inclusive_gateway(self, example_token):
@@ -183,21 +183,23 @@ class TestGraphPointer:
         condition1 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value=v1)
-        sequence_flow_1 = BPMNSequenceFlow(id=id_of_cond_flow, condition=condition1)
+        sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
+                                           condition=condition1)
         condition2 = TokenStateCondition(tok_attribute=k2,
                                          operator=Operators.EQUALS,
                                          tok_value='a value that is wrong')
-        sequence_flow_2 = BPMNSequenceFlow(id='no cond flow', condition=condition2)
+        sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow',
+                                           condition=condition2)
 
         flows = [sequence_flow_1, sequence_flow_2]
-        gateway = BPMNInclusiveGateway(id='gw', sequence_flows_out=flows)
+        gateway = BPMNInclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
         flows = graph_pointer.collect_conditional_sequence_flows_of_gateway(
                                                             gateway=gateway)
         assert len(flows) == 1
-        assert flows[0].id == id_of_cond_flow
+        assert flows[0].id_ == id_of_cond_flow
 
 
 
@@ -208,15 +210,17 @@ class TestGraphPointer:
         condition1 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value='wrong value')
-        sequence_flow_1 = BPMNSequenceFlow(id='no cond flow', condition=condition1)
+        sequence_flow_1 = BPMNSequenceFlow(id_='no cond flow',
+                                           condition=condition1)
 
         condition2 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value='a value that is wrong')
-        sequence_flow_2 = BPMNSequenceFlow(id='no cond flow2', condition=condition2)
+        sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
+                                           condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]
 
-        gateway = BPMNExclusiveGateway(id='gw', sequence_flows_out=flows)
+        gateway = BPMNExclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
@@ -232,29 +236,31 @@ class TestGraphPointer:
         condition1 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value=v1)
-        sequence_flow_1 = BPMNSequenceFlow(id=id_of_cond_flow, condition=condition1)
+        sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
+                                           condition=condition1)
 
         condition2 = TokenStateCondition(tok_attribute=k1,
                                          operator=Operators.EQUALS,
                                          tok_value='a value that is wrong')
-        sequence_flow_2 = BPMNSequenceFlow(id='no cond flow2', condition=condition2)
+        sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
+                                           condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]
 
-        gateway = BPMNExclusiveGateway(id='gw', sequence_flows_out=flows)
+        gateway = BPMNExclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
         flows = graph_pointer.collect_conditional_sequence_flows_of_gateway(gateway=gateway)
         assert len(flows) == 1
-        assert flows[0].id == id_of_cond_flow
+        assert flows[0].id_ == id_of_cond_flow
 
 
     def test_next_step_no_gateway_activity(self, nn_chunker):
         # checks if adjacent element of activity is pushed on stack
 
         # model building
-        act_1 = BPMNActivity(id='act1', name='noun')
-        act_2 = BPMNActivity(id='act2', name='noun')
+        act_1 = BPMNActivity(id_='act1', name='noun')
+        act_2 = BPMNActivity(id_='act2', name='noun')
         act_1, act_2, flow = self.link_elements(source=act_1, target=act_2)
         act_1: BPMNActivity
         model = self.make_model(elements=[act_1,act_2], flows=[flow])
@@ -271,8 +277,8 @@ class TestGraphPointer:
         # checks if adjacent element of start event is pushed on stack
 
         # model building
-        start = BPMNStartEvent(id='SE', name='startendevent')
-        act_1 = BPMNActivity(id='act1', name='noun')
+        start = BPMNStartEvent(id_='SE', name='startendevent')
+        act_1 = BPMNActivity(id_='act1', name='noun')
         start, act_1, flow = self.link_elements(source=start, target=act_1)
         start: BPMNStartEvent
         model = self.make_model(elements=[start,act_1], flows=[flow])
@@ -289,8 +295,8 @@ class TestGraphPointer:
         # checks if activity with adjacent end event is comes to a stop
 
         # model_building
-        end = BPMNEndEvent(id='EE', name='startendevent')
-        act_1 = BPMNActivity(id='act1', name='noun')
+        end = BPMNEndEvent(id_='EE', name='startendevent')
+        act_1 = BPMNActivity(id_='act1', name='noun')
         act_1, end, flow = self.link_elements(source=act_1, target=end)
         act_1: BPMNActivity
         end: BPMNEndEvent
@@ -313,9 +319,9 @@ class TestGraphPointer:
         # conditional branch checking is done by other tests
 
         # model building
-        gateway = BPMNParallelGateway(id='gw')
-        act_1 = BPMNActivity(id='act1', name='noun')
-        act_2 = BPMNActivity(id='act2', name='noun')
+        gateway = BPMNParallelGateway(id_='gw')
+        act_1 = BPMNActivity(id_='act1', name='noun')
+        act_2 = BPMNActivity(id_='act2', name='noun')
 
         gateway, act_1, flow_1 = self.link_elements(source=gateway, target=act_1)
         gateway, act_2, flow_2 = self.link_elements(source=gateway, target=act_2)
@@ -337,11 +343,11 @@ class TestGraphPointer:
         # checks case: annihilate opening gateway
 
         # model building
-        in_act_1 = BPMNActivity(id='inact1', name='noun')
-        in_act_2 = BPMNActivity(id='inact2', name='noun')
-        opening_gateway = BPMNParallelGateway(id='opgw')
-        closing_gateway = BPMNParallelGateway(id='clgw')
-        out_act = BPMNActivity(id='outact', name='noun')
+        in_act_1 = BPMNActivity(id_='inact1', name='noun')
+        in_act_2 = BPMNActivity(id_='inact2', name='noun')
+        opening_gateway = BPMNParallelGateway(id_='opgw')
+        closing_gateway = BPMNParallelGateway(id_='clgw')
+        out_act = BPMNActivity(id_='outact', name='noun')
 
         opening_gateway, in_act_1, _ = self.link_elements(source=opening_gateway,
                                                           target=in_act_1)
@@ -380,10 +386,10 @@ class TestGraphPointer:
         # activity before gateway annihilation
 
         # model building
-        in_act_1 = BPMNActivity(id='inact1', name='noun')
-        in_act_2 = BPMNActivity(id='inact2', name='noun')
-        closing_gateway = BPMNParallelGateway(id='clgw')
-        out_act = BPMNActivity(id='outact', name='noun')
+        in_act_1 = BPMNActivity(id_='inact1', name='noun')
+        in_act_2 = BPMNActivity(id_='inact2', name='noun')
+        closing_gateway = BPMNParallelGateway(id_='clgw')
+        out_act = BPMNActivity(id_='outact', name='noun')
 
         in_act_1, closing_gateway, _ = self.link_elements(source=in_act_1,
                                                           target=closing_gateway)
