@@ -20,7 +20,7 @@ class TestIntegration:
 
     def run_pointer(self, graph_pointer: GraphPointer) -> Token:
         for _ in range(100):
-            ret = graph_pointer.runstep_graph()
+            ret = graph_pointer.iterate_model()
             if ret == 1:
                 return graph_pointer.token
         # if graph_pointer does not hold after 100 steps

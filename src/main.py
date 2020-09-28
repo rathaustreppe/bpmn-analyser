@@ -125,7 +125,7 @@ graph_pointer_list: List[GraphPointer] = [gp]
 
 for graph_pointer in graph_pointer_list:
     for i in range(100):
-        ret = graph_pointer.runstep_graph()
+        ret = graph_pointer.iterate_model()
         if ret == 1:
             # compare tokens
             return_token = graph_pointer.token
