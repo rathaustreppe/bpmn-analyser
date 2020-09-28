@@ -49,7 +49,8 @@ class TokenStateCondition:
             if condition.find(op.value) != -1:
                 operator = op
         if operator == '':
-            raise MissingOperatorInConditionError(text=condition)
+            raise MissingOperatorInConditionError(text=condition,
+                                                  valid_operators=[op.value for op in Operators])
 
         # find attr
         op_pos = condition.find(operator.value)

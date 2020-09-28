@@ -33,7 +33,7 @@ class Token:
             print(f'Token changed: {key}: {val_before} -> {value}')
         else:
             raise RuntimeError(
-                f'ERROR: key {key} not in token attributes')
+                f'ERROR: key: "{key}" not in token attributes')
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]

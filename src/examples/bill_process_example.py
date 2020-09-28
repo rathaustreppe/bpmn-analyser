@@ -118,7 +118,8 @@ class BillProcessExample(IExample):
                           tagged_words_bypass=tagged_words_bypass)
 
     def get_students_process(self) -> BPMNModel:
-        # This is the students solution. We want to check if this BPMN-Graph is correct.
+        # This is the students solution. We want to check if this
+        # BPMN-Graph is correct.
         # Graph from *.bpmn-file
         path_to_bpmn = r'examples/bill_process.bpmn'
         converter = Converter()

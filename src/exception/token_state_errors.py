@@ -1,6 +1,7 @@
 class MissingOperatorInConditionError(Exception):
-    def __init__(self, text: str):
-        self.message = f'operator in string >{text}< is not implemented'
+    def __init__(self, text: str, valid_operators: 'Operators'):
+        self.message = f'operator in string >{text}< is not implemented. ' \
+                       f'Valid operators: {valid_operators}'
         super().__init__(self.message)
 
 
