@@ -38,13 +38,12 @@ class GraphPointer:
                  token: Token,
                  ruleset: List[TokenStateRule],
                  chunker: Chunker,
-                 model: BPMNModel,
-                 stack: Optional[Stack] = None) -> None:
+                 model: BPMNModel) -> None:
         self.model = model
         self.token = token
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
         self.previous_element: Optional[Union[BPMNGateway, BPMNActivity]] = None
-        self.stack = stack
+        self.stack = Stack()
         self._model_start = None
 
         if self.stack is None:

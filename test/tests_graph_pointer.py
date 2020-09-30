@@ -97,7 +97,7 @@ class TestGraphPointer:
         end = BPMNEndEvent(id_='1', name='EE')
         model = self.make_model(elements=[end], flows=[])
         graph_pointer = self.graph_pointer(model=model)
-        graph_pointer.stack.push(end)
+        graph_pointer.stack.push(item=end)
 
         assert graph_pointer.reached_end_event()
 
@@ -267,7 +267,7 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(act_1)
+        graph_pointer.stack.push(item=act_1)
 
         # test
         graph_pointer.next_step_no_gateway(element=act_1)
@@ -285,7 +285,7 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(start)
+        graph_pointer.stack.push(item=start)
 
         # test
         graph_pointer.next_step_no_gateway(element=start)
@@ -304,7 +304,7 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(act_1)
+        graph_pointer.stack.push(item=act_1)
 
         # test
         graph_pointer.next_step_no_gateway(element=act_1)
@@ -330,7 +330,7 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(gateway)
+        graph_pointer.stack.push(item=gateway)
 
         # test
         graph_pointer.next_step_opening_gateway(gateway=gateway)
@@ -370,7 +370,7 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(opening_gateway)
+        graph_pointer.stack.push(item=opening_gateway)
 
         # asserts for test config
         assert graph_pointer.is_opening_gateway(element=opening_gateway)
