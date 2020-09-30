@@ -38,16 +38,18 @@ class Converter:
         Use other and better tools to check this. For examples
         bpmn-js-bpmnlint.
         """
-        self.xml_reader.rel_path = rel_path_to_bpmn
+        abs_file_path = self.xml_reader.rel_to_abs_path(rel_path=
+                                                        rel_path_to_bpmn)
 
-        # the bpmn-xml of demo.bpmn.io contains wrong
-        # xmlns-definitions that prevent the python xml
-        # parser to read the xml:
-        # >>> definitions xmlns = "http://ww.omg.org/s...
-        # We kick them out.
-        self.xml_reader.prepare_dom()
 
-        self.xml_tree = self.xml_reader.parse_to_dom()
+        # # the bpmn-xml of demo.bpmn.io contains wrong
+        # # xmlns-definitions that prevent the python xml
+        # # parser to read the xml:
+        # # >>> definitions xmlns = "http://ww.omg.org/s...
+        # # We kick them out.
+        # self.xml_reader.prepare_dom()
+
+        self.xml_tree = self.xml_reader.parse_to_dom(abs_file_path=abs_file_path)
 
         bpmn_converter = BPMNConverter(xml_reader=self.xml_reader,
                                        bpmn_factory=BPMNFactory())
@@ -55,5 +57,9 @@ class Converter:
         all_bpmn_types = [BPMNEnum.STARTEVENT, BPMNEnum.ENDEVENT,
                           BPMNEnum.ACTIVITY, BPMNEnum.PARALLGATEWAY,
                           BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]
+
+        # temp files of xml reader now useless.
+        # clean them
+        self.xml_reader.clean_temp_file_path()
 
         return bpmn_converter.create_all_bpmn_objects(bpmn_types=all_bpmn_types)

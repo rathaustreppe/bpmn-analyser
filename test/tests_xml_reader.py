@@ -13,7 +13,7 @@ class TestXMLReader:
 
     pytest_root = os.path.dirname(os.path.abspath(__file__))
     xml_files = os.path.join(pytest_root, 'test_files', 'xml')
-    working_dict = os.path.join(pytest_root, 'test_files', 'working_dict')
+    working_dict = os.path.join(pytest_root, 'test_files', 'temp_working_dict')
 
     @classmethod
     def setup_class(cls):
@@ -48,14 +48,12 @@ class TestXMLReader:
         the <name> tag of the BPMNStartEvent.
         """
         xpath_start_event = './/startEvent'
-
-        actual = os.path.join(self.working_dict, filename)
-        self.xml_reader_actual.rel_path = actual
-        self.xml_reader_actual.prepare_dom()
+        abs_file_path = os.path.join(self.working_dict, filename)
 
         # if we can query the dom, the new xml is parsable
         # this is what we want when calling prepare_dom()
-        actual_dom = self.xml_reader_actual.parse_to_dom(abs_path=actual)
+        actual_dom = self.xml_reader_actual.parse_to_dom(abs_file_path=
+                                                         abs_file_path)
         return actual_dom.find(xpath_start_event).attrib['name']
 
     def test_strip_definitions_def_def(self):
@@ -82,3 +80,24 @@ class TestXMLReader:
         # delete definitions and <bpmndi>
         actual_name = self.strip_definitions(filename='bpmndi.bpmn')
         assert actual_name == self.hunger_noticed
+
+    def test_do_not_touch_files(self):
+        # checks if original file is left untouched and xml reader therefore
+        # only works with copies
+        # to test this we parse and query the to_be_untouched file
+        # and compare it to the exact copy to_be_untouched_2
+        filename = 'to_be_untouched.bpmn'
+        filename_2 = 'to_be_untouched_2.bpmn'
+        actual_name = self.strip_definitions(filename=filename)
+        assert actual_name == self.hunger_noticed
+
+        # open both files and compare line by line
+        file_path_untouched = os.path.join(self.working_dict, filename)
+        with open(file_path_untouched, "r") as f:
+            lines_1 = f.readlines()
+
+        file_path_untouched_2 = os.path.join(self.working_dict, filename_2)
+        with open(file_path_untouched_2, "r") as f:
+            lines_2 = f.readlines()
+
+        assert lines_1 == lines_2

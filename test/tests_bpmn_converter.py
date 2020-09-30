@@ -36,8 +36,10 @@ class TestBPMNConverter:
     def create_model(self, filename:str) -> BPMNModel:
         bpmn_converter = BPMNConverter(xml_reader=XMLReader(), bpmn_factory=BPMNFactory())
         file_path = os.path.join(self.converter_xmls(), filename)
-        bpmn_converter.xml_reader.parse_to_dom(abs_path=file_path)
-        return bpmn_converter.create_all_bpmn_objects(bpmn_types=self.all_bpmn_types())
+        bpmn_converter.xml_reader.parse_to_dom(abs_file_path=file_path)
+        model= bpmn_converter.create_all_bpmn_objects(bpmn_types=self.all_bpmn_types())
+        bpmn_converter.xml_reader.clean_temp_file_path()
+        return model
 
     def find_elems(self, elements: List[BPMNElement], type):
         return [elem for elem in elements if isinstance(elem, type)]
