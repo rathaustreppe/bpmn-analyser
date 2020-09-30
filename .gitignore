@@ -1,7 +1,11 @@
- #pyharm ide
+# pyharm ide
 .idea
+# html files of coverage
+htmlcov
+
 *.pyc
 *.svg
+
 
 # python virutal environments
 venv38

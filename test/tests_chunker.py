@@ -2,6 +2,8 @@ from typing import List, Tuple
 
 import pytest
 
+from src.exception.language_processing_errors import NoChunkFoundError, \
+    MultipleChunksFoundError
 from src.nlp.chunker import Chunker
 
 
@@ -24,14 +26,14 @@ class TestChunker:
         # no found chunks leads to an error
         text = self.tuple_to_str(tuple_list=nn_word)
         chunker = Chunker(chunk_grams='')
-        with pytest.raises(ValueError):
+        with pytest.raises(NoChunkFoundError):
             chunker.find_chunk(text=text)
 
     def test_chunker_double_chunk(self, nn_chunker, nn_word):
         # two chunks per sentence is not allowed
         text = self.tuple_to_str(tuple_list=nn_word) + " " \
                + self.tuple_to_str(tuple_list=nn_word)
-        with pytest.raises(ValueError):
+        with pytest.raises(MultipleChunksFoundError):
             nn_chunker.find_chunk(text=text)
 
     def test_chunker_complex_chunk(self, nn_vb_nn_chunker, nn_vb_nn_sentence):

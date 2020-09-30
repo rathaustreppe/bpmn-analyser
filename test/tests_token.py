@@ -84,7 +84,7 @@ class TestToken:
         assert token_copy == example_token
 
     def test_equal_new_token(self, example_token):
-        # same keys and values from example token above
+        # same keys and values from examples token above
         attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
         token2 = Token(attributes=attributes)
         assert token2 == example_token

@@ -1,13 +1,24 @@
-from typing import List
+from typing import List, Union, Optional
 
-import igraph
-from igraph import Graph
 from pedantic import pedantic_class
 
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.exception.graph_exception import GraphNotDirectedError, \
-    GraphHasNoStartError, GraphHasMultipleStartsError
-from src.models.gateway_stack_handler import GatewayStackHandler
+from src.converter.bpmn_models.bpmn_activity import BPMNActivity
+from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.bpmn_model import BPMNModel
+from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
+from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
+from src.converter.bpmn_models.gateway.bpmn_exclusive_gateway import \
+    BPMNExclusiveGateway
+from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
+from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
+    BPMNInclusiveGateway
+from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
+    BPMNParallelGateway
+from src.exception.gateway_errors import ExclusiveGatewayBranchError
+from src.exception.model_errors import MultipleStartEventsError, \
+    NoStartEventError
+from src.models.stack import Stack
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
@@ -23,92 +34,76 @@ class GraphPointer:
     state. It knows how to deal with gateways.
     """
 
-    def __init__(self, graph: Graph,
+    def __init__(self,
                  token: Token,
                  ruleset: List[TokenStateRule],
-                 chunker: Chunker) -> None:
-        self.graph = graph
+                 chunker: Chunker,
+                 model: BPMNModel,
+                 stack: Optional[Stack] = None) -> None:
+        self.model = model
         self.token = token
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
-        self.previous_element: igraph.Vertex = None
-        self.stack_handler = GatewayStackHandler()
+        self.previous_element: Optional[Union[BPMNGateway, BPMNActivity]] = None
+        self.stack = stack
+        self._model_start = None
 
-    def runstep_graph(self) -> int:
+        if self.stack is None:
+            self.stack = Stack()
+
+    def iterate_model(self) -> int:
         """
         With each call, it iterates one step through the
-        graph (= changes self.current and self.previous),
-        analyses the text (= bpmn activity) and performs state transitions on token.
+        BPMNModel (= changes and self.previous),
+        analyses the text (= bpmn activity) and performs state transitions
+        on token.
         Returns:
             int:
             1 if the end of the graph is reached
             0 if the the step was performed successfully but
             the end of the graph is not reached yet
         """
+        if self._model_start is None:
+            # init
+            self._model_start = self.find_start_event()
+            self.next_step_no_gateway(element=self._model_start)
 
-        if self.previous_element is None:
-            # case: init, first call of runstep_graph
-            # We know it must be a BPMNStartEvent (otherwise contradicting
-            # BPMNSpecification) so we can perform text analysis on it.
-            current = self.find_start_vertex()
-            matching_rules = self._text_analysis(vertex=current)
-            self._modify_token_with_rules(matching_rules=matching_rules)
-            self.previous_element = current
+        if not self.reached_end_event():
+            self.next_step_switch_by_type()
             return 0
         else:
-            # if previous element was a endEvent, we reached the end of the graph
-            # endEvents are the only BPMN-Element with no outgoing edges
-            # (compare to activities, gateways and startEvents)
-            if len(self.previous_element.out_edges()) != 0:
-                self._next_step()
-                return 0
-            else:
-                return 1
+            # make text analysis of end event, empty stack and
+            # quit with return 1
+            self.next_step_switch_by_type()
+            self.stack.empty()
+            return 1
 
+    def reached_end_event(self) -> bool:
+        return isinstance(self.stack.top(), BPMNEndEvent)
 
-
-    def find_start_vertex(self) -> igraph.Vertex:
+    def find_start_event(self) -> BPMNStartEvent:
         """
-        Find the entry point of the graph from where
-        the graph is read. Can only process directed graphs
-        and only graphs with exactly one start vertex. We treat a vertex as
-        start vertex if the vertex has no incident edges.
+        Find the entry point of the BPMNModel from where
+        the BPMNModel is read. This is usually the BPMNStartEvent.
         """
-
-        # cannot find a start of a non-directed graph
-        if not self.graph.is_directed():
-            raise GraphNotDirectedError(graph=self.graph)
-
-        # get the incidence list of all vertices
-        # if one and only one vertex has no incident edge,
-        # it is the start vertex
-        incidence_list = (self.graph.get_inclist(mode="IN"))
-
-        # now we got something like
-        # >>> [[], [0], [1], [2], [3]]
-        # and want to check that there is only one empty
-        # list and we want to get the position of the list
-        # because this is equal to the vertex_id (see
-        # documentation of igraph.graph.get_inclist)
-        if (incidence_list.count([])) == 0:
-            raise GraphHasNoStartError(graph=self.graph)
-
-        elif (incidence_list.count([])) > 1:
-            raise GraphHasMultipleStartsError(graph=self.graph)
-
+        start = self.model.find_elements_by_type(type_to_find=BPMNStartEvent)
+        if len(start) == 1:
+            return start[0]
+        elif len(start) == 0:
+            raise NoStartEventError(model=self.model)
         else:
-            vertex_id_in_graph = incidence_list.index([])
-            return self.graph.vs[vertex_id_in_graph]
+            raise MultipleStartEventsError(model=self.model)
 
-
-    def _text_analysis(self, vertex: igraph.Vertex) -> List[TokenStateRule]:
+    def _text_analysis(self, activity: Union[BPMNActivity,
+                                             BPMNStartEvent,
+                                             BPMNEndEvent]) \
+            -> List[TokenStateRule]:
         """
-        Applies NLP on vertex and finds all the rules where their SynonymCloud
-        is synonym to the given vertex text.
+        Applies NLP on BPMNActivity and finds all the rules where
+        their SynonymCloud is synonym to the given vertex text.
         """
-        vertex_text = vertex[BPMNEnum.NAME.value]
-        matching_rules = self.rule_finder.find_rules(text=vertex_text)
+        matching_rules = self.rule_finder.find_rules(text=activity.name)
 
-        print(f'TEXT: {vertex_text}')
+        print(f'TEXT: {activity.name}')
         print(f'MATCHING RULES: {matching_rules}')
 
         return matching_rules
@@ -123,65 +118,154 @@ class GraphPointer:
             self.token = rule.check_and_modify(token=self.token)
         return self.token
 
-    def find_current_element(self) -> igraph.Vertex:
-        # We find out what is meant to be the current element by looking back
-        # and checking the type of the previous element.
-        # If it was an activity we dont invoke the stack. Every BPMNActivity
-        # can have only one adjacent/following element. So we can find the
-        # adjacent element by asking the graph library. The adjacent element
-        # of the previous element is therefore our new current element.
-        # If the previous element was a gateway we need to ask the stack. It
-        # tells us with which branch of the gateway we should continue the
-        # processing. This will be our new current element.
-        gateway_texts = BPMNEnum.GATEWAY_TEXTS.value
+    @staticmethod
+    def first_element_of_all_branches(branches: List[BPMNSequenceFlow]) -> \
+            List[Union[BPMNActivity, BPMNGateway, BPMNElement]]:
+        return [flow.target for flow in branches]
 
-        if self.previous_element[BPMNEnum.NAME.value] in gateway_texts:
-            return self.stack_handler.next_stack_element()
-        else:
-            # previous_element was activity or startEvent
-            next_edges = self.previous_element.out_edges()
-            if len(next_edges) == 1:
-                return self.graph.vs[next_edges[0].target]
+    def condition_fulfilling_sequence_flows(self,
+                                            flows_to_check: List[BPMNSequenceFlow])\
+            -> List[BPMNSequenceFlow]:
+        flows = []
+        for flow in flows_to_check:
+            if flow.condition is None or flow.condition.check_condition(
+                    token=self.token):
+                # we treat flows without conditions as fulfilled flows
+                flows.append(flow)
+        return flows
 
-    def get_first_vertex_of_all_branches(self, branches:List[igraph.Edge]) -> List[igraph.Vertex]:
-        return [self.graph.vs[edge.target] for edge in branches]
-
-    def _next_step(self) -> None:
+    def collect_conditional_sequence_flows_of_gateway(self,
+                                                      gateway: BPMNGateway) -> \
+            List[BPMNSequenceFlow]:
         """
-        Single-Steps through the graph with each call. Deals with consecutively
-        BPMNActivities and knows how to split at BPMNGateways. Uses a
-        StackHandler to keep track of processed gateway branches.
+        Method that makes a distinction of different gateway types and returns
+        the corresponding sequence_flows that fulfill the conditions.
+        Parallel-Gateway: returns all sequence_flows
+        Inclusive-Gateway: returns all sequence_flows that meet the condition
+        Exclusive-Gateway: checks that only one sequence_flow
+        fulfills the condition
         """
-        gateway_texts = BPMNEnum.GATEWAY_TEXTS.value
+        flows = gateway.sequence_flows_out
 
-        current = self.find_current_element()
-        current_name_tag = current[BPMNEnum.NAME.value]
+        if isinstance(gateway, BPMNParallelGateway):
+            return flows
 
-        if current_name_tag in gateway_texts:
-            # current is gateway
-            # Collect all the branches a gateway branches into it and check
-            # their conditions. If they are true, we can branch into them.
-            # All those edges that meet the condition will be put on the stack.
-            # This way we make sure to process all branches.
-            # If it is a parallel gateway, all branches are used.
-            outgoing_edges = current.out_edges()
-            if current_name_tag == BPMNEnum.PARALLGATEWAY_TEXT.value:
-                conditions_meet_edges = outgoing_edges
+        elif isinstance(gateway, BPMNInclusiveGateway):
+            return self.condition_fulfilling_sequence_flows(
+                flows_to_check=flows)
+
+        elif isinstance(gateway, BPMNExclusiveGateway):
+            cond_flows = self.condition_fulfilling_sequence_flows(
+                flows_to_check=flows)
+            if len(cond_flows) == 1:
+                return cond_flows
             else:
-                conditions_meet_edges = [edge for edge in outgoing_edges
-                                         if edge[BPMNEnum.CONDITION.value].
-                                             check_condition(token=self.token)]
+                raise ExclusiveGatewayBranchError(gateway=gateway,
+                                                  flows=flows)
 
-            branch_vertices = self.get_first_vertex_of_all_branches(
-                branches=conditions_meet_edges)
+    def text_analysis(self, current: Union[BPMNActivity,
+                                           BPMNStartEvent,
+                                           BPMNEndEvent]) -> None:
+        matching_rules = self.rule_finder.find_rules(text=current.name)
+        self._modify_token_with_rules(matching_rules=matching_rules)
 
-            self.stack_handler.check_gateway_stack(gateway=current,
-                                                   branch_vertices=branch_vertices)
+    @staticmethod
+    def is_opening_gateway(element: BPMNElement) -> bool:
+        return isinstance(element, BPMNGateway) and element.is_opening_gateway()
+
+    @staticmethod
+    def is_closing_gateway(element: BPMNElement) -> bool:
+        return isinstance(element,
+                          BPMNGateway) and not element.is_opening_gateway()
+
+    def next_step_no_gateway(self, element: Union[BPMNActivity,
+                                                  BPMNStartEvent,
+                                                  BPMNEndEvent]) -> None:
+        """
+        Method that knows how to deal with every other BPMN-Element except
+        gateways and flows. Those BPMNElements (BPMNActivity, BPMNStartEvent,
+        BPMNEndEvent) have only one adjacent element and need text processing
+        (NLP). There is no enhanced stack logic in this function: after NLP
+        only put the adjacent element on top of the stack.
+        """
+        def push(to_push: Union[BPMNActivity, BPMNStartEvent, BPMNEndEvent,
+                                BPMNElement]):
+            self.stack.push(item=to_push)
+
+        self.text_analysis(current=element)
+
+        if isinstance(element, BPMNActivity):
+            push(to_push=element.sequence_flow_out.target)
+
+        elif isinstance(element, BPMNStartEvent):
+            push(to_push=element.sequence_flow.target)
+
+        elif isinstance(element, BPMNEndEvent):
+            # BPMNEndEvent on top of stack is treated as ending in next
+            # iteration
+            push(to_push=element)
+
+    def next_step_opening_gateway(self, gateway: BPMNGateway) -> None:
+        """
+        method that deals with opening gateways (those that split the main
+        branch of a model in conditional branches (exclusive, parallel, etc)).
+        To keep track with different branches, every branch that fulfills the
+        condition to branch, will be put on the stack. Only when all branches
+        are processed, the opening gateway is finished (-> can be removed from
+        stack = annihilated)
+        """
+        if self.is_opening_gateway(element=gateway):
+            conditions_meet_flows = \
+                self.collect_conditional_sequence_flows_of_gateway(
+                    gateway=gateway)
+            branch_elements = self.first_element_of_all_branches(
+                branches=conditions_meet_flows)
+
+            self.stack.push(gateway)
+
+            # reverse list order to put it 1:1 on stack (because stack is LIFO,
+            # but first list element should be on top of stack, because easier
+            # to debug)
+            branch_elements.reverse()
+
+            for element in branch_elements:
+                self.stack.push(element)
+
+    def next_step_closing_gateway(self, gateway: BPMNGateway) -> None:
+        """
+        method that deals with closing gateways (those that merge different
+        branches of a model into one).
+        """
+        if self.is_closing_gateway(element=gateway):
+            tos = self.stack.top()
+            if self.is_opening_gateway(element=tos):
+                # annihilate
+                self.stack.pop()
+                # closing gateway can have only 1 outgoing sequence_flow
+                # therefore direct access
+                self.stack.push(gateway.sequence_flows_out[0].target)
+            elif self.is_closing_gateway(element=tos):
+                raise ValueError('Stack Exception')
+            elif isinstance(tos, BPMNActivity) or isinstance(tos,
+                                                             BPMNStartEvent):
+                # there is another branch to process: process it first.
+                # so nothing to do. next_step-function will decide next time
+                return
+
+    def next_step_switch_by_type(self) -> None:
+        """
+        interface method for executing the element-by-element processing of
+        a model. Leaves element-to-process-next on stack. Everytime calling
+        this function it takes an element from the stack, processes it (NLP)
+        and put the adjacent element on the stack. It knows how to handle
+        gateways, events and activities.
+        """
+        current = self.stack.pop()
+        if self.is_opening_gateway(element=current):
+            self.next_step_opening_gateway(gateway=current)
+
+        elif self.is_closing_gateway(element=current):
+            self.next_step_closing_gateway(gateway=current)
+
         else:
-            # current is no gateway, therefore perform text analysis &
-            # rule checking & token changing
-            matching_rules = self._text_analysis(vertex=current)
-            self._modify_token_with_rules(matching_rules=matching_rules)
-
-        self.previous_element = current
-
+            self.next_step_no_gateway(element=current)

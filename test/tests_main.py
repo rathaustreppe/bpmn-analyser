@@ -17,7 +17,6 @@ from test.tests_stack import TestStack
 from test.tests_xml_reader import TestXMLReader
 from test.tests_bpmn_converter import TestBPMNConverter
 from test.tests_bpmn_factory import TestBPMNFactory
-from test.tests_graph_converter import TestGraphConverter
 
 # NLP
 from test.tests_chunker import TestChunker
@@ -25,7 +24,6 @@ from test.tests_synonym_composite import TestSynonymComposite
 from test.tests_synonym_cloud import TestSynonymCloud
 
 # integration tests of unit compositions
-from test.tests_gateway_stack_handler import TestGatewayStackHandler
 from test.tests_graph_pointer import TestGraphPointer
 from test.tests_integration import TestIntegration
 

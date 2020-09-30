@@ -8,5 +8,5 @@ Basically for everything that is in a diagram.
 
 @pedantic_class
 class BPMNElement:
-    def __init__(self, id: str) -> None:
-        self.id = id
+    def __init__(self, id_: str) -> None:
+        self.id_ = id_

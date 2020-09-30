@@ -1,13 +1,13 @@
 import os
+import unittest
 
-import igraph
-
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.converter import Converter
-from src.converter.xml_reader import XMLReader
+from src.examples.gateway_example import GatewayExample
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
+from src.models.token_state_rule import TokenStateRule
+from src.nlp.synonym_cloud import SynonymCloud
 
 
 class TestIntegration:
@@ -21,11 +21,30 @@ class TestIntegration:
 
     def run_pointer(self, graph_pointer: GraphPointer) -> Token:
         for _ in range(100):
-            ret = graph_pointer.runstep_graph()
+            ret = graph_pointer.iterate_model()
             if ret == 1:
                 return graph_pointer.token
         # if graph_pointer does not hold after 100 steps
         return Token(attributes=None)
+
+    def execute_process(self, filename: str,
+                        xml_folders_path,
+                        chunker,
+                        ruleset,
+                        init_token) -> Token:
+
+        xml_file_path = os.path.join(xml_folders_path, filename)
+
+        converter = Converter()
+        model = converter.convert(rel_path_to_bpmn=xml_file_path)
+
+        graph_pointer = GraphPointer(model=model,
+                                     token=init_token,
+                                     ruleset=ruleset,
+                                     chunker=chunker)
+
+        return self.run_pointer(graph_pointer=graph_pointer)
+
 
     def test_bill_process_system_test(self, xml_folders_path,
                                       bill_process_chunker,
@@ -33,121 +52,130 @@ class TestIntegration:
                                       bill_process_init_token,
                                       bill_process_solution_token):
 
-        xml_file_path = os.path.join(xml_folders_path,
-                                     'bill_process_no_def.bpmn')
+        file = os.path.join('bill process', 'bill_process_with_def.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=bill_process_chunker,
+                                            ruleset=bill_process_ruleset,
+                                            init_token=bill_process_init_token)
 
-        converter = Converter()
-        graph = converter.convert(rel_path_to_bpmn=xml_file_path)
-
-        graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
-                                     ruleset=bill_process_ruleset,
-                                     chunker=bill_process_chunker)
-
-        return_token = self.run_pointer(graph_pointer=graph_pointer)
         assert return_token == bill_process_solution_token
 
-    def test_bill_process_from_graph1(self, bill_process_chunker,
+    def test_bill_process_from_graph2(self, xml_folders_path,
+                                      bill_process_chunker,
                                       bill_process_ruleset,
                                       bill_process_init_token,
                                       bill_process_solution_token):
         # bill first arrives in goerlitz
-        pre = TokenStateModification(key='place', value='Goerlitz')
-        bill_process_init_token.change_value(modification=pre)
+        modification = TokenStateModification(key='place',value='Goerlitz')
+        bill_process_init_token.change_value(modification=modification)
 
-        graph = igraph.Graph()
-        graph = graph.as_directed()
-
-        graph.add_vertices(7)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
-
-        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
-        graph.vs[1][BPMNEnum.NAME.value] = self.ml_signs_bill
-        graph.vs[2][BPMNEnum.NAME.value] = self.send_bill_to_zittau
-        graph.vs[3][BPMNEnum.NAME.value] = self.zittau_checks_contract
-        graph.vs[4][BPMNEnum.NAME.value] = self.zittau_signs_bill
-        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_dresden
-        graph.vs[6][BPMNEnum.NAME.value] = self.startendevent_placeholder
-
-        graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
-                                     ruleset=bill_process_ruleset,
-                                     chunker=bill_process_chunker)
-        return_token = self.run_pointer(graph_pointer=graph_pointer)
+        file = os.path.join('bill process', 'bill_process_2.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=bill_process_chunker,
+                                            ruleset=bill_process_ruleset,
+                                            init_token=bill_process_init_token)
         assert return_token == bill_process_solution_token
 
-    def test_bill_process_from_graph2(self, bill_process_chunker,
+
+    def test_bill_process_from_graph3(self, xml_folders_path,
+                                      bill_process_chunker,
                                       bill_process_ruleset,
                                       bill_process_init_token,
                                       bill_process_solution_token):
-        graph = igraph.Graph()
-        graph = graph.as_directed()
 
-        graph.add_vertices(7)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4,5),(5,6)])
-
-        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
-        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
-        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
-        graph.vs[3][BPMNEnum.NAME.value] = "send bill to Goerlitz"
-        graph.vs[4][BPMNEnum.NAME.value] = self.ml_signs_bill
-        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_dresden
-        graph.vs[6][BPMNEnum.NAME.value] = self.startendevent_placeholder
-
-        graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
-                                     ruleset=bill_process_ruleset,
-                                     chunker=bill_process_chunker)
-        return_token = self.run_pointer(graph_pointer=graph_pointer)
+        file = os.path.join('bill process', 'bill_process_3.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=bill_process_chunker,
+                                            ruleset=bill_process_ruleset,
+                                            init_token=bill_process_init_token)
         assert return_token == bill_process_solution_token
 
-    def test_bill_process_from_graph3(self, bill_process_chunker,
+
+    def test_bill_process_from_graph4(self, xml_folders_path,
+                                      bill_process_chunker,
                                       bill_process_ruleset,
                                       bill_process_init_token,
                                       bill_process_solution_token):
-        # business process works
 
-        graph = igraph.Graph()
-        graph = graph.as_directed()
-
-        graph.add_vertices(8)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5),(5, 6), (6, 7)])
-
-        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
-        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
-        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
-        graph.vs[3][BPMNEnum.NAME.value] = "send bill to Goerlitz"
-        graph.vs[4][BPMNEnum.NAME.value] = self.ml_signs_bill
-        graph.vs[5][BPMNEnum.NAME.value] = self.send_bill_to_zittau
-        graph.vs[6][BPMNEnum.NAME.value] = self.send_bill_to_dresden
-        graph.vs[7][BPMNEnum.NAME.value] = self.startendevent_placeholder
-
-        graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
-                                     ruleset=bill_process_ruleset,
-                                     chunker=bill_process_chunker)
-        return_token = self.run_pointer(graph_pointer=graph_pointer)
+        file = os.path.join('bill process', 'bill_process_4.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=bill_process_chunker,
+                                            ruleset=bill_process_ruleset,
+                                            init_token=bill_process_init_token)
         assert return_token == bill_process_solution_token
 
-    def test_bill_process_from_graph4(self, bill_process_chunker,
-                          bill_process_ruleset,
-                          bill_process_init_token,
-                          bill_process_solution_token):
+
+    def test_bill_process_from_graph5(self, xml_folders_path,
+                                      bill_process_chunker,
+                                      bill_process_ruleset,
+                                      bill_process_init_token,
+                                      bill_process_solution_token):
         # business process doesnt work
         # ML cant sign in Zittau
-
-        graph = igraph.Graph()
-        graph = graph.as_directed()
-        graph.add_vertices(6)
-        graph.add_edges([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)])
-
-        graph.vs[0][BPMNEnum.NAME.value] = self.startendevent_placeholder
-        graph.vs[1][BPMNEnum.NAME.value] = self.zittau_checks_contract
-        graph.vs[2][BPMNEnum.NAME.value] = self.zittau_signs_bill
-        graph.vs[3][BPMNEnum.NAME.value] = self.ml_signs_bill
-        graph.vs[4][BPMNEnum.NAME.value] = self.send_bill_to_dresden
-        graph.vs[5][BPMNEnum.NAME.value] = self.startendevent_placeholder
-
-        graph_pointer = GraphPointer(graph=graph, token=bill_process_init_token,
-                                     ruleset=bill_process_ruleset,
-                                     chunker=bill_process_chunker)
-        return_token = self.run_pointer(graph_pointer=graph_pointer)
+        file = os.path.join('bill process', 'bill_process_5.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=bill_process_chunker,
+                                            ruleset=bill_process_ruleset,
+                                            init_token=bill_process_init_token)
 
         assert return_token != bill_process_solution_token
         assert return_token.get_attribute(key='signature ML') == False
+
+    def test_interlaced_gateways(self, xml_folders_path,
+                                 nn_chunker):
+
+        # define the rules
+        # when finding 'act1' change act1-attribute of token to true
+        # same with 'act2' and 'act3'
+        ruleset = []
+        for act in ['act1', 'act2', 'act3']:
+            syncloud = SynonymCloud.from_list(text=[act])
+            modification = TokenStateModification(key=act, value=True)
+            tsr_act = TokenStateRule(state_conditions=[],
+                                    state_modifications=[modification],
+                                    synonym_cloud=syncloud)
+            ruleset.append(tsr_act)
+
+        # define the token
+        init_attibutes = {
+            'act1': False,
+            'act2': False,
+            'act3': False,
+            'k1': 'v1' # used for branch condition of XOR
+        }
+        token = Token(attributes=init_attibutes)
+
+        file = os.path.join('converter', 'exclusive_in_parallel_gateway.bpmn')
+        return_token = self.execute_process(filename=file,
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=nn_chunker,
+                                            ruleset=ruleset,
+                                            init_token=token)
+
+        # define solution token
+        init_attibutes = {
+            'act1': True, # True, because XOR branches into act1.
+            'act2': False, # False, because XOR branches into act1 instead of act2
+            'act3': True, # True, because AND branches into act3.
+            'k1': 'v1' # part of init_token, therefore of solution_token as well
+        }
+        solution_token = Token(attributes=init_attibutes)
+
+        assert return_token == solution_token
+
+    def test_interlaced_gateways_2(self, xml_folders_path):
+        gateway_example = GatewayExample()
+
+        return_token = self.execute_process(filename='gateway_example.bpmn',
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=gateway_example.get_chunker(),
+                                            ruleset=gateway_example.get_ruleset(),
+                                            init_token=gateway_example.get_init_token())
+        solution_token = gateway_example.get_solution_token()
+
+        assert solution_token == return_token

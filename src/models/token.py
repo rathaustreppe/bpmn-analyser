@@ -10,12 +10,10 @@ from src.models.token_state_modification import \
 class Token:
     """
     Is the class for a token-object to be passed through
-    the business-process-graphs.
+    the business-process-model.
     """
 
-    def __init__(self,
-                 attributes: Optional[
-                     Dict[str, Any]] = None) -> None:
+    def __init__(self, attributes: Optional[Dict[str, Any]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
@@ -35,7 +33,7 @@ class Token:
             print(f'Token changed: {key}: {val_before} -> {value}')
         else:
             raise RuntimeError(
-                f'ERROR: key {key} not in token attributes')
+                f'ERROR: key: "{key}" not in token attributes')
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
@@ -56,8 +54,8 @@ class Token:
         """
         Compares two tokens if they have equal dict-
         attributes.
-        Overriding __eq__ means you can use '==' syntax.
-        >>> if token1 == token2: # do something
+        Overriding __eq__ means you can use '==' syntax:
+        if token1 == token2: # do something
         Args:
             other (Token): token you want to compare to
 

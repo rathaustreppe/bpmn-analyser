@@ -1,7 +1,10 @@
-from typing import List
+from typing import List, Type, Union
 
+from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
+from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 
 
 class BPMNModel:
@@ -12,4 +15,12 @@ class BPMNModel:
                 raise ValueError(f'list of bpmn_elements cannot contain '
                                  f'sequenceflows. Use >sequence_flow< attribute instead.')
         self.bpmn_elements = bpmn_elements
+
         self.sequence_flows = sequence_flows
+
+    def find_elements_by_type(self, type_to_find) -> List[Union[BPMNStartEvent,
+                                                                BPMNEndEvent,
+                                                                BPMNActivity,
+                                                                BPMNElement]]:
+        return [elem for elem in self.bpmn_elements if isinstance(elem, type_to_find)]
+

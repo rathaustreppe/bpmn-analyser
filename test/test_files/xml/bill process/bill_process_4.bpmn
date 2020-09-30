@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_08m8lfs" name="startendevent">
+      <outgoing>Flow_04zyfhn</outgoing>
+    </startEvent>
+    <task id="Activity_1h273k0" name="ML signs bill">
+      <incoming>Flow_1w9cmzi</incoming>
+      <outgoing>Flow_1aeek3g</outgoing>
+    </task>
+    <task id="Activity_0qbojm7" name="send bill to Goerlitz">
+      <incoming>Flow_0ovsyd2</incoming>
+      <outgoing>Flow_1w9cmzi</outgoing>
+    </task>
+    <task id="Activity_05182ly" name="Zittau checks contract">
+      <incoming>Flow_04zyfhn</incoming>
+      <outgoing>Flow_10mtqtk</outgoing>
+    </task>
+    <task id="Activity_0yai9j5" name="Zittau signs bill">
+      <incoming>Flow_10mtqtk</incoming>
+      <outgoing>Flow_0ovsyd2</outgoing>
+    </task>
+    <task id="Activity_0j0v9g4" name="send bill to Dresden">
+      <incoming>Flow_0010stu</incoming>
+      <outgoing>Flow_1erh122</outgoing>
+    </task>
+    <endEvent id="Event_1rhhihd" name="startendevent">
+      <incoming>Flow_1erh122</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1erh122" sourceRef="Activity_0j0v9g4" targetRef="Event_1rhhihd" />
+    <sequenceFlow id="Flow_04zyfhn" sourceRef="Event_08m8lfs" targetRef="Activity_05182ly" />
+    <sequenceFlow id="Flow_10mtqtk" sourceRef="Activity_05182ly" targetRef="Activity_0yai9j5" />
+    <sequenceFlow id="Flow_0ovsyd2" sourceRef="Activity_0yai9j5" targetRef="Activity_0qbojm7" />
+    <sequenceFlow id="Flow_1w9cmzi" sourceRef="Activity_0qbojm7" targetRef="Activity_1h273k0" />
+    <task id="Activity_0urpydo" name="send bill to Zittau">
+      <incoming>Flow_1aeek3g</incoming>
+      <outgoing>Flow_0010stu</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1aeek3g" sourceRef="Activity_1h273k0" targetRef="Activity_0urpydo" />
+    <sequenceFlow id="Flow_0010stu" sourceRef="Activity_0urpydo" targetRef="Activity_0j0v9g4" />
+  </process>

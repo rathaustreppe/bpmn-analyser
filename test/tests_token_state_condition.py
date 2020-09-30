@@ -1,5 +1,9 @@
 import pytest
 
+from src.exception.token_state_errors import \
+    MissingOperatorInConditionError, \
+    MissingAttributeInConditionError, MissingValueInConditionError, \
+    MissingAttributeInTokenError
 from src.models.token import Token
 from src.models.token_state_condition import Operators, \
     TokenStateCondition
@@ -35,14 +39,14 @@ class TestTokenStateCondition:
 
     def test_empty_token_attribute(self, empty_token):
         # empty token attribute raises error
-        with pytest.raises(KeyError):
+        with pytest.raises(MissingAttributeInTokenError):
             self.empty_rule.check_condition(
                 token=empty_token)
 
     def test_nonexisting_token_attribute_in_rule(self, empty_token):
         # apply token_attribute in rule that does not
         # exist in token
-        with pytest.raises(KeyError):
+        with pytest.raises(MissingAttributeInTokenError):
             self.example_rule.check_condition(
                 token=empty_token)
 
@@ -93,14 +97,18 @@ class TestTokenStateCondition:
         values = [short_val, long_val, empty]
 
         equals = Operators.EQUALS
-        greaterthen = Operators.GREATERTHEN
+        greaterthen = Operators.GREATER_THEN
         operators = [equals, greaterthen]
 
         for attr in attributes:
             for operator in operators:
                 for value in values:
-                    if attr == empty or value == empty:
-                        with pytest.raises(ValueError):
+                    if attr == empty:
+                        with pytest.raises(MissingAttributeInConditionError):
+                            TokenStateCondition.from_string(
+                                condition=f'{attr}{operator.value}{value}')
+                    elif value == empty:
+                        with pytest.raises(MissingValueInConditionError):
                             TokenStateCondition.from_string(
                                 condition=f'{attr}{operator.value}{value}')
                     else:
@@ -113,10 +121,10 @@ class TestTokenStateCondition:
         condition = 'attr>42'
         tsc = TokenStateCondition.from_string(condition=condition)
         assert tsc._tok_attribute == 'attr'
-        assert tsc._operator == Operators.GREATERTHEN
+        assert tsc._operator == Operators.GREATER_THEN
         assert tsc._tok_value == '42'
 
     def test_from_string_operator_not_implemented(self):
         condition = 'attr(42'
-        with pytest.raises(ValueError):
+        with pytest.raises(MissingOperatorInConditionError):
             TokenStateCondition.from_string(condition=condition)

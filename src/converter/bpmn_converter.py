@@ -1,9 +1,7 @@
-from typing import Tuple, List, Optional, Union
+from typing import List, Optional, Union
 
-from igraph import Graph, VertexSeq, Vertex
 from pedantic import pedantic_class
 
-from src.converter.bpmn_models import bpmn_model
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -16,13 +14,7 @@ from src.converter.bpmn_models.event.bpmn_endevent import \
     BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import \
     BPMNStartEvent
-from src.converter.bpmn_models.gateway.bpmn_exclusive_gateway import \
-    BPMNExclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
-from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
-    BPMNInclusiveGateway
-from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
-    BPMNParallelGateway
 from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
 
@@ -31,25 +23,23 @@ from src.converter.xml_reader import XMLReader
 class BPMNConverter:
     def __init__(self,
                  xml_reader: XMLReader,
-                 bpmn_factory: IBPMNFactory,
-                 graph: Optional[Graph] = None) -> None:
+                 bpmn_factory: IBPMNFactory) -> None:
         self.xml_reader = xml_reader
         self.bpmn_factory = bpmn_factory
-        self.graph = graph
 
     def make_element(self, element_type: BPMNEnum,
                      src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
             List[Union[BPMNElement, BPMNSequenceFlow]]:
-        # """
-        # Searches all element_types in XML-DOM and returns corresponding
-        # BPMN-Objects.
-        # Args:
-        #     element_type(BPMNEnum): abc
-        #     src_tgt_elements (Optional[List[src.converter.bpmn_models.bpmn_element.BPMNElement]]): abc
-        #
-        # Returns:
-        #     List[src.converter.bpmn_models.bpmn_element.BPMNElement]: abc
-        # """
+        """
+        Searches all element_types in XML-DOM and returns corresponding
+        BPMN-Objects.
+        Args:
+            element_type(BPMNEnum): abc
+            src_tgt_elements (Optional[List[BPMNElement]]): abc
+
+        Returns:
+            List[Union[BPMNElement,BPMNSequenceFlow]]: abc
+        """
         elements = self.xml_reader.query(element_type=element_type)
         bpmn_objects = []
         for element in elements:
@@ -64,23 +54,23 @@ class BPMNConverter:
             List[BPMNSequenceFlow]:
         """
         Method to tell source and target objects of sequenceflows to which
-        sequenceflow they belong. (bidirectional reference)
+        sequence_flow they belong. (bidirectional reference)
         """
         for sequence_flow in sequence_flows:
             # check StartEvents (can only be sources) and EndEvents (can only
             # be targets)
             if isinstance(sequence_flow.source, BPMNStartEvent):
-                sequence_flow.source.sequenceFlow = sequence_flow
+                sequence_flow.source.sequence_flow = sequence_flow
 
             if isinstance(sequence_flow.target, BPMNEndEvent):
-                sequence_flow.target.sequenceFlow = sequence_flow
+                sequence_flow.target.sequence_flow = sequence_flow
 
             # check activities
             if isinstance(sequence_flow.source, BPMNActivity):
-                sequence_flow.source.sequenceFlowOut = sequence_flow
+                sequence_flow.source.sequence_flow_out = sequence_flow
 
             if isinstance(sequence_flow.target, BPMNActivity):
-                sequence_flow.target.sequenceFlowIn = sequence_flow
+                sequence_flow.target.sequence_flow_in = sequence_flow
 
             # check gateways
             if isinstance(sequence_flow.source, BPMNGateway):

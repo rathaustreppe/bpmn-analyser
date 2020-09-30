@@ -1,11 +1,12 @@
 import pytest
 
+from src.exception.stack_errors import EmptyStackPopError
 from src.models.stack import Stack
 
 
 class TestStack:
     def test_stack_empty(self):
-        stack: Stack[int] = Stack()
+        stack = Stack[int]()
         assert stack.empty()
 
     def test_push_pop(self):
@@ -20,7 +21,7 @@ class TestStack:
 
     def test_pop_empty_stack(self):
         stack: Stack[int] = Stack()
-        with pytest.raises(IndexError):
+        with pytest.raises(EmptyStackPopError):
             stack.pop()
 
     def test_top_empty_stack(self):
