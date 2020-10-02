@@ -59,6 +59,12 @@ def nn_chunker() -> Chunker:
     """
     return Chunker(chunk_grams=grammar)
 
+@pytest.fixture(scope='module', autouse=True)
+def increment_chunker() -> Chunker:
+    grammar = r"""
+    INCREMENT_Chunk:    {<}
+    """
+
 
 @pytest.fixture(scope='module', autouse=True)
 def adj_chunker() -> Chunker:

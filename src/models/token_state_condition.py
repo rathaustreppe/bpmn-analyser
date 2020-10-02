@@ -15,6 +15,7 @@ class Operators(Enum):
     EQUALS = '=='
     GREATER_THEN = '>'
     SMALLER_THEN = '<'
+    INCREMENT = '++'
 
 
 @pedantic_class

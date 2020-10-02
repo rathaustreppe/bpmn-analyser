@@ -22,6 +22,7 @@ from test.tests_bpmn_factory import TestBPMNFactory
 from test.tests_chunker import TestChunker
 from test.tests_synonym_composite import TestSynonymComposite
 from test.tests_synonym_cloud import TestSynonymCloud
+from test.tests_rule_finder import TestRuleFinder
 
 # integration tests of unit compositions
 from test.tests_graph_pointer import TestGraphPointer

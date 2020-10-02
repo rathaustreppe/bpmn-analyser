@@ -1,5 +1,7 @@
 import pytest
 
+from src.models.token import Token
+from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 
@@ -41,3 +43,16 @@ class TestTokenStateRule:
         example_token.change_value(modification=modification2)
         assert ret == example_token
 
+    def test_increment(self, example_token):
+        key = 'k'
+        value = '0'
+        token = Token(attributes={key: value})
+        condition = TokenStateCondition(tok_attribute=key,
+                                        operator=Operators.EQUALS,
+                                        tok_value=value)
+        modification = TokenStateModification(key=key, value='++')
+
+        tsr = TokenStateRule(state_conditions=[condition],
+                             state_modifications=[modification])
+        return_token = tsr.check_and_modify(token=token)
+        assert return_token.attributes[key] == '1' # 0++ => 1

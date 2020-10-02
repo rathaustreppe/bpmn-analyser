@@ -2,6 +2,8 @@ from typing import List
 
 from pedantic import pedantic_class
 
+from src.models.token_state_condition import TokenStateCondition, Operators
+from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
 
@@ -27,6 +29,10 @@ class RuleFinder:
         if text == 'startendevent':
             return []
 
+        if text.endswith('++'):
+            return [self._make_increment_rule(text=text)]
+
+
         chunk = self.chunker.find_chunk(text=text)
 
         matching_rules = []
@@ -38,3 +44,16 @@ class RuleFinder:
                 continue
 
         return matching_rules
+
+    def _make_increment_rule(self, text:str) -> TokenStateRule:
+        # needs sth. like "a ++" or "a++" (without space)
+
+        # remove increment and space to have only the name
+        token_attribute = text
+        token_attribute = token_attribute.replace(Operators.INCREMENT.value, '')
+        token_attribute = token_attribute.replace(' ', '')
+
+        modification = TokenStateModification(key=token_attribute, value='++')
+
+        return TokenStateRule(state_conditions=[],
+                             state_modifications=[modification])
