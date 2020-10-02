@@ -231,13 +231,13 @@ class TestIntegration:
     def test_simple_increment_loop(self, xml_folders_path, nn_chunker):
         def get_init_token() -> Token:
             init_attributes = {
-                'a': 0
+                'a':'0'
             }
             return Token(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
-                'a':2
+                'a':'2'
             }
             return Token(attributes=init_attributes)
 
@@ -261,15 +261,15 @@ class TestIntegration:
     def test_two_simple_increment_loops(self, xml_folders_path, nn_chunker):
         def get_init_token() -> Token:
             init_attributes = {
-                'a': 0,
-                'b':0
+                'a':'0',
+                'b':'0'
             }
             return Token(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
-                'a':2,
-                'b':2
+                'a':'2',
+                'b':'2'
             }
             return Token(attributes=init_attributes)
 
@@ -292,15 +292,15 @@ class TestIntegration:
     def test_two_interlaced_loops(self, xml_folders_path, nn_chunker):
         def get_init_token() -> Token:
             init_attributes = {
-                'a':0,
-                'b':0
+                'a':'0',
+                'b':'0'
             }
             return Token(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
-                'a':3,
-                'b':1
+                'a':'3',
+                'b':'1'
             }
             return Token(attributes=init_attributes)
 
@@ -326,15 +326,15 @@ class TestIntegration:
         # So while looping b, a is modified as well. (Side effects)
         def get_init_token() -> Token:
             init_attributes = {
-                'a':0,
-                'b':0
+                'a':'0',
+                'b':'0'
             }
             return Token(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
-                'a':2,
-                'b':2
+                'a':'2',
+                'b':'2'
             }
             return Token(attributes=init_attributes)
 

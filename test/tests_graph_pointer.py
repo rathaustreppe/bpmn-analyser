@@ -314,8 +314,8 @@ class TestGraphPointer:
         # end puts itself (endEvent) on top
         assert graph_pointer.stack.top() == end
 
-    def test_next_step_opening_gateway(self, nn_chunker):
-        # checks if branches of opening gateway and gateway itself are on stack
+    def test_next_step_opening_parallel_gateway(self, nn_chunker):
+        # checks if branches of opening parallel gateway and gateway itself are on stack
         # conditional branch checking is done by other tests
 
         # model building
@@ -330,86 +330,9 @@ class TestGraphPointer:
 
         # init
         graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(item=gateway)
 
         # test
-        graph_pointer.next_step_opening_gateway(gateway=gateway)
+        graph_pointer.next_step_parallel_gateway(gateway=gateway)
         assert graph_pointer.stack.pop() == act_1
         assert graph_pointer.stack.pop() == act_2
-        assert graph_pointer.stack.pop() == gateway
-
-
-    def test_next_step_closing_gateway(self, nn_chunker):
-        # checks case: annihilate opening gateway
-
-        # model building
-        in_act_1 = BPMNActivity(id_='inact1', name='noun')
-        in_act_2 = BPMNActivity(id_='inact2', name='noun')
-        opening_gateway = BPMNParallelGateway(id_='opgw')
-        closing_gateway = BPMNParallelGateway(id_='clgw')
-        out_act = BPMNActivity(id_='outact', name='noun')
-
-        opening_gateway, in_act_1, _ = self.link_elements(source=opening_gateway,
-                                                          target=in_act_1)
-        opening_gateway, in_act_2, _ = self.link_elements(source=opening_gateway,
-                                                          target=in_act_2)
-
-        in_act_1, closing_gateway, _ = self.link_elements(source=in_act_1,
-                                                          target=closing_gateway)
-        in_act_2, closing_gateway, _ = self.link_elements(source=in_act_2,
-                                                          target=closing_gateway)
-
-        closing_gateway, out_act, _ = self.link_elements(source=closing_gateway,
-                                                         target=out_act)
-
-        closing_gateway: BPMNParallelGateway
-        model = self.make_model(elements=[in_act_1, in_act_2,
-                                          opening_gateway,
-                                          closing_gateway,
-                                          out_act], flows=[_])
-
-        # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        graph_pointer.stack.push(item=opening_gateway)
-
-        # asserts for test config
-        assert graph_pointer.is_opening_gateway(element=opening_gateway)
-        assert graph_pointer.is_closing_gateway(element=closing_gateway)
-        assert type(opening_gateway) == type(closing_gateway)
-
-        # test
-        graph_pointer.next_step_closing_gateway(gateway=closing_gateway)
-        assert graph_pointer.stack.top() == out_act
-
-    def test_next_step_closing_gateway_activity(self, nn_chunker):
-        # checks case: not all branches processed,
-        # activity before gateway annihilation
-
-        # model building
-        in_act_1 = BPMNActivity(id_='inact1', name='noun')
-        in_act_2 = BPMNActivity(id_='inact2', name='noun')
-        closing_gateway = BPMNParallelGateway(id_='clgw')
-        out_act = BPMNActivity(id_='outact', name='noun')
-
-        in_act_1, closing_gateway, _ = self.link_elements(source=in_act_1,
-                                                          target=closing_gateway)
-        in_act_2, closing_gateway, _ = self.link_elements(source=in_act_2,
-                                                          target=closing_gateway)
-
-        closing_gateway, out_act, _ = self.link_elements(source=closing_gateway,
-                                                         target=out_act)
-        closing_gateway: BPMNParallelGateway
-        model = self.make_model(elements=[in_act_1, in_act_2,
-                                          closing_gateway,
-                                          out_act], flows=[_])
-        # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
-        activity_on_stack = in_act_2
-        graph_pointer.stack.push(item=activity_on_stack)
-
-        # asserts for test config
-        assert graph_pointer.is_closing_gateway(element=closing_gateway)
-
-        # test
-        graph_pointer.next_step_closing_gateway(gateway=closing_gateway)
-        assert graph_pointer.stack.top() == activity_on_stack
+        assert graph_pointer.stack.empty() == True
