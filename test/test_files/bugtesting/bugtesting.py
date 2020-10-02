@@ -53,11 +53,6 @@ class Test4Gateways(IExample):
         converter = Converter()
         return converter.convert(rel_path_to_bpmn=path_to_bpmn)
 
-    def get_students_process_3gateways(self) -> BPMNModel:
-        path_to_bpmn = r'3_gateways_see.bpmn'
-        converter = Converter()
-        return converter.convert(rel_path_to_bpmn=path_to_bpmn)
-
     def get_students_process(self) -> BPMNModel:
         pass
 
@@ -65,16 +60,6 @@ if __name__ == '__main__':
     print('>>> >>> >>> 4 Gateways should work <<< <<< <<<')
     gw_work = Test4Gateways()
     gw_work_pointer = GraphPointer(model=gw_work.get_students_process_4gateways(),
-                                token=gw_work.get_init_token(),
-                                ruleset=gw_work.get_ruleset(),
-                                chunker=gw_work.get_chunker())
-    solution_token = gw_work.get_solution_token()
-    main.run_pointer(graph_pointer=gw_work_pointer, solution_token=solution_token)
-    print(f'stack after:{gw_work_pointer.stack.items}')
-
-    print('>>> >>> >>> 3 Gateways see what happens <<< <<< <<<')
-    gw_work = Test4Gateways()
-    gw_work_pointer = GraphPointer(model=gw_work.get_students_process_3gateways(),
                                 token=gw_work.get_init_token(),
                                 ruleset=gw_work.get_ruleset(),
                                 chunker=gw_work.get_chunker())

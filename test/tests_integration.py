@@ -1,12 +1,15 @@
 import os
 import unittest
+from typing import List
 
+from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.converter import Converter
 from src.examples.gateway_example import GatewayExample
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
+from src.nlp.chunker import Chunker
 from src.nlp.synonym_cloud import SynonymCloud
 
 
@@ -178,4 +181,49 @@ class TestIntegration:
                                             init_token=gateway_example.get_init_token())
         solution_token = gateway_example.get_solution_token()
 
+        assert solution_token == return_token
+
+
+    def test_3_gateways(self, xml_folders_path):
+
+        def get_init_token() -> Token:
+            init_attributes = {
+                'abc': False,
+                'ghi1': False,
+                'ghi2': False
+            }
+            return Token(attributes=init_attributes)
+
+        def get_solution_token() -> Token:
+            init_attributes = {
+                'abc': True,
+                'ghi1': True,
+                'ghi2': True
+            }
+            return Token(attributes=init_attributes)
+
+        def get_ruleset() -> List[TokenStateRule]:
+            # ruleset for all attributes (all are the same):
+            all_attributes_to_look_for = ['abc', 'ghi1', 'ghi2']
+            ruleset = []
+            for attribute in all_attributes_to_look_for:
+                syncloud = SynonymCloud.from_list(text=[attribute])
+                mod = TokenStateModification(key=attribute, value=True)
+                ruleset.append(TokenStateRule(state_conditions=[],
+                                              state_modifications=[mod],
+                                              synonym_cloud=syncloud))
+            return ruleset
+
+        def get_chunker() -> Chunker:
+            grammar = r"""
+                        NN_Chunk:     {<NN.?>}
+                        """
+            return Chunker(chunk_grams=grammar)
+
+        solution_token = get_solution_token()
+        return_token = self.execute_process(filename='3_gateways_see.bpmn',
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=get_chunker(),
+                                            ruleset=get_ruleset(),
+                                            init_token=get_init_token())
         assert solution_token == return_token

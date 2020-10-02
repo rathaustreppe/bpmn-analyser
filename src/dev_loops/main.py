@@ -24,16 +24,18 @@ if __name__ == '__main__':
     first_edge = ('A', 'B')
 
     # BFS
-    visited = []
+    processed = []
     queue = MyQueue()
 
-    visited.append(first_edge)
     queue.queue(first_edge)
 
     print(queue)
     while queue.not_empty():
         edge = queue.dequeue()
-        print(f'dequeued edge: {edge}')
+        if edge in processed:
+            print(f'edge already processed: {edge}')
+            continue
+        print(f'edge to process: {edge}')
 
         # find all edges after target vertex of any_edge
         edges_after_vertex = graph.edges_after_vertex(edge)
@@ -41,14 +43,14 @@ if __name__ == '__main__':
         # check conditions...
         edges_with_passed_conditions = edges_after_vertex
 
-        # my_queue edges when they are not visited
-        for edge in edges_with_passed_conditions:
-            if edge not in visited:
-                visited.append(edge)
-                print(f'append visited:{edge}')
-                queue.queue(edge)
+        # queue edges when they are not processed
+        for e in edges_with_passed_conditions:
+            queue.queue(e)
+            print(f'edge put in queue: {e}')
 
-                # visited ist nicht richtig.
+        processed.append(edge)
+
+                # processed ist nicht richtig.
                 # eher drehen auf abgearbeitet
                 # wenn abgearbeitet, dann auf die liste
                 # und wenn dequeued wird, wird gerprüft ob es schon abgearbeitet wurde
