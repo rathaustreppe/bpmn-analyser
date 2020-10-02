@@ -169,11 +169,11 @@ class GraphPointer:
         self._modify_token_with_rules(matching_rules=matching_rules)
 
     @staticmethod
-    def is_opening_gateway(element: BPMNElement) -> bool:
+    def is_opening_gateway(element: Optional[BPMNElement]) -> bool:
         return isinstance(element, BPMNGateway) and element.is_opening_gateway()
 
     @staticmethod
-    def is_closing_gateway(element: BPMNElement) -> bool:
+    def is_closing_gateway(element: Optional[BPMNElement]) -> bool:
         return isinstance(element,
                           BPMNGateway) and not element.is_opening_gateway()
 
