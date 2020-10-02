@@ -7,11 +7,6 @@
     <bpmn:endEvent id="Event_1slid7z" name="startendevent">
       <bpmn:incoming>Flow_03asw3d</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:parallelGateway id="Gateway_0ztlhbu">
-      <bpmn:incoming>Flow_0fyhi8r</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1pc2xqg</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0zkhtwm</bpmn:outgoing>
-    </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_0fyhi8r" sourceRef="Event_0llbsig" targetRef="Gateway_0ztlhbu" />
     <bpmn:sequenceFlow id="Flow_03asw3d" sourceRef="Gateway_04qe0h1" targetRef="Event_1slid7z" />
     <bpmn:sequenceFlow id="SequenceFlow_0zkhtwm" sourceRef="Gateway_0ztlhbu" targetRef="ExclusiveGateway_1mttasu" />
@@ -44,6 +39,11 @@
       <bpmn:incoming>SequenceFlow_1dyvgvg</bpmn:incoming>
       <bpmn:outgoing>Flow_03asw3d</bpmn:outgoing>
     </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="Gateway_0ztlhbu">
+      <bpmn:incoming>Flow_0fyhi8r</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1pc2xqg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zkhtwm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_067t90l">
@@ -66,9 +66,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1536" y="255" width="68" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0ztlhbu_di" bpmnElement="Gateway_0ztlhbu">
-        <dc:Bounds x="405" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0zkhtwm_di" bpmnElement="SequenceFlow_0zkhtwm">
         <di:waypoint x="455" y="230" />
@@ -134,6 +131,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ParallelGateway_0oysk7o_di" bpmnElement="Gateway_04qe0h1">
         <dc:Bounds x="1345" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_02393m3_di" bpmnElement="Gateway_0ztlhbu" isMarkerVisible="true">
+        <dc:Bounds x="405" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
