@@ -124,6 +124,20 @@ class TestTokenStateCondition:
         assert tsc._operator == Operators.GREATER_THEN
         assert tsc._tok_value == '42'
 
+    def test_greater_then(self):
+        token = Token(attributes={'attr': '43'})
+        condition = 'attr>42'
+        tsc = TokenStateCondition.from_string(condition=condition)
+
+        assert tsc.check_condition(token=token) == True
+
+    def test_smaller_then(self):
+        token = Token(attributes={'attr': '42'})
+        condition = 'attr<43'
+        tsc = TokenStateCondition.from_string(condition=condition)
+
+        assert tsc.check_condition(token=token) == True
+
     def test_from_string_operator_not_implemented(self):
         condition = 'attr(42'
         with pytest.raises(MissingOperatorInConditionError):
