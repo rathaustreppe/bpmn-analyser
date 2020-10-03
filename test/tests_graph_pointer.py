@@ -321,10 +321,14 @@ class TestGraphPointer:
         gateway = BPMNParallelGateway(id_='gw')
         act_1 = BPMNActivity(id_='act1', name='noun')
         act_2 = BPMNActivity(id_='act2', name='noun')
+        act_gateway_inflow = BPMNActivity(id_='act_inflow', name='noun')
 
+        act_gateway_inflow, gateway, flow_0 = self.link_elements(source=act_gateway_inflow,
+                                                                 target=gateway)
         gateway, act_1, flow_1 = self.link_elements(source=gateway, target=act_1)
         gateway, act_2, flow_2 = self.link_elements(source=gateway, target=act_2)
-        model = self.make_model(elements=[gateway, act_1, act_2], flows=[flow_1, flow_2])
+        model = self.make_model(elements=[gateway, act_1, act_2],
+                                flows=[flow_0, flow_1, flow_2])
         gateway: BPMNParallelGateway
 
         # init
