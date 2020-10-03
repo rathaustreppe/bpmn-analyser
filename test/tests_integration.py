@@ -2,9 +2,12 @@ import os
 import unittest
 from typing import List
 
+import pytest
+
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.converter import Converter
 from src.examples.gateway_example import GatewayExample
+from src.exception.gateway_errors import ExclusiveGatewayBranchError
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
@@ -353,3 +356,65 @@ class TestIntegration:
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
+        
+    def test_inclusive_gateway(self, xml_folders_path, nn_chunker):
+        # test an inclusive gateway with 3 branches where 2 are true
+        # checks if both branches are beeing processed and the gateway
+        # switches to output
+
+        def get_init_token() -> Token:
+            init_attributes = {
+                'a': '0',
+                'b': '0',
+                'c': '-1'
+            }
+            return Token(attributes=init_attributes)
+
+        def get_solution_token() -> Token:
+            init_attributes = {
+                'a': '1',
+                'b': '1',
+                'c': '-1'
+            }
+            return Token(attributes=init_attributes)
+
+        solution_token = get_solution_token()
+        return_token = self.execute_process(filename='inclusive_gateway.bpmn',
+                                            xml_folders_path=xml_folders_path,
+                                            chunker=nn_chunker,
+                                            ruleset=[],
+                                            init_token=get_init_token())
+        assert solution_token == return_token
+
+    def test_dying_xor(self, nn_chunker, xml_folders_path):
+        # test what happens when an XOR with 2 branches but cannot
+        # branch anywhere because of the conditions on the flow.
+        # And to see how the adjacent inclusive gateway reacts.
+        init_attributes = {
+            'a': '0',
+            'b':'0'
+        }
+        init_token = Token(attributes=init_attributes)
+
+        with pytest.raises(ExclusiveGatewayBranchError):
+            self.execute_process(filename='dying_xor.bpmn',
+                                xml_folders_path=xml_folders_path,
+                                chunker=nn_chunker,
+                                ruleset=[],
+                                init_token=init_token)
+
+    def test_dying_xor_changed_order(self, nn_chunker, xml_folders_path):
+        # Because the order of processing depends on where the elements are in
+        # the xml file, we rearrange in a second test the order of the branches.
+        init_attributes = {
+            'a': '0',
+            'b': '0'
+        }
+        init_token = Token(attributes=init_attributes)
+
+        with pytest.raises(ExclusiveGatewayBranchError):
+            self.execute_process(filename='dying_xor_changed_order.bpmn',
+                                xml_folders_path=xml_folders_path,
+                                chunker=nn_chunker,
+                                ruleset=[],
+                                init_token=init_token)

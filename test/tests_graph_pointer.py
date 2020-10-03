@@ -113,7 +113,6 @@ class TestGraphPointer:
         act = BPMNActivity(id_='1', name='act')
         model = self.make_model(elements=[act], flows=[])
         graph_pointer = self.graph_pointer(model=model)
-        graph_pointer.previous_element = act
 
         assert graph_pointer.reached_end_event() is False
 
