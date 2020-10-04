@@ -1,8 +1,8 @@
 from pedantic import pedantic_class
 
 '''
-Metaclass for BPMNEvents, BPMNActivities, BPMNSequenceflows.
-Basically for everything that is in a diagram.
+Metaclass for everything that can be displayed graphically in a BPMNChart:
+Gateways, Events, Acitivities, Flows (== edges) between those object...
 '''
 
 

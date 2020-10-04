@@ -7,6 +7,7 @@ import pytest
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
+from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
@@ -44,7 +45,7 @@ class TestGraphPointer:
         return BPMNModel(bpmn_elements=elements, sequence_flows=flows)
 
     def link_elements(self, source: BPMNElement,
-                      target: BPMNElement) -> Tuple[BPMNElement, BPMNElement, BPMNSequenceFlow]:
+                      target: BPMNElement) -> Tuple[BPMNFlowObject, BPMNFlowObject, BPMNSequenceFlow]:
         linking_flow = BPMNSequenceFlow(id_='f1', condition=None, source=source,
                                         target=target)
 
