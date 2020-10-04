@@ -44,7 +44,7 @@ class GraphPointer:
         self.model = model
         self.token = token
         self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
-        self.stack = Stack()
+        self.stack = Stack[Union[BPMNActivity,BPMNGateway,BPMNEvent]]()
         self._model_start = None
         self.processed_flows: Set[BPMNSequenceFlow] = set()
 
@@ -183,7 +183,7 @@ class GraphPointer:
             self.branching_gateway(gateway=gateway)
         else:
             # joining exclusive gateway need no condition check
-            self.stack.push(gateway.sequence_flows_out[0].target)
+            self.stack.push(item=gateway.sequence_flows_out[0].target)
             self.processed_flows.add(gateway.sequence_flows_out[0])
 
     def next_step_parallel_gateway(self, gateway: BPMNParallelGateway) -> None:
@@ -200,7 +200,7 @@ class GraphPointer:
             if self.all_incoming_flows_processed(gateway=gateway):
                 # push the single outgoing flow
                 if len(gateway.sequence_flows_out) == 1:
-                    self.stack.push(gateway.sequence_flows_out[0].target)
+                    self.stack.push(item=gateway.sequence_flows_out[0].target)
                 else:
                     raise JoiningGatewayError(gateway=gateway)
             else:
@@ -224,7 +224,7 @@ class GraphPointer:
             self.branching_gateway(gateway=gateway)
         else:
             if self.stack.empty():
-                self.stack.push(gateway.sequence_flows_out[0].target)
+                self.stack.push(item=gateway.sequence_flows_out[0].target)
             else:
                 # stack not empty: other things to process first
                 # when bugs occur with this behaviour, then a look-back-mechanism
@@ -249,7 +249,7 @@ class GraphPointer:
             # to debug)
             branch_elements.reverse()
             for element in branch_elements:
-                self.stack.push(element)
+                self.stack.push(item=element)
 
             # processed flows
             for flow in conditions_meet_flows:

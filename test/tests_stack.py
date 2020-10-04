@@ -10,7 +10,7 @@ class TestStack:
         assert stack.empty()
 
     def test_push_pop(self):
-        stack: Stack[int] = Stack()
+        stack = Stack[int]()
         stack.push(item=1)
         stack.push(item=2)
         stack.push(item=3)
@@ -20,15 +20,15 @@ class TestStack:
         assert stack.empty
 
     def test_pop_empty_stack(self):
-        stack: Stack[int] = Stack()
+        stack = Stack[int]()
         with pytest.raises(EmptyStackPopError):
             stack.pop()
 
     def test_top_empty_stack(self):
-        stack: Stack[int] = Stack()
+        stack = Stack[int]()
         assert stack.top() is None
 
     def test_top(self):
-        stack: Stack[int] = Stack()
+        stack = Stack[int]()
         stack.push(item=42)
         assert stack.top() == 42
