@@ -1,4 +1,4 @@
-from typing import List, Union, Optional, Set
+from typing import List, Union, Optional, Set, Tuple
 
 from pedantic import pedantic_class
 
@@ -52,32 +52,42 @@ class GraphPointer:
         if self.stack is None:
             self.stack = Stack()
 
-    def iterate_model(self) -> int:
+    def iterate_model(self, number_of_steps: Optional[int] = 0) -> Tuple[int, Token]:
         """
-        With each call, it iterates one step through the
-        BPMNModel (= changes and self.previous),
-        analyses the text (= bpmn activity) and performs state transitions
-        on token.
-        Returns:
-            int:
-            1 if the end of the graph is reached
-            0 if the the step was performed successfully but
-            the end of the graph is not reached yet
+        Iterates through the BPMNModel, analyses the texts
+        and performs state transitions on token.
+        Returns a tuple containing the information:
+        int: 0 if processing was ok, 1 if processing took to many steps. This
+        is an indicator of an infinite loop.
+        Token: the modified token
         """
-        if self._model_start is None:
-            # init
-            self._model_start = self.find_start_event()
-            self.next_step_no_gateway(element=self._model_start)
 
-        if not self.reached_end_event():
-            self.next_step_switch_by_type()
-            return 0
-        else:
-            # make text analysis of end event, empty stack and
-            # quit with return 1
-            self.next_step_switch_by_type()
-            self.stack.empty()
-            return 1
+        # specify how many steps are done before
+        # quitting. This prevents infinite loops and is easier to implement
+        # then an infinite-loop-detector.
+        if number_of_steps == 0:
+            number_of_steps = len(self.model.bpmn_elements) * 10
+
+        for _ in range(number_of_steps):
+
+            if self._model_start is None:
+                # init
+                self._model_start = self.find_start_event()
+                self.next_step_no_gateway(element=self._model_start)
+
+            if not self.reached_end_event():
+                # continue processing of diagram
+                self.next_step_switch_by_type()
+            else:
+                # reached end event. Analyse end event and then quit.
+                # Return ok.
+                self.next_step_switch_by_type()
+                self.stack.empty()
+                return (0, self.token)
+
+        # loop end reached but not the diagram end: something went wrong
+        return (-1, self.token)
+
 
     def reached_end_event(self) -> bool:
         return isinstance(self.stack.top(), BPMNEndEvent)

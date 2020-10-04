@@ -26,12 +26,12 @@ class TestIntegration:
     startendevent_placeholder = 'startendevent'
 
     def run_pointer(self, graph_pointer: GraphPointer) -> Token:
-        for _ in range(100):
-            ret = graph_pointer.iterate_model()
-            if ret == 1:
-                return graph_pointer.token
-        # if graph_pointer does not hold after 100 steps
-        return Token(attributes=None)
+        ret = graph_pointer.iterate_model()
+        if ret[0] == 0:
+            return graph_pointer.token
+        else:
+            # infinite loop
+            assert False
 
     def execute_process(self, filename: str,
                         xml_folders_path,
