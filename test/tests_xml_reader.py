@@ -7,6 +7,10 @@ from src.converter.xml_reader import XMLReader
 
 class TestXMLReader:
 
+    # all xml files are organized into separate folders. Specify the name
+    # of the folder containing all xml files relevant for this testclass
+    test_folder_name = 'xml_reader'
+
     @staticmethod
     def read_xml(string):
         import xml.etree.ElementTree as Et
@@ -20,8 +24,7 @@ class TestXMLReader:
     # a often used text in this test class
     hunger_noticed = 'hunger noticed'
 
-    @staticmethod
-    def strip_definitions(filename: str,
+    def strip_definitions(self, filename: str,
                           xml_reader: XMLReader,
                           xml_folders_path: str) -> str:
         """
@@ -31,7 +34,9 @@ class TestXMLReader:
         the <name> tag of the BPMNStartEvent.
         """
         xpath_start_event = './/startEvent'
-        abs_file_path = os.path.join(xml_folders_path, filename)
+        abs_file_path = os.path.join(xml_folders_path,
+                                     self.test_folder_name,
+                                     filename)
 
         # if we can query the dom, the new xml is parsable
         # this is what we want when calling prepare_dom()
@@ -86,11 +91,15 @@ class TestXMLReader:
         assert actual_name == self.hunger_noticed
 
         # open both files and compare line by line
-        file_path_untouched = os.path.join(xml_folders_path, filename)
+        file_path_untouched = os.path.join(xml_folders_path,
+                                           self.test_folder_name,
+                                           filename)
         with open(file_path_untouched, "r") as f:
             lines_1 = f.readlines()
 
-        file_path_untouched_2 = os.path.join(xml_folders_path, filename_2)
+        file_path_untouched_2 = os.path.join(xml_folders_path,
+                                             self.test_folder_name,
+                                             filename_2)
         with open(file_path_untouched_2, "r") as f:
             lines_2 = f.readlines()
 
