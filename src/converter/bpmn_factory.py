@@ -20,13 +20,12 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.converter.i_bpmn_factory import IBPMNFactory
 from src.exception.wrong_type_errors import NotImplementedTypeError
 from src.models.token_state_condition import TokenStateCondition
 
 
 @pedantic_class
-class BPMNFactory(IBPMNFactory):
+class BPMNFactory():
     # Attention: BPMNFactory can only, by definition, work
     # with valid xml + valid bpmn strings and builds python objects of the data
     # in those xml files. The program is

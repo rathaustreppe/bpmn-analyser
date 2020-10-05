@@ -2,6 +2,7 @@ from typing import List, Optional, Union
 
 from pedantic import pedantic_class
 
+from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
@@ -15,7 +16,6 @@ from src.converter.bpmn_models.event.bpmn_endevent import \
 from src.converter.bpmn_models.event.bpmn_startevent import \
     BPMNStartEvent
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
-from src.converter.i_bpmn_factory import IBPMNFactory
 from src.converter.xml_reader import XMLReader
 
 
@@ -23,7 +23,7 @@ from src.converter.xml_reader import XMLReader
 class BPMNConverter:
     def __init__(self,
                  xml_reader: XMLReader,
-                 bpmn_factory: IBPMNFactory) -> None:
+                 bpmn_factory: BPMNFactory) -> None:
         self.xml_reader = xml_reader
         self.bpmn_factory = bpmn_factory
 
