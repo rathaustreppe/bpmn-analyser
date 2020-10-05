@@ -15,7 +15,8 @@ test_files_folder_name = 'test_files'
 xml_files_folder_name = 'xml'
 temp_xml_files_folder_name = 'temp_xml'
 
-def pytest_sessionstart(session):
+
+def pytest_sessionstart():
     """
     Called after the Session object has been created and
     before performing collection and entering the run test loop.
@@ -32,8 +33,8 @@ def pytest_sessionstart(session):
                               test_files_folder_name,
                               xml_files_folder_name)
     temp_xml_folder = os.path.join(pytest_root,
-                                  test_files_folder_name,
-                                  temp_xml_files_folder_name)
+                                   test_files_folder_name,
+                                   temp_xml_files_folder_name)
 
     try:
         shutil.copytree(xml_folder, temp_xml_folder)
@@ -41,7 +42,7 @@ def pytest_sessionstart(session):
         pass
 
 
-def pytest_sessionfinish(session, exitstatus):
+def pytest_sessionfinish():
     """
     Called after whole test run finished, right before
     returning the exit status to the system.
@@ -50,8 +51,8 @@ def pytest_sessionfinish(session, exitstatus):
     """
     pytest_root = os.path.dirname(os.path.abspath(__file__))
     temp_xml_folder = os.path.join(pytest_root,
-                                  test_files_folder_name,
-                                  temp_xml_files_folder_name)
+                                   test_files_folder_name,
+                                   temp_xml_files_folder_name)
     shutil.rmtree(temp_xml_folder)
 
 
@@ -122,4 +123,3 @@ def nn_vb_nn_sentence() -> List[Tuple[str, str]]:
 @pytest.fixture(scope='module', autouse=True)
 def xx_nn_xx_sentence() -> List[Tuple[str, str]]:
     return [('sending', 'VBG'), ('contract', 'NN'), ('green', 'ADJ')]
-
