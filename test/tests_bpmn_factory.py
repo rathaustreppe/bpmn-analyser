@@ -1,5 +1,3 @@
-from xml.etree.ElementTree import Element
-
 import pytest
 
 from src.converter.bpmn_factory import BPMNFactory
@@ -50,7 +48,7 @@ class TestBPMNFactory:
         flow = self.factory.create_bpmn_connecting_object(
             element=self.read_xml(string_flow),
             elem_type=BPMNEnum.SEQUENCEFLOW,
-            src_tgt_elements=[act1,act2])
+            src_tgt_elements=[act1, act2])
 
         assert flow.id_ == 'f'
         assert flow.source.id_ == '1'
