@@ -87,25 +87,18 @@ class BPMNConverter:
 
         return sequence_flows
 
-    def create_bpmn_objects(self, bpmn_types: List[BPMNEnum]) -> List[
-        BPMNFlowObject]:
+    def create_bpmn_flow_objects(self) -> List[BPMNFlowObject]:
         """
-        Method that creates BPMNElements (all specified in bpmn_types but no
-        SequenceFlows!) by reading the XML-Reader XML-DOM.
+        Method that creates all various types of BPMNFlowObjects by
+        reading the XML-Reader XML-DOM.
         """
-        # for this purpose we create a list that contains
-        # all BPMNElements & BPMNGateways for later linking
-        all_bpmn_elements: List[BPMNFlowObject] = []
+        all_flow_objects: List[BPMNFlowObject] = []
+        all_flow_object_types = self.all_bpmn_flow_object_types()
 
-        # creating BPMN-Elements of all BPMN-Types
-        for bpmn_type in bpmn_types:
-            if bpmn_type != BPMNEnum.SEQUENCEFLOW:
-                bpmn_elements = self.make_element(element_type=bpmn_type)
-                all_bpmn_elements.extend(bpmn_elements)
-            else:
-                raise ValueError(f'list {bpmn_type} corrupted.'
-                                 f' Must not contain sequenceflows.')
-        return all_bpmn_elements
+        for bpmn_type in all_flow_object_types:
+            bpmn_elements = self.make_element(element_type=bpmn_type)
+            all_flow_objects.extend(bpmn_elements)
+        return all_flow_objects
 
     def create_bpmn_sequence_flows(self, bpmn_elements: List[BPMNFlowObject]) -> \
             List[BPMNSequenceFlow]:
@@ -118,13 +111,27 @@ class BPMNConverter:
         # update bidirectional references of sequence flows in bpmn-elements
         return self.set_sequence_flows_references(sequence_flows=sequence_flows)
 
-    def create_all_bpmn_objects(self, bpmn_types: List[BPMNEnum]) -> BPMNModel:
+    def create_bpmn_model(self) -> BPMNModel:
         """
         Reads the xml-dom and converts it into a list of python
-        BPMN-objects. It keeps SequenceFlows and every other BPMN-Element in two
-        separate lists.
+        BPMN-objects. It keeps separates connecting objects
+        (e.g BPMNSequenceFlows) and BPMNFlowObjects seperat and returns the
+        BPMNModel
         """
-        bpmn_elements = self.create_bpmn_objects(bpmn_types=bpmn_types)
+        bpmn_flow_objects = self.create_bpmn_flow_objects()
         bpmn_sequence_flows = self.create_bpmn_sequence_flows(
-            bpmn_elements=bpmn_elements)
-        return BPMNModel(bpmn_elements=bpmn_elements, sequence_flows=bpmn_sequence_flows)
+            bpmn_elements=bpmn_flow_objects)
+        return BPMNModel(bpmn_elements=bpmn_flow_objects,
+                         sequence_flows=bpmn_sequence_flows)
+
+    def all_bpmn_flow_object_types(self) -> List[BPMNEnum]:
+        """
+        A list of all classes that inherit from BPMNFlowObject.
+        In near future BPMNEnum should be refactored to store classes directly
+        instead of their strings. Then this manual notation of subclasses
+        can be replaced with:
+        https://stackoverflow.com/questions/3862310/how-to-find-all-the-subclasses-of-a-class-given-its-name
+        """
+        return [BPMNEnum.ACTIVITY, BPMNEnum.STARTEVENT,
+                BPMNEnum.ENDEVENT, BPMNEnum.PARALLGATEWAY,
+                BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]
