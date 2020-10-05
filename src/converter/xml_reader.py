@@ -46,9 +46,17 @@ class XMLReader:
 
         # lines to delete containing:
         # make sure to have opening and closing tags
-        block_line_tags = ('<definitions', '</definitions',
+        block_line_tags = ['<definitions', '</definitions',
                             '<bpmndi', '</bpmndi',
-                            '<omgdi', '<omgdc')
+                            '<omgdi', '<omgdc']
+
+        # sometimes 'bpmn:' is put in front of every line
+        # update block_line_tags:
+        added_tags = []
+        for tag in block_line_tags:
+            added_tags.append('bpmn:' + tag)
+
+        block_line_tags.extend(added_tags)
 
         new_file = [line for line in lines
                     if not any(map(line.__contains__, block_line_tags))]
@@ -76,7 +84,7 @@ class XMLReader:
 
         if not os.path.isfile(abs_file_path):
             # ToDo: better exception
-            raise Exception('no file found')
+            raise FileNotFoundError(abs_file_path)
 
         # always prepare_dom(). Why? When malicious lines are in the document,
         # the parser may parse everything or may die. If he parses, then the
@@ -117,12 +125,22 @@ class XMLReader:
             raise ValueError('XML-DOM of XML-Reader is None. Use parse_to_dom '
                              'to initiate.')
         elements_in_file = []
+        bpmn_tag = '{http://www.omg.org/spec/BPMN/20100524/MODEL}'
         for element in self.xml_dom.findall(
-                './/' + element_type.value):
+                './/' + bpmn_tag + element_type.value):
+
             # We dont need to preserve which sequence flow is
             # incomming and outgoing. This is stored in
             # sourceRef and targetRef of each sequenceFlow.
             elements_in_file.append(element)
+
+        # in older tests, the 'bpmn:' tag (which resolves} is not present.
+        # So it doesnt find anything.
+        # so we query without the tag
+        if len(elements_in_file) == 0:
+            for element in self.xml_dom.findall(
+                    './/' + element_type.value):
+                elements_in_file.append(element)
 
         return elements_in_file
 

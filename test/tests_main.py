@@ -5,8 +5,6 @@ import sys
 import os
 sys.path.append(os.getcwd())
 
-# unit tests
-
 # data structures
 from test.tests_token import TestToken
 from test.tests_token_state_condition import TestTokenStateCondition
@@ -22,10 +20,17 @@ from test.tests_bpmn_factory import TestBPMNFactory
 from test.tests_chunker import TestChunker
 from test.tests_synonym_composite import TestSynonymComposite
 from test.tests_synonym_cloud import TestSynonymCloud
+from test.tests_rule_finder import TestRuleFinder
 
-# integration tests of unit compositions
+# loops and gateways
+from test.tests_gateways import TestGateway
+from test.tests_loop import TestLoop
+
+# diagram processing algorithm
 from test.tests_graph_pointer import TestGraphPointer
-from test.tests_integration import TestIntegration
+
+# integration tests
+from test.tests_integration_bill_process import TestIntegrationBillProcess
 
 if __name__ == '__main__':
     unittest.main()

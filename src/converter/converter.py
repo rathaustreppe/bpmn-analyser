@@ -5,7 +5,6 @@ from pedantic import pedantic_class
 
 from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.xml_reader import XMLReader
 
@@ -54,12 +53,8 @@ class Converter:
         bpmn_converter = BPMNConverter(xml_reader=self.xml_reader,
                                        bpmn_factory=BPMNFactory())
 
-        all_bpmn_types = [BPMNEnum.STARTEVENT, BPMNEnum.ENDEVENT,
-                          BPMNEnum.ACTIVITY, BPMNEnum.PARALLGATEWAY,
-                          BPMNEnum.EXCLGATEWAY, BPMNEnum.INCLGATEWAY]
-
         # temp files of xml reader now useless.
         # clean them
         self.xml_reader.clean_temp_file_path()
 
-        return bpmn_converter.create_all_bpmn_objects(bpmn_types=all_bpmn_types)
+        return bpmn_converter.create_bpmn_model()

@@ -11,8 +11,11 @@ from src.models.token import Token
 
 
 class Operators(Enum):
+    # list of operators that python can evaluate
     EQUALS = '=='
     GREATER_THEN = '>'
+    SMALLER_THEN = '<'
+    INCREMENT = '++'
 
 
 @pedantic_class
@@ -84,8 +87,18 @@ class TokenStateCondition:
                 attribute=self._tok_attribute,
                 token=token)
 
-        val = token.get_attribute(key=self._tok_attribute)
-        return val == self._tok_value
+        token_val = token.get_attribute(key=self._tok_attribute)
+
+        if self._operator == Operators.EQUALS:
+            return token_val == self._tok_value
+        elif self._operator == Operators.GREATER_THEN:
+            return token_val > self._tok_value
+        elif self._operator == Operators.SMALLER_THEN:
+            return token_val < self._tok_value
+        else:
+            raise NotImplementedError(f'Operator {self._operator} not implemented.'
+                                      f'Currently implemented: {Operators.value}')
+
 
     def __str__(self) -> str:
         return f'{self._tok_attribute}{self._operator.value}{self._tok_value}'

@@ -6,7 +6,7 @@ import pytest
 from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
@@ -28,23 +28,18 @@ class TestBPMNConverter:
         working_dict = os.path.join(pytest_root, 'test_files', 'xml','converter')
         return working_dict
 
-    def all_bpmn_types(self) -> List[BPMNEnum]:
-        return [BPMNEnum.STARTEVENT, BPMNEnum.ENDEVENT, BPMNEnum.ACTIVITY,
-                BPMNEnum.PARALLGATEWAY, BPMNEnum.EXCLGATEWAY,
-                BPMNEnum.INCLGATEWAY]
-
     def create_model(self, filename:str) -> BPMNModel:
         bpmn_converter = BPMNConverter(xml_reader=XMLReader(), bpmn_factory=BPMNFactory())
         file_path = os.path.join(self.converter_xmls(), filename)
         bpmn_converter.xml_reader.parse_to_dom(abs_file_path=file_path)
-        model= bpmn_converter.create_all_bpmn_objects(bpmn_types=self.all_bpmn_types())
+        model= bpmn_converter.create_bpmn_model()
         bpmn_converter.xml_reader.clean_temp_file_path()
         return model
 
-    def find_elems(self, elements: List[BPMNElement], type):
+    def find_elems(self, elements: List[BPMNFlowObject], type):
         return [elem for elem in elements if isinstance(elem, type)]
 
-    def find_by_id(self, elements: List[BPMNElement], id: str) -> BPMNElement:
+    def find_by_id(self, elements: List[BPMNFlowObject], id: str) -> BPMNFlowObject:
         elements = [elem for elem in elements if elem.id_ == id]
 
         if len(elements) == 0:

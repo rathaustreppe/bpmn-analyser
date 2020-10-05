@@ -25,15 +25,31 @@ class Token:
 
     def change_value(self, modification: TokenStateModification) -> None:
         key = modification.get_key()
-        value = modification.get_value()
 
-        if key in self.attributes.keys():
-            val_before = self.attributes[key]
-            self.attributes[key] = value
-            print(f'Token changed: {key}: {val_before} -> {value}')
-        else:
+        if key not in self.attributes.keys():
             raise RuntimeError(
                 f'ERROR: key: "{key}" not in token attributes')
+
+        token_value_before = self.attributes[key]
+        value = modification.get_value()
+
+        if value == '++':
+            # try to add 1 to token value
+            try:
+                int_value = int(token_value_before)
+                int_value += 1
+            except ValueError:
+                raise ValueError('tried to add 1 to a non-integer string')
+
+            token_value_after = str(int_value)
+            self.attributes[key] = token_value_after
+
+        else:
+            # simply set the string to new value
+            self.attributes[key] = value
+
+        print(f'Token changed: {key}: {token_value_before} -> {value}')
+
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]

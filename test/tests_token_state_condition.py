@@ -34,8 +34,8 @@ class TestTokenStateCondition:
         # even with enums, you never know...
         with pytest.raises(Exception):
             TokenStateCondition(tok_attribute='',
-                           operator=Operators.XYZ,
-                           tok_value=None)
+                                operator=Operators.XYZ,
+                                tok_value=None)
 
     def test_empty_token_attribute(self, empty_token):
         # empty token attribute raises error
@@ -53,24 +53,24 @@ class TestTokenStateCondition:
     def test_rule_with_none_value(self):
         # rule checks for none-value
         rule = TokenStateCondition(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value=None)
+                                   operator=Operators.EQUALS,
+                                   tok_value=None)
         token = Token(attributes={'k1': None})
         assert rule.check_condition(token=token)
 
     def test_rule_with_none_value_2(self):
         # rule checks for none-value but is wrong with that
         rule = TokenStateCondition(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value=None)
+                                   operator=Operators.EQUALS,
+                                   tok_value=None)
         token = Token(attributes={'k1': 'v1'})
         assert rule.check_condition(token=token) is False
 
     def test_rule_with_none_value_3(self):
         # rule checks for value but finds none
         rule = TokenStateCondition(tok_attribute='k1',
-                              operator=Operators.EQUALS,
-                              tok_value='v1')
+                                   operator=Operators.EQUALS,
+                                   tok_value='v1')
         token = Token(attributes={'k1': None})
         assert rule.check_condition(token=token) is False
 
@@ -112,7 +112,8 @@ class TestTokenStateCondition:
                             TokenStateCondition.from_string(
                                 condition=f'{attr}{operator.value}{value}')
                     else:
-                        tsc = TokenStateCondition.from_string(condition=f'{attr}{operator.value}{value}')
+                        tsc = TokenStateCondition.from_string(
+                            condition=f'{attr}{operator.value}{value}')
                         assert tsc._tok_attribute == attr
                         assert tsc._operator == operator
                         assert tsc._tok_value == value
@@ -123,6 +124,20 @@ class TestTokenStateCondition:
         assert tsc._tok_attribute == 'attr'
         assert tsc._operator == Operators.GREATER_THEN
         assert tsc._tok_value == '42'
+
+    def test_greater_then(self):
+        token = Token(attributes={'attr': '43'})
+        condition = 'attr>42'
+        tsc = TokenStateCondition.from_string(condition=condition)
+
+        assert tsc.check_condition(token=token) is True
+
+    def test_smaller_then(self):
+        token = Token(attributes={'attr': '42'})
+        condition = 'attr<43'
+        tsc = TokenStateCondition.from_string(condition=condition)
+
+        assert tsc.check_condition(token=token) is True
 
     def test_from_string_operator_not_implemented(self):
         condition = 'attr(42'

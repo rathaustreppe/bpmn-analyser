@@ -122,3 +122,12 @@ class TestToken:
         token1 = Token(attributes=attributes1)
         token2 = Token(attributes=attributes2)
         assert token1 != token2
+
+    def test_increment(self):
+        key = 'k1'
+        attributes = {key: '0'}
+        token = Token(attributes=attributes)
+        tsm = TokenStateModification(key=key, value='++')
+
+        token.change_value(modification=tsm)
+        assert token.attributes[key] == '1'
