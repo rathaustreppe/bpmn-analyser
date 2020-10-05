@@ -24,6 +24,10 @@ from test.tests_synonym_composite import TestSynonymComposite
 from test.tests_synonym_cloud import TestSynonymCloud
 from test.tests_rule_finder import TestRuleFinder
 
+# loops and gateways
+from test.tests_gateways import TestGateway
+from test.tests_loop import TestLoop
+
 # integration tests of unit compositions
 from test.tests_graph_pointer import TestGraphPointer
 from test.tests_integration import TestIntegration

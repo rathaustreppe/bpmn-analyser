@@ -15,6 +15,7 @@ from src.nlp.synonym_cloud import SynonymCloud
 contract_checked = 'contract checked'
 wn_synset_bill = wn.synset('bill.n.02')
 
+
 @pytest.fixture(scope='module', autouse=True)
 def xml_folders_path():
     pytest_root = os.path.dirname(os.path.abspath(__file__))
@@ -58,12 +59,6 @@ def nn_chunker() -> Chunker:
     NN_Chunk:     {<NN.?>}
     """
     return Chunker(chunk_grams=grammar)
-
-@pytest.fixture(scope='module', autouse=True)
-def increment_chunker() -> Chunker:
-    grammar = r"""
-    INCREMENT_Chunk:    {<}
-    """
 
 
 @pytest.fixture(scope='module', autouse=True)
