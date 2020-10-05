@@ -7,6 +7,6 @@ Gateways, Events, Acitivities, Flows (== edges) between those object...
 
 
 @pedantic_class
-class BPMNElement:
+class BPMNFlowObject:
     def __init__(self, id_: str) -> None:
         self.id_ = id_

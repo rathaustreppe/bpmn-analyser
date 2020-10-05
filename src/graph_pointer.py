@@ -3,7 +3,7 @@ from typing import List, Union, Optional, Set, Tuple
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
@@ -172,7 +172,7 @@ class GraphPointer:
                 return False
         return True
 
-    def get_inflows(self, element: BPMNElement) -> List[BPMNSequenceFlow]:
+    def get_inflows(self, element: BPMNFlowObject) -> List[BPMNSequenceFlow]:
         if isinstance(element, BPMNGateway):
             return element.sequence_flows_in
         elif isinstance(element, BPMNActivity):
@@ -315,7 +315,7 @@ class GraphPointer:
         together are processed together (e.g. Activities and StartEvents).
 
         GraphPointer works sequentially: with every call it goes one step
-        further (= processes one BPMNElement). There are no threads involved e.g.
+        further (= processes one BPMNFlowObject). There are no threads involved e.g.
         when BPMNGateways split into multiple branches.
 
         As the BPMN-Specification we make a distinction between branching and

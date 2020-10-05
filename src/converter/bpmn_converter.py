@@ -5,7 +5,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
-    BPMNElement
+    BPMNFlowObject
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import \
@@ -28,24 +28,30 @@ class BPMNConverter:
         self.bpmn_factory = bpmn_factory
 
     def make_element(self, element_type: BPMNEnum,
-                     src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
-            List[Union[BPMNElement, BPMNSequenceFlow]]:
+                     src_tgt_elements: Optional[List[BPMNFlowObject]] = None) -> \
+            List[Union[BPMNFlowObject, BPMNSequenceFlow]]:
         """
         Searches all element_types in XML-DOM and returns corresponding
         BPMN-Objects.
         Args:
             element_type(BPMNEnum): abc
-            src_tgt_elements (Optional[List[BPMNElement]]): abc
+            src_tgt_elements (Optional[List[BPMNFlowObject]]): abc
 
         Returns:
-            List[Union[BPMNElement,BPMNSequenceFlow]]: abc
+            List[Union[BPMNFlowObject,BPMNSequenceFlow]]: abc
         """
         elements = self.xml_reader.query(element_type=element_type)
         bpmn_objects = []
         for element in elements:
-            element_obj = self.bpmn_factory.create_bpmn_element(element=element,
-                                                                elem_type=element_type,
-                                                                src_tgt_elements=src_tgt_elements)
+            if element_type == BPMNEnum.SEQUENCEFLOW:
+                element_obj = self.bpmn_factory.create_bpmn_connecting_object(
+                    element=element,
+                    elem_type=element_type,
+                    src_tgt_elements=src_tgt_elements)
+            else:
+                element_obj = self.bpmn_factory.create_bpmn_flow_object(
+                    element=element,
+                    elem_type=element_type)
             bpmn_objects.append(element_obj)
         return bpmn_objects
 
@@ -82,14 +88,14 @@ class BPMNConverter:
         return sequence_flows
 
     def create_bpmn_objects(self, bpmn_types: List[BPMNEnum]) -> List[
-        BPMNElement]:
+        BPMNFlowObject]:
         """
         Method that creates BPMNElements (all specified in bpmn_types but no
         SequenceFlows!) by reading the XML-Reader XML-DOM.
         """
         # for this purpose we create a list that contains
         # all BPMNElements & BPMNGateways for later linking
-        all_bpmn_elements: List[BPMNElement] = []
+        all_bpmn_elements: List[BPMNFlowObject] = []
 
         # creating BPMN-Elements of all BPMN-Types
         for bpmn_type in bpmn_types:
@@ -101,7 +107,7 @@ class BPMNConverter:
                                  f' Must not contain sequenceflows.')
         return all_bpmn_elements
 
-    def create_bpmn_sequence_flows(self, bpmn_elements: List[BPMNElement]) -> \
+    def create_bpmn_sequence_flows(self, bpmn_elements: List[BPMNFlowObject]) -> \
             List[BPMNSequenceFlow]:
         """
         Method that creates BPMNSequenceFlows by reading the XML-Reader XML-DOM.

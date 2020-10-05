@@ -12,11 +12,11 @@ introducing a TypeVar every time, we let them expect a BPMNFlowObject.
 """
 from pedantic import pedantic_class
 
-from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
 
 
 @pedantic_class
-class BPMNFlowObject(BPMNElement):
+class BPMNFlowObject(BPMNFlowObject):
     def __init__(self, id_: str, name: str) -> None:
         super().__init__(id_=id_)
         self.name = name

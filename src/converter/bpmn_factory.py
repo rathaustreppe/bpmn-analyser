@@ -6,7 +6,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
-    BPMNElement
+    BPMNFlowObject
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
@@ -33,13 +33,8 @@ class BPMNFactory(IBPMNFactory):
     # designed that a factory is only instantiated when the
     # xml is conform to XML and BPMN standard. Therefore it cannot handle
     # corrupt files or file-definitions.
-    # This would be okay: <task id="" condition=""></task>'
-    # This not: <task></task>'
-    def create_bpmn_element(self,
-                            element: Element,
-                            elem_type: BPMNEnum,
-                            src_tgt_elements: Optional[
-                                List[BPMNElement]] = None) -> BPMNElement:
+    def create_bpmn_flow_object(self, element: Element, elem_type: BPMNEnum) -> \
+            BPMNFlowObject:
         if elem_type == BPMNEnum.STARTEVENT:
             return self._create_start_event(element=element)
 
@@ -48,10 +43,6 @@ class BPMNFactory(IBPMNFactory):
 
         elif elem_type == BPMNEnum.ACTIVITY:
             return self._create_activity(element=element)
-
-        elif elem_type == BPMNEnum.SEQUENCEFLOW:
-            return self._create_sequence_flow(sequence_flow=element,
-                                              elements=src_tgt_elements)
 
         elif elem_type == BPMNEnum.PARALLGATEWAY:
             return self._create_parallel_gateway(element=element)
@@ -64,6 +55,17 @@ class BPMNFactory(IBPMNFactory):
 
         else:
             raise NotImplementedTypeError(object_=elem_type.value)
+
+    def create_bpmn_connecting_object(self, element: Element,
+                                      elem_type: BPMNEnum,
+                                      src_tgt_elements: Optional[
+                                          List[BPMNFlowObject]] = None) -> BPMNSequenceFlow:
+        if elem_type == BPMNEnum.SEQUENCEFLOW:
+            return self._create_sequence_flow(sequence_flow=element,
+                                          elements=src_tgt_elements)
+        else:
+            raise NotImplementedTypeError(object_=elem_type.value)
+
 
     def _create_end_event(self, element: Element) -> BPMNEndEvent:
         id_, name = self._create_bpmn_element(element=element)
@@ -102,7 +104,7 @@ class BPMNFactory(IBPMNFactory):
 
     def _create_sequence_flow(self,
                               sequence_flow: Element,
-                              elements: List[BPMNElement]) -> BPMNSequenceFlow:
+                              elements: List[BPMNFlowObject]) -> BPMNSequenceFlow:
         """
         We fully build a sequence flow here. We take the
         BPMN-elements as a list to search for the object
@@ -128,13 +130,13 @@ class BPMNFactory(IBPMNFactory):
         # attribute of our BPMN-elements.
         sequence_targets = []
         for source in elements:
-            source: BPMNElement
+            source: BPMNFlowObject
             if target_ref == source.id_:
                 sequence_targets.append(source)
 
         sequence_sources = []
         for target in elements:
-            target: BPMNElement
+            target: BPMNFlowObject
             if source_ref == target.id_:
                 sequence_sources.append(target)
 

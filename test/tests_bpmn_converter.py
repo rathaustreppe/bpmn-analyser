@@ -6,7 +6,7 @@ import pytest
 from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
@@ -41,10 +41,10 @@ class TestBPMNConverter:
         bpmn_converter.xml_reader.clean_temp_file_path()
         return model
 
-    def find_elems(self, elements: List[BPMNElement], type):
+    def find_elems(self, elements: List[BPMNFlowObject], type):
         return [elem for elem in elements if isinstance(elem, type)]
 
-    def find_by_id(self, elements: List[BPMNElement], id: str) -> BPMNElement:
+    def find_by_id(self, elements: List[BPMNFlowObject], id: str) -> BPMNFlowObject:
         elements = [elem for elem in elements if elem.id_ == id]
 
         if len(elements) == 0:
