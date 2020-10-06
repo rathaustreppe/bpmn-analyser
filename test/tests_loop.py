@@ -165,3 +165,39 @@ class TestLoop:
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
+
+    def test_generator_loop_different_order(self, xml_folders_path,
+                            nn_chunker):
+        # in the generator_loop test a is modified first,
+        # then b. In this test we changed the order, so
+        # b is modified first, then a.
+        def get_init_token() -> Token:
+            init_attributes = {
+                'a': '0',
+                'b': '0'
+            }
+            return Token(attributes=init_attributes)
+
+        def get_solution_token() -> Token:
+            init_attributes = {
+                'a': '2',
+                'b': '2'
+            }
+            return Token(attributes=init_attributes)
+
+        def get_ruleset() -> List[TokenStateRule]:
+            # empty ruleset, because RuleFinder generates rule for increment
+            return []
+
+        def get_chunker() -> Chunker:
+            # just return any chunker, because increments bypass Chunker
+            return nn_chunker
+
+        solution_token = get_solution_token()
+        return_token = self.execute_process(
+            filename='generator_loop_different_order.bpmn',
+            xml_folders_path=xml_folders_path,
+            chunker=get_chunker(),
+            ruleset=get_ruleset(),
+            init_token=get_init_token())
+        assert solution_token == return_token

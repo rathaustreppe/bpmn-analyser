@@ -43,3 +43,4 @@ if __name__ == '__main__':
                                    chunker=gateway_example.get_chunker())
     gw_solution_token = gateway_example.get_solution_token()
     run_pointer(graph_pointer=gateway_pointer, solution_token=gw_solution_token)
+    
