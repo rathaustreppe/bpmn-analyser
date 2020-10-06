@@ -6,7 +6,7 @@
 
 Educational tool for semantic analysis of BPMN-diagrams. 
 Define sample solutions, let your students create diagrams
-and compare your solution with your students ones!
+and compare your their solutions with yours.
 
 
 
@@ -29,7 +29,7 @@ Teach your students business process modelling skills by focusing on what is imp
 Understanding real-life-constraints and expressing their ideas with modelling.
 
 Think about a business process in real-life. Maybe a customer orders 
-coffee beans in your online shop or your universities administration takes ages to reply to your application.
+coffee beans in your online shop or your universitity administration takes ages to reply to your application.
 If you want your students to model this process, BPMN-Analyzer helps you to
 * precisely formulate a task description
 * define real-life-constraints that limit your process
@@ -49,9 +49,9 @@ students modelled the process correctly.
 BPMN-Analyzer can
 * read valid and well-formed BPMN2.0-XMLs. Use [camundas BPMN tool](https://demo.bpmn.io) tool for modelling!
 Check out the [BPMNLinting-Tool](https://github.com/bpmn-io/bpmnlint-playground) for syntax checks.
-* execute following elements of BPMN:
-    * Activities, Start-and EndEvents
-    * Gateways: parallel, inclusive & exclusive 
+* execute elements of BPMN:
+    * activities, start-and end events
+    * gateways: parallel, inclusive & exclusive 
     * explicit loops
 * read and understand semi-structured text by using Natural Language Processing RegExp-Chunker
 * make use of wordnet to check for synonyms
