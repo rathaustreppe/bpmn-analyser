@@ -4,7 +4,6 @@
 htmlcov
 
 *.pyc
-*.svg
 
 
 # python virutal environments
