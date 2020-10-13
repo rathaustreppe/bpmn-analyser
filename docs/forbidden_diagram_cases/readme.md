@@ -1,5 +1,5 @@
 
->>> F O R B I D D E N    D I A G R A M S <<<
+# Forbidden Diagrams
 
 There are some cases where BPMN is syntactically correct
 but semantically ambiguous.
