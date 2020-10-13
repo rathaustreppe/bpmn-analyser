@@ -7,4 +7,4 @@ comprehensive documentation of the allowed syntax.
 Or look at it here:
 
 ## Syntax Documentation
-![Image of allowed syntax](syntax_documentation.png?raw=true)
+![Image of allowed syntax](syntax_documentation.svg)
