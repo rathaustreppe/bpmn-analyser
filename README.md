@@ -6,7 +6,7 @@
 
 Educational tool for semantic analysis of BPMN-diagrams. 
 Define sample solutions, let your students create diagrams
-and compare your their solutions with yours.
+and compare their solutions with yours.
 
 
 
@@ -16,10 +16,7 @@ and compare your their solutions with yours.
 * [About the Project](#about-the-project)
 * [Features](#features)
 * [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
 * [RoadMap](#roadmap)
-* [Usage](#usage)
 
 ## About the Project
 Software engineers and business administration need to understand business processes in order 
@@ -47,8 +44,8 @@ students modelled the process correctly.
 
 ## Features
 BPMN-Analyzer can
-* read valid and well-formed BPMN2.0-XMLs. Use [camundas BPMN tool](https://demo.bpmn.io) tool for modelling!
-Check out the [BPMNLinting-Tool](https://github.com/bpmn-io/bpmnlint-playground) for syntax checks.
+* read valid and well-formed BPMN2.0-XMLs. Use [camundas BPMN tool](https://demo.bpmn.io) for modelling!
+Check out the [BPMN linting tool](https://github.com/bpmn-io/bpmnlint-playground) for syntax checks.
 * execute elements of BPMN:
     * activities, start-and end events
     * gateways: parallel, inclusive & exclusive 
