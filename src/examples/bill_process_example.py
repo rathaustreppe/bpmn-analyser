@@ -121,6 +121,6 @@ class BillProcessExample(IExample):
         # This is the students solution. We want to check if this
         # BPMN-Graph is correct.
         # Graph from *.bpmn-file
-        path_to_bpmn = r'examples/bill_process.bpmn'
+        path_to_bpmn = r'bill_process.bpmn'
         converter = Converter()
-        return converter.convert(rel_path_to_bpmn=path_to_bpmn)
+        return converter.convert(rel_file_path=path_to_bpmn)

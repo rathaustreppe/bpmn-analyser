@@ -1,5 +1,8 @@
-from src.examples.bill_process_example import BillProcessExample
-from src.examples.gateway_example import GatewayExample
+import glob
+import os
+
+from src.converter.converter import Converter
+from src.examples.field_trial.sample_solution import SampleSolution
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 
@@ -24,23 +27,30 @@ def run_pointer(graph_pointer: GraphPointer, solution_token: Token):
 
 
 if __name__ == '__main__':
-    # >>> >>> >>>  B I L L   P R O C E S S   E X A M P L E  <<< <<< <<<
-    print('\n>>> >>> >>>  B I L L   P R O C E S S   E X A M P L E  <<< <<< <<<')
-    bill_example = BillProcessExample()
-    bill_pointer = GraphPointer(model=bill_example.get_students_process(),
-                                token=bill_example.get_init_token(),
-                                ruleset=bill_example.get_ruleset(),
-                                chunker=bill_example.get_chunker())
-    bill_solution_token = bill_example.get_solution_token()
-    run_pointer(graph_pointer=bill_pointer, solution_token=bill_solution_token)
+    # Execute this main.py to analyze several files in a folder and get a
+    # formatted output.
+    converter = Converter()
 
-    # >>> >>> >>> G A T E W A Y    E X A M P L E <<< <<< <<<
-    print('\n >>> >>> >>> G A T E W A Y    E X A M P L E <<< <<< <<<')
-    gateway_example = GatewayExample()
-    gateway_pointer = GraphPointer(model=gateway_example.get_students_process(),
-                                   token=gateway_example.get_init_token(),
-                                   ruleset=gateway_example.get_ruleset(),
-                                   chunker=gateway_example.get_chunker())
-    gw_solution_token = gateway_example.get_solution_token()
-    run_pointer(graph_pointer=gateway_pointer, solution_token=gw_solution_token)
-    
+    # tell the program where all the *.bpmn-files are:
+    abs_folder_path = r'.....................\files'
+
+
+    file_mask = r'*.bpmn'
+
+    # runs through all the files
+    for filepath in glob.glob(os.path.join(abs_folder_path, file_mask)):
+        print(f'\n>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
+        try:
+            students_bpmn_model = converter.convert(abs_file_path=filepath)
+            sample_solution = SampleSolution()
+
+            students_graphpointer = GraphPointer(model=students_bpmn_model,
+                                                 token=sample_solution.get_init_token(),
+                                                 ruleset=sample_solution.get_ruleset(),
+                                                 chunker=sample_solution.get_chunker())
+            sample_solution_token = sample_solution.get_solution_token()
+            run_pointer(graph_pointer=students_graphpointer, solution_token=sample_solution_token)
+        except Exception as e:
+            print(f'while processing an error occurred: \n {e}')
+            print(f'{students_graphpointer.token}')
+            continue
