@@ -149,7 +149,7 @@
     </task>
     <sequenceFlow id="Flow_1o2ev4r" sourceRef="Activity_1b7ereb" targetRef="Activity_0ugbea5" />
     <sequenceFlow id="Flow_0989c0c" sourceRef="Activity_0ugbea5" targetRef="Activity_1y0tsgy" />
-    <task id="Activity_0rmtmxd" name="A == 2&#10;B == 0">
+    <task id="Activity_0rmtmxd" name="A == 1&#10;B == 0">
       <outgoing>Flow_13vx6mw</outgoing>
     </task>
     <sequenceFlow id="Flow_13vx6mw" sourceRef="Activity_0rmtmxd" targetRef="Gateway_0ly6kua" />
@@ -305,30 +305,44 @@ It will change the TokenState accordingly.</text>
   </process>
   <bpmndi:BPMNDiagram id="BpmnDiagram_1">
     <bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
-      <bpmndi:BPMNShape id="TextAnnotation_1iu386r_di" bpmnElement="TextAnnotation_1iu386r">
-        <omgdc:Bounds x="810" y="2660" width="99.99999999999999" height="40.66193853427896" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_09364uw_di" bpmnElement="TextAnnotation_09364uw">
-        <omgdc:Bounds x="280" y="2665" width="99.99999999999999" height="40.66193853427896" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1li0po2_di" bpmnElement="TextAnnotation_1li0po2">
-        <omgdc:Bounds x="440" y="2880" width="99.99999999999999" height="40.66193853427896" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1xwa0b6_di" bpmnElement="TextAnnotation_1xwa0b6">
-        <omgdc:Bounds x="390" y="1313" width="100" height="70" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1dly9f8_di" bpmnElement="TextAnnotation_1dly9f8">
-        <omgdc:Bounds x="450" y="3175" width="99.99999805248385" height="84.02467884679623" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0cfnmx1_di" bpmnElement="TextAnnotation_0cfnmx1">
-        <omgdc:Bounds x="790" y="3105" width="99.99999805248385" height="112.95469049138481" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1gnnobb_di" bpmnElement="TextAnnotation_1gnnobb">
-        <omgdc:Bounds x="830" y="3315" width="200.00001558012923" height="98.29823896241325" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_028kzuz_di" bpmnElement="TextAnnotation_028kzuz">
-        <omgdc:Bounds x="650" y="3440" width="99.99999805248385" height="40.71474349186842" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0r0xtyl_di" bpmnElement="Flow_0r0xtyl">
+        <omgdi:waypoint x="755" y="3000" />
+        <omgdi:waypoint x="810" y="3000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uc8k58_di" bpmnElement="Flow_0uc8k58">
+        <omgdi:waypoint x="730" y="2975" />
+        <omgdi:waypoint x="730" y="2880" />
+        <omgdi:waypoint x="600" y="2880" />
+        <omgdi:waypoint x="600" y="2960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_076lkwn_di" bpmnElement="Flow_076lkwn">
+        <omgdi:waypoint x="650" y="3000" />
+        <omgdi:waypoint x="705" y="3000" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y6mzzh_di" bpmnElement="Flow_0y6mzzh">
+        <omgdi:waypoint x="780" y="2745" />
+        <omgdi:waypoint x="780" y="2640" />
+        <omgdi:waypoint x="480" y="2640" />
+        <omgdi:waypoint x="480" y="2745" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="604" y="2622" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1errv2y_di" bpmnElement="Flow_1errv2y">
+        <omgdi:waypoint x="805" y="2770" />
+        <omgdi:waypoint x="960" y="2770" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="853" y="2752" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qro63z_di" bpmnElement="Flow_0qro63z">
+        <omgdi:waypoint x="505" y="2770" />
+        <omgdi:waypoint x="600" y="2770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hhrj3a_di" bpmnElement="Flow_0hhrj3a">
+        <omgdi:waypoint x="700" y="2770" />
+        <omgdi:waypoint x="755" y="2770" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_09ctl91_di" bpmnElement="Flow_09ctl91">
         <omgdi:waypoint x="875" y="2370" />
         <omgdi:waypoint x="990" y="2370" />
@@ -510,44 +524,6 @@ It will change the TokenState accordingly.</text>
         <omgdi:waypoint x="568" y="280" />
         <omgdi:waypoint x="702" y="280" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hhrj3a_di" bpmnElement="Flow_0hhrj3a">
-        <omgdi:waypoint x="700" y="2770" />
-        <omgdi:waypoint x="755" y="2770" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qro63z_di" bpmnElement="Flow_0qro63z">
-        <omgdi:waypoint x="505" y="2770" />
-        <omgdi:waypoint x="600" y="2770" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1errv2y_di" bpmnElement="Flow_1errv2y">
-        <omgdi:waypoint x="805" y="2770" />
-        <omgdi:waypoint x="960" y="2770" />
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="853" y="2752" width="59" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0y6mzzh_di" bpmnElement="Flow_0y6mzzh">
-        <omgdi:waypoint x="780" y="2745" />
-        <omgdi:waypoint x="780" y="2640" />
-        <omgdi:waypoint x="480" y="2640" />
-        <omgdi:waypoint x="480" y="2745" />
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="604" y="2622" width="53" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0uc8k58_di" bpmnElement="Flow_0uc8k58">
-        <omgdi:waypoint x="730" y="2975" />
-        <omgdi:waypoint x="730" y="2880" />
-        <omgdi:waypoint x="600" y="2880" />
-        <omgdi:waypoint x="600" y="2960" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_076lkwn_di" bpmnElement="Flow_076lkwn">
-        <omgdi:waypoint x="650" y="3000" />
-        <omgdi:waypoint x="705" y="3000" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r0xtyl_di" bpmnElement="Flow_0r0xtyl">
-        <omgdi:waypoint x="755" y="3000" />
-        <omgdi:waypoint x="810" y="3000" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="DataObjectReference_0z3psqe_di" bpmnElement="DataObjectReference_0z3psqe">
         <omgdc:Bounds x="622" y="85" width="36" height="50" />
         <bpmndi:BPMNLabel>
@@ -683,33 +659,6 @@ It will change the TokenState accordingly.</text>
       <bpmndi:BPMNShape id="Activity_0zlrz1h_di" bpmnElement="Activity_0zlrz1h">
         <omgdc:Bounds x="990" y="2330" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0k02ev1_di" bpmnElement="TextAnnotation_0k02ev1">
-        <omgdc:Bounds x="280" y="940" width="99.99999737370241" height="69.70740103270224" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1hxz5ok_di" bpmnElement="TextAnnotation_1hxz5ok">
-        <omgdc:Bounds x="430" y="930" width="99.99999547552585" height="69.68124536693847" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_059efux_di" bpmnElement="TextAnnotation_059efux">
-        <omgdc:Bounds x="880" y="953" width="99.9999973737024" height="84.33734939759036" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0lz3lk2_di" bpmnElement="TextAnnotation_0lz3lk2">
-        <omgdc:Bounds x="320" y="1830" width="99.99999805248385" height="69.99574623521758" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1vyde9c_di" bpmnElement="TextAnnotation_1vyde9c">
-        <omgdc:Bounds x="490" y="1816" width="99.99999999999999" height="84.00314727855348" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1auocu1_di" bpmnElement="TextAnnotation_1auocu1">
-        <omgdc:Bounds x="570" y="1320" width="100.00001050519042" height="55.077452667814114" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1wp1xu0_di" bpmnElement="TextAnnotation_1wp1xu0">
-        <omgdc:Bounds x="880" y="1816" width="99.99999737370241" height="98.1067125645439" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0c8ky7i_di" bpmnElement="TextAnnotation_0c8ky7i">
-        <omgdc:Bounds x="180" y="2150" width="99.99999547552585" height="69.68124536693847" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0ye17hr_di" bpmnElement="TextAnnotation_0ye17hr">
-        <omgdc:Bounds x="390" y="2136" width="99.99999547552585" height="98.59154929577466" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1jrx7o1_di" bpmnElement="Activity_1jrx7o1">
         <omgdc:Bounds x="600" y="2730" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -733,6 +682,9 @@ It will change the TokenState accordingly.</text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_17ksl88_di" bpmnElement="Activity_17ksl88">
         <omgdc:Bounds x="650" y="3225" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m0gqja_di" bpmnElement="Activity_1nfj152">
+        <omgdc:Bounds x="320" y="3740" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0lwtnth_di" bpmnElement="Gateway_1utx4tv">
         <omgdc:Bounds x="635" y="3745" width="50" height="50" />
@@ -761,6 +713,57 @@ It will change the TokenState accordingly.</text>
       <bpmndi:BPMNShape id="Activity_06zb1wv_di" bpmnElement="Activity_0u0angv">
         <omgdc:Bounds x="650" y="3540" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k02ev1_di" bpmnElement="TextAnnotation_0k02ev1">
+        <omgdc:Bounds x="280" y="940" width="99.99999737370241" height="69.70740103270224" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1hxz5ok_di" bpmnElement="TextAnnotation_1hxz5ok">
+        <omgdc:Bounds x="430" y="930" width="99.99999547552585" height="69.68124536693847" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_059efux_di" bpmnElement="TextAnnotation_059efux">
+        <omgdc:Bounds x="880" y="953" width="99.9999973737024" height="84.33734939759036" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0lz3lk2_di" bpmnElement="TextAnnotation_0lz3lk2">
+        <omgdc:Bounds x="320" y="1830" width="99.99999805248385" height="69.99574623521758" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1vyde9c_di" bpmnElement="TextAnnotation_1vyde9c">
+        <omgdc:Bounds x="490" y="1816" width="99.99999999999999" height="84.00314727855348" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1xwa0b6_di" bpmnElement="TextAnnotation_1xwa0b6">
+        <omgdc:Bounds x="390" y="1313" width="100" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1auocu1_di" bpmnElement="TextAnnotation_1auocu1">
+        <omgdc:Bounds x="570" y="1320" width="100.00001050519042" height="55.077452667814114" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1wp1xu0_di" bpmnElement="TextAnnotation_1wp1xu0">
+        <omgdc:Bounds x="880" y="1816" width="99.99999737370241" height="98.1067125645439" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0c8ky7i_di" bpmnElement="TextAnnotation_0c8ky7i">
+        <omgdc:Bounds x="180" y="2150" width="99.99999547552585" height="69.68124536693847" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ye17hr_di" bpmnElement="TextAnnotation_0ye17hr">
+        <omgdc:Bounds x="390" y="2136" width="99.99999547552585" height="98.59154929577466" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1iu386r_di" bpmnElement="TextAnnotation_1iu386r">
+        <omgdc:Bounds x="810" y="2660" width="99.99999999999999" height="40.66193853427896" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_09364uw_di" bpmnElement="TextAnnotation_09364uw">
+        <omgdc:Bounds x="280" y="2665" width="99.99999999999999" height="40.66193853427896" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1li0po2_di" bpmnElement="TextAnnotation_1li0po2">
+        <omgdc:Bounds x="440" y="2880" width="99.99999999999999" height="40.66193853427896" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1dly9f8_di" bpmnElement="TextAnnotation_1dly9f8">
+        <omgdc:Bounds x="450" y="3175" width="99.99999805248385" height="84.02467884679623" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0cfnmx1_di" bpmnElement="TextAnnotation_0cfnmx1">
+        <omgdc:Bounds x="790" y="3105" width="99.99999805248385" height="112.95469049138481" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1gnnobb_di" bpmnElement="TextAnnotation_1gnnobb">
+        <omgdc:Bounds x="830" y="3315" width="200.00001558012923" height="98.29823896241325" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_028kzuz_di" bpmnElement="TextAnnotation_028kzuz">
+        <omgdc:Bounds x="650" y="3440" width="99.99999805248385" height="40.71474349186842" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_02itfqc_di" bpmnElement="Association_02itfqc">
         <omgdi:waypoint x="419" y="1069" />
         <omgdi:waypoint x="373" y="1010" />
@@ -780,6 +783,10 @@ It will change the TokenState accordingly.</text>
       <bpmndi:BPMNEdge id="Association_0a9yfa9_di" bpmnElement="Association_0a9yfa9">
         <omgdi:waypoint x="451" y="1946" />
         <omgdi:waypoint x="490" y="1896" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_17h0swm_di" bpmnElement="Association_17h0swm">
+        <omgdi:waypoint x="528" y="1427" />
+        <omgdi:waypoint x="490" y="1383" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_03udew4_di" bpmnElement="Association_03udew4">
         <omgdi:waypoint x="551" y="1426" />
@@ -809,10 +816,6 @@ It will change the TokenState accordingly.</text>
         <omgdi:waypoint x="559" y="2960" />
         <omgdi:waypoint x="517" y="2921" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_17h0swm_di" bpmnElement="Association_17h0swm">
-        <omgdi:waypoint x="528" y="1427" />
-        <omgdi:waypoint x="490" y="1383" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0iasjzm_di" bpmnElement="Association_0iasjzm">
         <omgdi:waypoint x="650" y="3246" />
         <omgdi:waypoint x="550" y="3209" />
@@ -825,9 +828,6 @@ It will change the TokenState accordingly.</text>
         <omgdi:waypoint x="750" y="3283" />
         <omgdi:waypoint x="838" y="3315" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Activity_0m0gqja_di" bpmnElement="Activity_1nfj152">
-        <omgdc:Bounds x="320" y="3740" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_146ddzv_di" bpmnElement="Association_146ddzv">
         <omgdi:waypoint x="700" y="3540" />
         <omgdi:waypoint x="700" y="3481" />

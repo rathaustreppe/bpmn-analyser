@@ -30,7 +30,7 @@ class TestLoop:
         xml_file_path = os.path.join(xml_folders_path, 'loop', filename)
 
         converter = Converter()
-        model = converter.convert(rel_path_to_bpmn=xml_file_path)
+        model = converter.convert(rel_file_path=xml_file_path)
 
         graph_pointer = GraphPointer(model=model,
                                      token=init_token,

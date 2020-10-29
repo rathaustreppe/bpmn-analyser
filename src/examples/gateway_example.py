@@ -58,6 +58,6 @@ class GatewayExample(IExample):
         return Chunker(chunk_grams=grammar)
 
     def get_students_process(self) -> BPMNModel:
-        path_to_bpmn = r'examples/gateway_example.bpmn'
+        path_to_bpmn = r'gateway_example.bpmn'
         converter = Converter()
-        return converter.convert(rel_path_to_bpmn=path_to_bpmn)
+        return converter.convert(rel_file_path=path_to_bpmn)

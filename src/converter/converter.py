@@ -25,7 +25,9 @@ class Converter:
         if xml_reader is None:
             self.xml_reader = XMLReader()
 
-    def convert(self, rel_path_to_bpmn: str) -> BPMNModel:
+    def convert(self,
+                rel_file_path: Optional[str] = None,
+                abs_file_path: Optional[str] = None) -> BPMNModel:
         """
         Does all the stuff:
         reading xml, parsing to elementtree and putting
@@ -37,8 +39,13 @@ class Converter:
         Use other and better tools to check this. For examples
         bpmn-js-bpmnlint.
         """
-        abs_file_path = self.xml_reader.rel_to_abs_path(rel_path=
-                                                        rel_path_to_bpmn)
+        if rel_file_path is None and abs_file_path is None:
+            raise ValueError('Please specify a relative or absolute path '
+                             'to your *.bpmn file')
+
+        if abs_file_path is None:
+            abs_file_path = self.xml_reader.rel_to_abs_path(rel_path=
+                                                        rel_file_path)
 
 
         # # the bpmn-xml of demo.bpmn.io contains wrong
