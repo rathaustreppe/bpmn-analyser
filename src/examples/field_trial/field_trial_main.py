@@ -3,7 +3,6 @@ import os
 import traceback
 
 from src.converter.converter import Converter
-from src.examples.field_trial.sample_solution import SampleSolution
 from src.examples.field_trial.task2_solution import Task2Solution
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
