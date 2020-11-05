@@ -77,6 +77,11 @@ class BPMNFactory():
     def _create_bpmn_element(self, element: Element) -> Tuple[str, str]:
         id_ = element.get(BPMNEnum.ID.value)
         name = element.get(BPMNEnum.NAME.value)
+
+        # allows elements to have no text. Temporary fix!
+        if name is None:
+            name = ''
+
         return id_, name
 
     def _create_activity(self, element: Element) -> BPMNActivity:
