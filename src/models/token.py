@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, Any, Optional
 
 from pedantic import overrides, pedantic_class
@@ -27,8 +28,9 @@ class Token:
         key = modification.get_key()
 
         if key not in self.attributes.keys():
-            raise RuntimeError(
-                f'ERROR: key: "{key}" not in token attributes')
+            msg = f'Key >{key}< not in token attributes. Token: {self}'
+            logging.error(msg)
+            raise RuntimeError(msg)
 
         token_value_before = self.attributes[key]
         value = modification.get_value()
@@ -39,7 +41,9 @@ class Token:
                 int_value = int(token_value_before)
                 int_value += 1
             except ValueError:
-                raise ValueError('tried to add 1 to a non-integer string')
+                msg = f'Tried to add 1 to a non-integer string: {token_value_before}'
+                logging.error(msg)
+                raise ValueError(msg)
 
             token_value_after = str(int_value)
             self.attributes[key] = token_value_after

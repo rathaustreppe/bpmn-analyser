@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Optional, List, Tuple
 
@@ -78,12 +79,10 @@ class XMLReader:
 
     def parse_to_dom(self, abs_file_path: str) -> Element:
         if not os.path.isabs(abs_file_path):
-            # ToDo: try to convert to abs_path
-            # ToDo: better exception
-            raise Exception('no abs path')
+            abs_file_path = os.path.abspath(abs_file_path)
 
         if not os.path.isfile(abs_file_path):
-            # ToDo: better exception
+            logging.error(f'File not found: {abs_file_path}')
             raise FileNotFoundError(abs_file_path)
 
         # always prepare_dom(). Why? When malicious lines are in the document,
@@ -122,8 +121,9 @@ class XMLReader:
         Returns:
         """
         if self.xml_dom is None:
-            raise ValueError('XML-DOM of XML-Reader is None. Use parse_to_dom '
-                             'to initiate.')
+            logging.debug('XML-DOM of XML-Reader is None. Used parse_to_dom() to initiate.')
+            self.xml_dom = self.parse_to_dom(abs_file_path=self.abs_path)
+
         elements_in_file = []
         bpmn_tag = '{http://www.omg.org/spec/BPMN/20100524/MODEL}'
         for element in self.xml_dom.findall(

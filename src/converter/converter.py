@@ -7,6 +7,7 @@ from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.xml_reader import XMLReader
+from src.exception.path_errors import NoPathError
 
 
 @pedantic_class
@@ -40,8 +41,7 @@ class Converter:
         bpmn-js-bpmnlint.
         """
         if rel_file_path is None and abs_file_path is None:
-            raise ValueError('Please specify a relative or absolute path '
-                             'to your *.bpmn file')
+            raise NoPathError()
 
         if abs_file_path is None:
             abs_file_path = self.xml_reader.rel_to_abs_path(rel_path=

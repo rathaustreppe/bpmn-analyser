@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 from typing import Any
 
@@ -96,8 +97,10 @@ class TokenStateCondition:
         elif self._operator == Operators.SMALLER_THEN:
             return token_val < self._tok_value
         else:
-            raise NotImplementedError(f'Operator {self._operator} not implemented.'
-                                      f'Currently implemented: {Operators.value}')
+            msg = f'Operator {self._operator} not implemented. ' \
+                  f'Currently implemented: {Operators.value}'
+            logging.error(msg)
+            raise NotImplementedError(msg)
 
 
     def __str__(self) -> str:

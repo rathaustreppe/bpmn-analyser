@@ -6,6 +6,7 @@ class WrongTypeError(Exception):
         self.message = f'Expected type: {expected}. ' \
                        f'Got: {given}. Object: {object_} '
         super().__init__(self.message)
+        logging.error(self.message)
 
 
 class NotImplementedTypeError(Exception):
@@ -14,3 +15,4 @@ class NotImplementedTypeError(Exception):
                        f'{type(object_)} is not supported' \
                        f' in this function'
         super().__init__(self.message)
+        logging.error(self.message)

@@ -1,3 +1,5 @@
+import logging
+
 from typing import List, Tuple
 
 from nltk import Tree
@@ -8,6 +10,7 @@ class NoChunkFoundError(Exception):
         self.message = f'no chunk in text {pos_list} found. ' \
                        f'Used grammars: {chunker.grammars}'
         super().__init__(self.message)
+        logging.error(self.message)
 
 
 class MultipleChunksFoundError(Exception):
@@ -18,12 +21,14 @@ class MultipleChunksFoundError(Exception):
                        f'instead of only one. Found chunks: {found_chunks}. ' \
                        f'Used chunker: {chunker}'
         super().__init__(self.message)
+        logging.error(self.message)
 
 
 class EmptySynonymCloudError(Exception):
     def __init__(self, syncloud: 'SynonymCloud'):
         self.message =f' Synonymcloud {syncloud} cannot be empty'
         super().__init__(self.message)
+        logging.error(self.message)
 
 
 class ChunkSynonymCloudMismatch(Exception):
@@ -32,3 +37,4 @@ class ChunkSynonymCloudMismatch(Exception):
                        f' and syncloud {synonym_cloud} with length ' \
                        f'{len(synonym_cloud)} do not match.'
         super().__init__(self.message)
+        logging.error(self.message)

@@ -3,12 +3,10 @@ from typing import List, Union, Optional, Set, Tuple
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
-from src.converter.bpmn_models.event.bpmn_event import BPMNEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 from src.converter.bpmn_models.gateway.bpmn_exclusive_gateway import \
     BPMNExclusiveGateway
@@ -18,9 +16,10 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
-    JoiningGatewayError
+    JoiningGatewayError, NoBranchingGatewayError
 from src.exception.model_errors import MultipleStartEventsError, \
     NoStartEventError
+from src.exception.wrong_type_errors import NotImplementedTypeError
 from src.models.stack import Stack
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
@@ -180,7 +179,7 @@ class GraphPointer:
         elif isinstance(element, BPMNEndEvent):
             return [element.sequence_flow]
         else:
-            raise ValueError(f'elementtype {element} not implemented')
+            raise NotImplementedTypeError(object_=element)
 
     def next_step_exclusive_gateway(self,
                                     gateway: BPMNExclusiveGateway) -> None:
@@ -264,7 +263,8 @@ class GraphPointer:
             for flow in conditions_meet_flows:
                 self.processed_flows.add(flow)
         else:
-            raise TypeError(f'Gateway {gateway} is no branching gateway.')
+            raise NoBranchingGatewayError(gateway=gateway)
+
 
     def next_step_no_gateway(self, element: BPMNFlowObject) -> None:
         """

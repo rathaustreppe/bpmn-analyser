@@ -1,8 +1,7 @@
 import logging
 
-
-class EmptyStackPopError(Exception):
+class NoPathError(Exception):
     def __init__(self):
-        self.message = f'cannot pop from an empty stack.'
+        self.message = f'Not a single path was given that day.'
         super().__init__(self.message)
         logging.error(self.message)

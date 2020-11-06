@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import traceback
 
@@ -6,6 +7,7 @@ from src.converter.converter import Converter
 from src.examples.field_trial.task2_solution import Task2Solution
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
+from src.util.logger.logging_config import setup_logger_config
 
 
 def run_pointer(graph_pointer: GraphPointer, solution_token: Token):
@@ -28,6 +30,8 @@ def run_pointer(graph_pointer: GraphPointer, solution_token: Token):
 
 
 if __name__ == '__main__':
+    setup_logger_config()
+
     # Execute this main.py to analyze several files in a folder and get a
     # formatted output.
     converter = Converter()
@@ -49,7 +53,9 @@ if __name__ == '__main__':
         task_folder_path = os.path.join(abs_folder_path, task_folder_name)
         # runs through all the files
         for filepath in glob.glob(os.path.join(task_folder_path, file_mask)):
-            print(f'\n>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
+            file_separator = f'>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<'
+            print('\n', file_separator)
+            logging.debug(file_separator)
             try:
                 students_bpmn_model = converter.convert(abs_file_path=filepath)
 

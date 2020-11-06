@@ -1,3 +1,4 @@
+import logging
 from typing import Tuple, Optional, List
 
 from nltk.corpus import wordnet
@@ -10,8 +11,9 @@ class SynonymComposite:
     def __init__(self, word: str = None,
                  synset: Optional[Synset] = None) -> None:
         if (word is None or word == '') and synset is None:
-            raise ValueError(
-                'word and synset parameter cannot both be none')
+            msg = 'word and synset parameter cannot both be none'
+            logging.error(msg)
+            raise ValueError(msg)
 
         self.word = word
         self.synset = synset
@@ -43,12 +45,14 @@ class SynonymComposite:
         word_type = self.get_wordnet_pos(treebank_tag=tagged_word[1])
 
         if word is None or word == '':
-            raise ValueError(f'tagged word cannot be '
-                             f'empty when checking synonyms')
+            msg = f'Function parameter tagged_word cannot contain empty strings.'
+            logging.error(msg)
+            raise ValueError(msg)
 
         if word_type == '':
-            raise ValueError(f'word type of word  {word} '
-                             f'needs to be a TreeBank-POS-tag')
+            msg = f'words in {tagged_word} have no TreeBank-POS-tag.'
+            logging.error(msg)
+            raise ValueError(msg)
 
         return wordnet.synsets(word, word_type)
 
@@ -62,7 +66,9 @@ class SynonymComposite:
         if self.synset is not None:
             return self.synset in synsets_to_check
         else:
-            raise ValueError(f'synset attribute of synset {self} is none')
+            msg = f'synset attribute of synset {self} is none'
+            logging.error(msg)
+            raise ValueError(msg)
 
     @staticmethod
     def get_wordnet_pos(treebank_tag: str) -> str:
