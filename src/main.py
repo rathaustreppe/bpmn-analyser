@@ -1,8 +1,9 @@
 import glob
 import os
+import traceback
 
 from src.converter.converter import Converter
-from src.examples.field_trial.sample_solution import SampleSolution
+from src.examples.field_trial.task2_solution import Task2Solution
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 
@@ -32,25 +33,32 @@ if __name__ == '__main__':
     converter = Converter()
 
     # tell the program where all the *.bpmn-files are:
-    abs_folder_path = r'.....................\files'
-
+    abs_folder_path = r'....'
 
     file_mask = r'*.bpmn'
 
-    # runs through all the files
-    for filepath in glob.glob(os.path.join(abs_folder_path, file_mask)):
-        print(f'\n>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
-        try:
-            students_bpmn_model = converter.convert(abs_file_path=filepath)
-            sample_solution = SampleSolution()
+    # make solution object for task 2
+    task2 = Task2Solution()
 
-            students_graphpointer = GraphPointer(model=students_bpmn_model,
-                                                 token=sample_solution.get_init_token(),
-                                                 ruleset=sample_solution.get_ruleset(),
-                                                 chunker=sample_solution.get_chunker())
-            sample_solution_token = sample_solution.get_solution_token()
-            run_pointer(graph_pointer=students_graphpointer, solution_token=sample_solution_token)
-        except Exception as e:
-            print(f'while processing an error occurred: \n {e}')
-            print(f'{students_graphpointer.token}')
-            continue
+    # container for all 5 task solutions and their subfolder-names
+    tasks_to_check = [(task2, 'U2')]
+
+    # run through all tasks
+    for task, task_folder_name in tasks_to_check:
+        task_folder_path = os.path.join(abs_folder_path, task_folder_name)
+        # runs through all the files
+        for filepath in glob.glob(os.path.join(task_folder_path, file_mask)):
+            print(f'\n>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
+            try:
+                students_bpmn_model = converter.convert(abs_file_path=filepath)
+
+                students_graphpointer = GraphPointer(model=students_bpmn_model,
+                                                     token=task.get_init_token(),
+                                                     ruleset=task.get_ruleset(),
+                                                     chunker=task.get_chunker())
+                solution_token = task.get_solution_token()
+                run_pointer(graph_pointer=students_graphpointer, solution_token=solution_token)
+            except Exception as e:
+                print(traceback.format_exc())
+                print(f'{students_graphpointer.token}')
+                continue
