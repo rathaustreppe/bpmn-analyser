@@ -66,6 +66,8 @@ class Chunker:
         sentences = nltk.sent_tokenize(text)
 
         # requirement - constraint: only one sentence is allowed.
+        if len(sentences) == 0:
+            raise ValueError('text with no length detected')
         sentence = sentences[0]
 
         # Word Tokenizing

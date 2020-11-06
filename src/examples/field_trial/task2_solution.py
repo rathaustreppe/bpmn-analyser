@@ -41,7 +41,7 @@ class Task2Solution(IExample):
 
     def get_ruleset(self) -> List[TokenStateRule]:
         # Rechnung ausstellen, nur wenn Schubkarren geliefert wurden
-        syncloud_r1 = SynonymCloud.from_list(text=['Rechnung austellen'])
+        syncloud_r1 = SynonymCloud.from_list(text=['Rechnung','ausstellen'])
 
         cond_r1 = TokenStateCondition(tok_attribute='Schubkarren ausgeliefert',
                                       operator=Operators.EQUALS,
@@ -52,7 +52,7 @@ class Task2Solution(IExample):
                                synonym_cloud=syncloud_r1)
 
         # Schubkarren nur ausliefern, wenn Schubkarren zusammengebaut
-        syncloud_r2 = SynonymCloud.from_list(text=['Schubkarren mit Lieferschein ausliefern '])
+        syncloud_r2 = SynonymCloud.from_list(text=['Schubkarren', 'mit', 'Lieferschein', 'ausliefern'])
 
         cond_r2 = TokenStateCondition(tok_attribute='Schubkarren zusammengebaut',
                                       operator=Operators.EQUALS,
@@ -64,26 +64,26 @@ class Task2Solution(IExample):
                                synonym_cloud=syncloud_r2)
 
         # Schubkarren nur zusammengebauen, wenn Eigenteile gefertigt und Fremdteile bestellt
-        syncloud_r3 = SynonymCloud.from_list(text=['Schubkarren zusammenbauen'])
+        syncloud_r3 = SynonymCloud.from_list(text=['Schubkarren', 'zusammenbauen'])
 
-        cond_r3 = TokenStateCondition(
+        cond_r3_1 = TokenStateCondition(
             tok_attribute='Eigenteile gefertigt',
             operator=Operators.EQUALS,
             tok_value=True)
 
-        cond_r3 = TokenStateCondition(
+        cond_r3_2 = TokenStateCondition(
             tok_attribute='Fremdteile bestellt',
             operator=Operators.EQUALS,
             tok_value=True)
 
         modification_r3 = TokenStateModification(key='Schubkarren zusammengebaut',
                                                  value=True)
-        tsr_3 = TokenStateRule(state_conditions=[cond_r3, cond_r3],
+        tsr_3 = TokenStateRule(state_conditions=[cond_r3_1, cond_r3_2],
                                state_modifications=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
         # Fremdteile nur bestellen, wenn Bedarf geprüft wurde
-        syncloud_r4 = SynonymCloud.from_list(text=['Bestellungen für fremdbezogene Teile aufgeben'])
+        syncloud_r4 = SynonymCloud.from_list(text=['Bestellungen', 'für', 'fremdbezogene', 'Teile', 'aufgeben'])
 
         cond_r4 = TokenStateCondition(
             tok_attribute='Fremdteilebedarf geprüft',
@@ -100,7 +100,7 @@ class Task2Solution(IExample):
 
         # Eigenteile nur fertigen, wenn Bedarf geprüft wurde
         syncloud_r5 = SynonymCloud.from_list(
-            text=['Fertigung für eigengefertigte Teile anstoßen'])
+            text=['Fertigung', 'für', 'eigengefertigte', 'Teile', 'anstoßen'])
 
         cond_r5 = TokenStateCondition(
             tok_attribute='Eigenteilebedarf geprüft',
@@ -116,7 +116,7 @@ class Task2Solution(IExample):
                                synonym_cloud=syncloud_r5)
 
         # Lagerbestand wird kontrolliert
-        syncloud_r6 = SynonymCloud.from_list(text=['Lagerbestand an Schubkarren kontrollieren'])
+        syncloud_r6 = SynonymCloud.from_list(text=['Lagerbestand', 'an', 'Schubkarren', 'kontrollieren'])
 
         modification_r6 = TokenStateModification(key='Lagerbestand kontrolliert', value=True)
         tsr_6 = TokenStateRule(state_conditions=[],
@@ -130,7 +130,7 @@ class Task2Solution(IExample):
         # we use german in our text, which isnt supported by NLTK -> use
         # default chunker and let synonymclouds check sentences
         grammar = r"""
-        Chunk:     {}
+        Chunk:     {<.*>*}
         """
         return Chunker(chunk_grams=grammar)
 
