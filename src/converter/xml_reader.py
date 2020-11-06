@@ -42,7 +42,7 @@ class XMLReader:
         # we need those sadistic low-level commands, because
         # we cannot parse the xml, modify it with xpath and
         # write it back, because the parser dies.
-        with open(abs_file_path, 'r', encoding='latin-1') as f:
+        with open(abs_file_path, 'r') as f:
             lines = f.readlines()
 
         # lines to delete containing:

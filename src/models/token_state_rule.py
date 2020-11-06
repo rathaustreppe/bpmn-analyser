@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from pedantic import pedantic_class
@@ -23,6 +24,7 @@ class TokenStateRule:
         if len(self.token_state_conditions) > 0:
             for condition in self.token_state_conditions:
                 if not condition.check_condition(token=token):
+                    logging.debug(f'Rule not meet! Token: {token}')
                     return False
         return True
 
@@ -32,6 +34,7 @@ class TokenStateRule:
         return token
 
     def check_and_modify(self, token: Token) -> Token:
+        logging.debug(f'Checking TSRule: {self}')
         if self._check_conditions(token=token):
             token = self._apply_modifications(token=token)
         return token

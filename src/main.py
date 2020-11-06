@@ -46,7 +46,7 @@ if __name__ == '__main__':
     task2 = Task2Solution()
 
     # container for all 5 task solutions and their subfolder-names
-    tasks_to_check = [(task2, 'debug')]
+    tasks_to_check = [(task2, 'U2')]
 
     # run through all tasks
     for task, task_folder_name in tasks_to_check:
@@ -65,6 +65,6 @@ if __name__ == '__main__':
                 run_pointer(graph_pointer=students_graphpointer, solution_token=solution_token)
                 logging.info(f'went trough diagram {os.path.basename(filepath)}\n')
             except Exception as e:
-                #logging.error(traceback.format_exc())
+                logging.error(traceback.format_exc())
                 logging.debug(f'Final token state: {students_graphpointer.token}\n')
                 continue

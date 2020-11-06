@@ -67,19 +67,19 @@ class Task2Solution(IExample):
         # Schubkarren nur zusammengebauen, wenn Eigenteile gefertigt und Fremdteile bestellt
         syncloud_r3 = SynonymCloud.from_list(text=['Schubkarren zusammenbauen'])
 
-        cond_r3 = TokenStateCondition(
+        cond_r31 = TokenStateCondition(
             tok_attribute='Eigenteile gefertigt',
             operator=Operators.EQUALS,
             tok_value=True)
 
-        cond_r3 = TokenStateCondition(
+        cond_r32 = TokenStateCondition(
             tok_attribute='Fremdteile bestellt',
             operator=Operators.EQUALS,
             tok_value=True)
 
         modification_r3 = TokenStateModification(key='Schubkarren zusammengebaut',
                                                  value=True)
-        tsr_3 = TokenStateRule(state_conditions=[cond_r3, cond_r3],
+        tsr_3 = TokenStateRule(state_conditions=[cond_r31, cond_r32],
                                state_modifications=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
@@ -125,7 +125,43 @@ class Task2Solution(IExample):
                                synonym_cloud=syncloud_r6)
 
 
-        return [tsr_1, tsr_2, tsr_3, tsr_4, tsr_5, tsr_6]
+        # Bedarf fremder Teile wird geprüft, nur wenn Lager vorher kontrolliert wurde
+        syncloud_r7 = SynonymCloud.from_list(
+            text=['Bedarf an fremdbezogenen Teilen ermitteln'])
+
+        cond_r7 = TokenStateCondition(
+            tok_attribute='Lagerbestand kontrolliert',
+            operator=Operators.EQUALS,
+            tok_value=True)
+
+        modification_r7 = TokenStateModification(
+            key='Fremdteilebedarf geprüft',
+            value=True)
+
+        tsr_7 = TokenStateRule(state_conditions=[cond_r7],
+                               state_modifications=[modification_r7],
+                               synonym_cloud=syncloud_r7)
+
+        # Bedarf eigener Teile wird geprüft, nur wenn Lager vorher kontrolliert wurde
+        syncloud_r8 = SynonymCloud.from_list(
+            text=['Bedarf an eigengefertigten Teilen ermitteln'])
+
+        cond_r8 = TokenStateCondition(
+            tok_attribute='Lagerbestand kontrolliert',
+            operator=Operators.EQUALS,
+            tok_value=True)
+
+        modification_r8 = TokenStateModification(
+            key='Eigenteilebedarf geprüft',
+            value=True)
+
+        tsr_8 = TokenStateRule(state_conditions=[cond_r8],
+                               state_modifications=[modification_r8],
+                               synonym_cloud=syncloud_r8)
+
+
+
+        return [tsr_1, tsr_2, tsr_3, tsr_4, tsr_5, tsr_6, tsr_7, tsr_8]
 
     def get_chunker(self) -> Chunker:
         # we use german in our text, which isnt supported by NLTK -> use

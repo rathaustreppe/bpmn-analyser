@@ -40,7 +40,12 @@ class SynonymComposite:
         if self.word is not None:
             accepted_distance = 0.92
             score = self.cosine_distance(word1=tagged_word[0], word2=self.word)
-            return score > accepted_distance
+            if score > accepted_distance:
+                accepted = True
+            else:
+                accepted = False
+            logging.debug(f'Synonyms compared: {tagged_word[0]} <> {self.word} || Score: {score} || Accepted?: {accepted}')
+            return accepted
 
     def tagged_word_to_synset(self,
                               tagged_word: Tuple[str, str]) -> List[Synset]:
@@ -86,7 +91,7 @@ class SynonymComposite:
         else:
             return ''
 
-    def cosine_distance(self, word1: str, word2: str):
+    def cosine_distance(self, word1: str, word2: str) -> float:
         # algorithm for calculating distance of two strings
         # Example: Word1 == Word2 == 'hello' --> score: 1.0, means exact
         # Example: Word1 == 'abc', Word2 == 'xyz' --> score: 0.0
@@ -114,6 +119,7 @@ class SynonymComposite:
         for i in range(len(rvector)):
             c += l1[i] * l2[i]
         cosine = c / float((sum(l1) * sum(l2)) ** 0.5)
+        cosine = round(cosine, 2)
         return cosine
 
     def __str__(self) -> str:
