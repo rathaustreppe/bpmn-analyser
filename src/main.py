@@ -33,7 +33,8 @@ if __name__ == '__main__':
     converter = Converter()
 
     # tell the program where all the *.bpmn-files are:
-    abs_folder_path = r'....'
+    rel_folder_path = r'../test/first_field_trial'
+    abs_folder_path = os.path.abspath(rel_folder_path)
 
     file_mask = r'*.bpmn'
 
