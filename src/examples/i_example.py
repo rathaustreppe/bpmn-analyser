@@ -6,7 +6,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
+from src.nlp.IChunker import IChunker
 
 
 @pedantic_class
@@ -25,7 +25,7 @@ class IExample(ABC):
         pass
 
     @abstractmethod
-    def get_chunker(self) -> Chunker:
+    def get_chunker(self) -> IChunker:
         pass
 
     @abstractmethod

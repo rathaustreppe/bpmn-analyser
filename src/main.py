@@ -53,9 +53,7 @@ if __name__ == '__main__':
         task_folder_path = os.path.join(abs_folder_path, task_folder_name)
         # runs through all the files
         for filepath in glob.glob(os.path.join(task_folder_path, file_mask)):
-            file_separator = f'>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<'
-            print('\n', file_separator)
-            logging.debug(file_separator)
+            logging.debug(f'>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
             try:
                 students_bpmn_model = converter.convert(abs_file_path=filepath)
 
@@ -65,7 +63,8 @@ if __name__ == '__main__':
                                                      chunker=task.get_chunker())
                 solution_token = task.get_solution_token()
                 run_pointer(graph_pointer=students_graphpointer, solution_token=solution_token)
+                logging.info(f'went trough diagram {os.path.basename(filepath)}')
             except Exception as e:
-                print(traceback.format_exc())
-                print(f'{students_graphpointer.token}')
+                #logging.error(traceback.format_exc())
+                logging.debug(f'Final token state: {students_graphpointer.token}')
                 continue

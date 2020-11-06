@@ -5,12 +5,12 @@ from pedantic import pedantic_class
 from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
+from src.nlp.IChunker import IChunker
 
 
 @pedantic_class
 class RuleFinder:
-    def __init__(self, chunker: Chunker, ruleset: List[TokenStateRule]) -> None:
+    def __init__(self, chunker: IChunker, ruleset: List[TokenStateRule]) -> None:
         self.chunker = chunker
         self.ruleset = ruleset
 

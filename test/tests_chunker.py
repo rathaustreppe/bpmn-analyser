@@ -5,6 +5,7 @@ import pytest
 from src.exception.language_processing_errors import NoChunkFoundError, \
     MultipleChunksFoundError
 from src.nlp.chunker import Chunker
+from src.nlp.default_chunker import DefaultChunker
 
 
 class TestChunker:
@@ -50,3 +51,38 @@ class TestChunker:
         assert len(chunk.leaves()) == 1
         assert chunk.leaves()[0] == xx_nn_xx_sentence[1]
         assert chunk.label() == 'NN_Chunk'
+
+    def test_default_chunker_word_preprocessing(self):
+        text = 'green'
+        chunker = DefaultChunker()
+        processed_text = chunker.preprocess(text=text)
+        assert len(processed_text) == 1
+        assert processed_text[0] == (text, 'NN') #default tagger tags everything as noun
+
+    def test_default_chunker_text_preprocessing(self):
+        text = 'i like trains'
+        chunker = DefaultChunker()
+        processed_text = chunker.preprocess(text=text)
+        assert len(processed_text) == 1
+        assert processed_text[0] == (text, 'NN')
+
+    def test_default_chunker_one_word_chunking(self):
+        text = 'green'
+        chunker = DefaultChunker()
+        chunk = chunker.find_chunk(text=text)
+        assert len(chunk.leaves()) == 1
+        assert chunk.leaves()[0] == (text, 'NN')
+
+    def test_default_chunker_sentence_chunking(self):
+        text = 'i like trains'
+        chunker = DefaultChunker()
+        chunk = chunker.find_chunk(text=text)
+        assert len(chunk.leaves()) == 1
+        assert chunk.leaves()[0] == (text, 'NN')
+
+    def test_default_chunker_multi_sentence_chunking(self):
+        text = 'I like 99.9 trains. What about you?'
+        chunker = DefaultChunker()
+        chunk = chunker.find_chunk(text=text)
+        assert len(chunk.leaves()) == 1
+        assert chunk.leaves()[0] == (text, 'NN')

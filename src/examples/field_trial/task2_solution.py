@@ -7,6 +7,7 @@ from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
+from src.nlp.default_chunker import DefaultChunker
 from src.nlp.synonym_cloud import SynonymCloud
 
 
@@ -129,10 +130,7 @@ class Task2Solution(IExample):
     def get_chunker(self) -> Chunker:
         # we use german in our text, which isnt supported by NLTK -> use
         # default chunker and let synonymclouds check sentences
-        grammar = r"""
-        Chunk:     {}
-        """
-        return Chunker(chunk_grams=grammar)
+        return DefaultChunker()
 
     def get_students_process(self) -> BPMNModel:
         pass

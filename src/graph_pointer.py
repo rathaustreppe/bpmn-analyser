@@ -23,7 +23,7 @@ from src.exception.wrong_type_errors import NotImplementedTypeError
 from src.models.stack import Stack
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
+from src.nlp.IChunker import IChunker
 from src.nlp.rule_finder import RuleFinder
 
 
@@ -39,7 +39,7 @@ class GraphPointer:
     def __init__(self,
                  token: Token,
                  ruleset: List[TokenStateRule],
-                 chunker: Chunker,
+                 chunker: IChunker,
                  model: BPMNModel) -> None:
         self.model = model
         self.token = token
@@ -279,8 +279,10 @@ class GraphPointer:
         def push(to_push: BPMNFlowObject):
             self.stack.push(item=to_push)
 
-        # perform text analysis and change the token state
-        self.text_analysis(current=element)
+        # perform text analysis and change the token state if the text is not
+        # empty. If the text is empty, leave it.
+        if element.name is not None and not element.name == '':
+            self.text_analysis(current=element)
 
         # Push the next element on stack. We make a distinction of different
         # types here, because accessing the outgoing flow depends on the type.
