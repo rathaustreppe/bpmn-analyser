@@ -52,8 +52,7 @@ class Token:
             # simply set the string to new value
             self.attributes[key] = value
 
-        print(f'Token changed: {key}: {token_value_before} -> {value}')
-
+        logging.info(f'Token changed: {key}: {token_value_before} -> {value}')
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]

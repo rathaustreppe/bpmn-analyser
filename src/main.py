@@ -13,20 +13,20 @@ from src.util.logger.logging_config import setup_logger_config
 def run_pointer(graph_pointer: GraphPointer, solution_token: Token):
     ret = graph_pointer.iterate_model()
     if ret[0] == 0:
-        print('diagram processed correctly')
+        logging.info('diagram processed correctly')
     else:
-        print('possible infinite loop detected')
+        logging.info('possible infinite loop detected')
 
     # compare tokens
     return_token = ret[1]
 
-    print(f'solution token: {solution_token}')
-    print(f'students token: {return_token}')
+    logging.info(f'solution token: {solution_token}')
+    logging.info(f'students token: {return_token}')
 
     if return_token == solution_token:
-        print('token equal: students solution is correct!\n')
+        logging.info('token equal: students solution is correct!')
     else:
-        print('token not equal: business process is wrong\n')
+        logging.info('token not equal: business process is wrong')
 
 
 if __name__ == '__main__':
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     task2 = Task2Solution()
 
     # container for all 5 task solutions and their subfolder-names
-    tasks_to_check = [(task2, 'U2')]
+    tasks_to_check = [(task2, 'debug')]
 
     # run through all tasks
     for task, task_folder_name in tasks_to_check:
@@ -63,8 +63,8 @@ if __name__ == '__main__':
                                                      chunker=task.get_chunker())
                 solution_token = task.get_solution_token()
                 run_pointer(graph_pointer=students_graphpointer, solution_token=solution_token)
-                logging.info(f'went trough diagram {os.path.basename(filepath)}')
+                logging.info(f'went trough diagram {os.path.basename(filepath)}\n')
             except Exception as e:
                 #logging.error(traceback.format_exc())
-                logging.debug(f'Final token state: {students_graphpointer.token}')
+                logging.debug(f'Final token state: {students_graphpointer.token}\n')
                 continue
