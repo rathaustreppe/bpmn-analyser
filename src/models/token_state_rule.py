@@ -34,8 +34,6 @@ class TokenStateRule:
     def check_and_modify(self, token: Token) -> Token:
         if self._check_conditions(token=token):
             token = self._apply_modifications(token=token)
-        else:
-            print(f'rule {self} did not meet conditions of token {token}')
         return token
 
     def __str__(self) -> str:

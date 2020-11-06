@@ -40,9 +40,8 @@ class RuleFinder:
             try:
                 if rule.synonym_cloud.are_synonyms(chunk=chunk):
                     matching_rules.append(rule)
-                    print(f'synonyms: SynCloud:{rule.synonym_cloud} --- Chunk: {chunk}')
-            except Exception as e:
-                print(f'no synonyms: SynCloud:{rule.synonym_cloud} --- Chunk: {chunk}')
+            except Exception:
+                continue
 
         return matching_rules
 
