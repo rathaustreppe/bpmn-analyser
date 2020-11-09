@@ -17,7 +17,7 @@ class Task1Solution(IExample):
         attributes = {
             'vorgelegter Entwurf': True, # should be false, and set to true by startevent
             'geprüfter Entwurf': False,
-            'bemängelter Entwurf': False,
+            'bemängelter Entwurf': True,
             'fehlerfreier Entwurf': False,
             'Serveranmeldung': False,
             'Dokument freigegeben': False,
@@ -73,7 +73,7 @@ class Task1Solution(IExample):
                                synonym_cloud=syncloud_r3)
 
         # Entwurf prüfen, wenn vorgelegt
-        syncloud_r4 = SynonymCloud.from_list(text=['Entwurf prüfen'])
+        syncloud_r4 = SynonymCloud.from_list(text=['Berechtigter prüft Entwurf'])
         cond_r41 = TokenStateCondition(tok_attribute='vorgelegter Entwurf',
                                        operator=Operators.EQUALS,
                                        tok_value=True)
@@ -84,7 +84,7 @@ class Task1Solution(IExample):
                                synonym_cloud=syncloud_r4)
 
         # Entwurf korrigiert, wenn geprüft und mängelhaft und nicht fehlerfrei
-        syncloud_r5 = SynonymCloud.from_list(text=['Entwurf korrigieren'])
+        syncloud_r5 = SynonymCloud.from_list(text=['Verfasser korrigiert Entwurf'])
         cond_r51 = TokenStateCondition(tok_attribute='vorgelegter Entwurf',
                                        operator=Operators.EQUALS,
                                        tok_value=True)

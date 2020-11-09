@@ -1,6 +1,7 @@
 import logging
+import re
 from enum import Enum
-from typing import Any
+from typing import Any, Union
 
 from pedantic import pedantic_class
 
@@ -8,6 +9,7 @@ from src.exception.token_state_errors import \
     MissingOperatorInConditionError, \
     MissingAttributeInConditionError, MissingValueInConditionError, \
     MissingAttributeInTokenError
+from src.exception.wrong_type_errors import WrongTypeError
 from src.models.token import Token
 
 
@@ -28,7 +30,7 @@ class TokenStateCondition:
 
     def __init__(self, tok_attribute: str = '',
                  operator: Operators = Operators.EQUALS,
-                 tok_value: Any = None) -> None:
+                 tok_value: Union[str, int, float] = '') -> None:
         """
         Example: If you want to define the condition, where
         the token attribute foo has to be bar, then you
@@ -38,7 +40,7 @@ class TokenStateCondition:
         Args:
             tok_attribute (str): is the key of the attribute dict of a token
             operator (Operators): '==' compares equality.
-            tok_value (Any): Defines the value the _tok_attribute has to have.
+            tok_value (Union[str,int,float]): Defines the value the _tok_attribute has to have.
         """
         self._tok_attribute = tok_attribute
         self._operator = operator
@@ -46,7 +48,12 @@ class TokenStateCondition:
 
     @classmethod
     def from_string(cls, condition: str) -> 'TokenStateCondition':
-        # parses 'attr=42' to constructor call of TokenStateCondition
+        """
+        parses conditions on BPMNConnectingObjects (e.g. sequenceFlows) to
+        constructor call of TokenStateConditions.
+        Example: 'attr>42' ==> token_attribute = attr, operator = >, value = 42
+        We pay attention to white spaces: '    attr   > 42'.
+        """
         operator = ''
         # find operator
         for op in Operators:
@@ -59,6 +66,10 @@ class TokenStateCondition:
         # find attr
         op_pos = condition.find(operator.value)
         attribute = condition[0:op_pos]
+        # delete whitespaces
+        attribute = attribute.rstrip()
+        attribute = attribute.lstrip()
+
         if attribute == '':
             raise MissingAttributeInConditionError(text=condition)
 
@@ -67,6 +78,9 @@ class TokenStateCondition:
         value = condition[op_str_ending:len(condition)]
         if value == '':
             raise MissingValueInConditionError(text=condition)
+        # delete whitespaces
+        value = value.rstrip()
+        value = value.lstrip()
 
         return TokenStateCondition(tok_attribute=attribute,
                                    operator=operator,
@@ -91,7 +105,37 @@ class TokenStateCondition:
         token_val = token.get_attribute(key=self._tok_attribute)
 
         if self._operator == Operators.EQUALS:
-            return token_val == self._tok_value
+            # pay attention to True/False values:
+            # SequenceFlows contain strings and they can be matched
+            # to text and bool.
+            # Token values can be bool and strings. And those strings can be
+            # matched to text and boolean.
+
+            if isinstance(token_val, bool):
+                if isinstance(self._tok_value, bool):
+                    # bool - bool
+                    return token_val == self._tok_value
+                elif self.__string_is_bool(string=self._tok_value):
+                    # bool - 'True' or 'False'
+                    return token_val == self.__string_to_bool(string=self._tok_value)
+                else:
+                    # bool - 'sth else'
+                    msg = f'Conditions tok_value <{self._tok_value}> ' \
+                          f'is neither <True> nor <False> ' \
+                          f'and is compared to a Token attribute ' \
+                          f'of type bool!'
+                    logging.error(msg)
+                    raise TypeError(msg)
+
+            elif isinstance(token_val, str):
+                # str - str
+                return token_val == self._tok_value
+
+            else:
+                raise WrongTypeError(expected='str or bool',
+                                     given=type(token_val),
+                                     object_=token_val)
+
         elif self._operator == Operators.GREATER_THEN:
             return token_val > self._tok_value
         elif self._operator == Operators.SMALLER_THEN:
@@ -102,6 +146,18 @@ class TokenStateCondition:
             logging.error(msg)
             raise NotImplementedError(msg)
 
+    def __string_is_bool(self, string:str) -> bool:
+        return (string == 'True' or string == 'False')
+
+    def __string_to_bool(self, string:str) -> bool:
+        if string == 'True':
+            return True
+        elif string == 'False':
+            return False
+        else:
+            msg = 'String <{string}> cannot be converted to bool'
+            logging.error(msg)
+            raise TypeError(msg)
 
     def __str__(self) -> str:
         return f'{self._tok_attribute}{self._operator.value}{self._tok_value}'

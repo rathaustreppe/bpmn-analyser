@@ -22,3 +22,9 @@ class BPMNActivity(BPMNFlowObject):
 
         if self.sequence_flow_out is not None:
             self.sequence_flow_out.source = self
+
+    def __str__(self) -> str:
+        return f'Activity[name/text: <{self.name}>'
+
+    def __repr__(self) -> str:
+        return self.__str__()

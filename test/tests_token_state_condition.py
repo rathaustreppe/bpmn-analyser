@@ -16,7 +16,7 @@ class TestTokenStateCondition:
             TokenStateCondition(
                 tok_attribute='',
                 operator=Operators.EQUALS,
-                tok_value=None)
+                tok_value='')
 
     @pytest.fixture(autouse=True)
     def example_rule(self):
@@ -49,30 +49,6 @@ class TestTokenStateCondition:
         with pytest.raises(MissingAttributeInTokenError):
             self.example_rule.check_condition(
                 token=empty_token)
-
-    def test_rule_with_none_value(self):
-        # rule checks for none-value
-        rule = TokenStateCondition(tok_attribute='k1',
-                                   operator=Operators.EQUALS,
-                                   tok_value=None)
-        token = Token(attributes={'k1': None})
-        assert rule.check_condition(token=token)
-
-    def test_rule_with_none_value_2(self):
-        # rule checks for none-value but is wrong with that
-        rule = TokenStateCondition(tok_attribute='k1',
-                                   operator=Operators.EQUALS,
-                                   tok_value=None)
-        token = Token(attributes={'k1': 'v1'})
-        assert rule.check_condition(token=token) is False
-
-    def test_rule_with_none_value_3(self):
-        # rule checks for value but finds none
-        rule = TokenStateCondition(tok_attribute='k1',
-                                   operator=Operators.EQUALS,
-                                   tok_value='v1')
-        token = Token(attributes={'k1': None})
-        assert rule.check_condition(token=token) is False
 
     def test_rule_normal(self, example_token):
         assert self.example_rule.check_condition(
@@ -136,10 +112,52 @@ class TestTokenStateCondition:
         token = Token(attributes={'attr': '42'})
         condition = 'attr<43'
         tsc = TokenStateCondition.from_string(condition=condition)
-
         assert tsc.check_condition(token=token) is True
 
     def test_from_string_operator_not_implemented(self):
         condition = 'attr(42'
         with pytest.raises(MissingOperatorInConditionError):
             TokenStateCondition.from_string(condition=condition)
+
+    def test_from_string_appending_space(self):
+        token = Token(attributes={'attr': '43'})
+        condition = 'attr==43 ' #notice space at end of string
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_space_after_operator(self):
+        token = Token(attributes={'attr': '43'})
+        condition = 'attr== 43' #notice space after operator
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_space_after_attribute(self):
+        token = Token(attributes={'attr': '43'})
+        condition = 'attr ==43' #notice space at end of attribute
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_space_at_beginning(self):
+        token = Token(attributes={'attr': '43'})
+        condition = ' attr==43'  # notice space at beginning of string
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_space_in_attribute_name(self):
+        token = Token(attributes={'attr attr': '43'})
+        condition = 'attr attr==43'  # notice space inside attribute
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_true_value(self):
+        token = Token(attributes={'hungry': True})
+        condition = 'hungry==True'
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+
+    def test_from_string_false_value(self):
+        token = Token(attributes={'hungry': False})
+        condition = 'hungry==False'
+        tsc = TokenStateCondition.from_string(condition=condition)
+        assert tsc.check_condition(token=token) is True
+

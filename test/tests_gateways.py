@@ -5,7 +5,8 @@ import pytest
 
 from src.converter.converter import Converter
 from src.examples.gateway_example import GatewayExample
-from src.exception.gateway_errors import ExclusiveGatewayBranchError
+from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
+    BranchingGatewayError
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
@@ -187,7 +188,7 @@ class TestGateway:
         }
         init_token = Token(attributes=init_attributes)
 
-        with pytest.raises(ExclusiveGatewayBranchError):
+        with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor.bpmn',
                                 xml_folders_path=xml_folders_path,
                                 chunker=nn_chunker,
@@ -203,7 +204,7 @@ class TestGateway:
         }
         init_token = Token(attributes=init_attributes)
 
-        with pytest.raises(ExclusiveGatewayBranchError):
+        with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor_changed_order.bpmn',
                                 xml_folders_path=xml_folders_path,
                                 chunker=nn_chunker,

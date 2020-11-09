@@ -16,7 +16,7 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
 from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
-    JoiningGatewayError, NoBranchingGatewayError
+    JoiningGatewayError, NoBranchingGatewayError, BranchingGatewayError
 from src.exception.model_errors import MultipleStartEventsError, \
     NoStartEventError
 from src.exception.wrong_type_errors import NotImplementedTypeError
@@ -123,10 +123,17 @@ class GraphPointer:
                                             flows_to_check: List[
                                                 BPMNSequenceFlow]) \
             -> List[BPMNSequenceFlow]:
+        """
+        Checks flow-conditions of all given sequenceFlows. This is needed
+        for gateways to check which flows meet their branching conditions.
+        Every flow without a condition (==None) is treated as if it would have
+        a fulfilled condition. This behaviour is aligned to normal BPMN-Diagrams
+        where not all sequenceFlows have conditions (e.g. activity-flow-activity)
+        """
         flows = []
         for flow in flows_to_check:
             if flow.condition is None or flow.condition.check_condition(
-                    token=self.token):
+                    token=self.token) is True:
                 # we treat flows without conditions as fulfilled flows
                 flows.append(flow)
         return flows
@@ -156,9 +163,10 @@ class GraphPointer:
                 flows_to_check=flows)
             if len(cond_flows) == 1:
                 return cond_flows
+            elif len(cond_flows) >1:
+                raise ExclusiveGatewayBranchError(gateway=gateway,flows=flows)
             else:
-                raise ExclusiveGatewayBranchError(gateway=gateway,
-                                                  flows=flows)
+                raise BranchingGatewayError(gateway=gateway)
 
     def text_analysis(self, current: BPMNFlowObject) -> None:
         matching_rules = self.rule_finder.find_rules(text=current.name)

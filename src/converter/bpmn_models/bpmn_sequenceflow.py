@@ -18,3 +18,11 @@ class BPMNSequenceFlow(BPMNFlowObject):
         self.condition = condition
         self.source = source
         self.target = target
+
+    def __str__(self) -> str:
+        return f'SequenceFlow[src <{self.source}>' \
+               f'| tgt <{self.target}' \
+               f'| condition <{self.condition}>]'
+
+    def __repr__(self) -> str:
+        return self.__str__()

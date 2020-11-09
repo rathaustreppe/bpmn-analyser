@@ -25,7 +25,7 @@ class MissingValueInConditionError(Exception):
 
 class MissingAttributeInTokenError(Exception):
     def __init__(self, token: 'Token', attribute: str):
-        self.message = f'attribute {attribute} in token {token} is either ' \
+        self.message = f'attribute >{attribute}< in token {token} is either ' \
                        f'empty, none or non-existing.'
         super().__init__(self.message)
         logging.error(self.message)

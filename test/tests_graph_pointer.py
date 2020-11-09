@@ -16,7 +16,8 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.exception.gateway_errors import ExclusiveGatewayBranchError
+from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
+    BranchingGatewayError
 from src.exception.model_errors import NoStartEventError, \
     MultipleStartEventsError
 from src.graph_pointer import GraphPointer
@@ -224,7 +225,7 @@ class TestGraphPointer:
         model = self.make_model(elements=[gateway], flows=flows)
         graph_pointer = self.graph_pointer(model=model, token=example_token)
 
-        with pytest.raises(ExclusiveGatewayBranchError):
+        with pytest.raises(BranchingGatewayError):
             graph_pointer.collect_conditional_sequence_flows_of_gateway(gateway=
                                                                         gateway)
 

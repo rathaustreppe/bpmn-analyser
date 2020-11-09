@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 from pedantic import overrides, pedantic_class
 
@@ -57,16 +57,16 @@ class Token:
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
 
+    def get_keys(self) -> List[str]:
+        return list(self.attributes.keys())
+
     @overrides(str)
     def __contains__(self, item: str) -> bool:
         # Enables easy syntax for in-operator:
         # Example:
         # >>> token contains 'abc in attributes
         # >>> if 'abc' in token # True
-        if item in self.attributes:
-            return True
-        else:
-            return False
+        return item in self.attributes
 
     @overrides(object)
     def __eq__(self, other: 'Token') -> bool:
