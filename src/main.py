@@ -4,6 +4,7 @@ import os
 import traceback
 
 from src.converter.converter import Converter
+from src.examples.field_trial.task1_solution import Task1Solution
 from src.examples.field_trial.task2_solution import Task2Solution
 from src.graph_pointer import GraphPointer
 from src.models.token import Token
@@ -42,11 +43,12 @@ if __name__ == '__main__':
 
     file_mask = r'*.bpmn'
 
-    # make solution object for task 2
+    # make solution object for tasks
+    task1 = Task1Solution()
     task2 = Task2Solution()
 
     # container for all 5 task solutions and their subfolder-names
-    tasks_to_check = [(task2, 'U2')]
+    tasks_to_check = [(task1, 'U1'), (task2, 'U2')]
 
     # run through all tasks
     for task, task_folder_name in tasks_to_check:
@@ -66,5 +68,11 @@ if __name__ == '__main__':
                 logging.info(f'went trough diagram {os.path.basename(filepath)}\n')
             except Exception as e:
                 logging.error(traceback.format_exc())
-                logging.debug(f'Final token state: {students_graphpointer.token}\n')
-                continue
+                try:
+                    students_graphpointer
+                except NameError:
+                    logging.debug('Failure in BPMN-Model or Graphpointer and not in execution')
+                    continue
+                else:
+                    logging.debug(f'Final token state: {students_graphpointer.token}\n')
+                    continue
