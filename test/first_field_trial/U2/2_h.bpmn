@@ -40,7 +40,7 @@
       <outgoing>SequenceFlow_137qgq9</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_1he1du3" name="Bestand &#60; 200" sourceRef="ExclusiveGateway_1f3jwza" targetRef="Task_0i8u3zr" />
-    <task id="Task_1ittz51" name="Bestellung für fremdbezogene Teile augeben">
+    <task id="Task_1ittz51" name="Bestellung fÃ¼r fremdbezogene Teile augeben">
       <incoming>SequenceFlow_126itxf</incoming>
       <outgoing>SequenceFlow_0ns47do</outgoing>
     </task>
@@ -50,19 +50,19 @@
       <outgoing>SequenceFlow_126itxf</outgoing>
       <outgoing>SequenceFlow_0658guq</outgoing>
     </exclusiveGateway>
-    <sequenceFlow id="SequenceFlow_126itxf" name="fremdbezogene Teile benötigt" sourceRef="ExclusiveGateway_0zeb3xh" targetRef="Task_1ittz51" />
+    <sequenceFlow id="SequenceFlow_126itxf" name="fremdbezogene Teile benÃ¶tigt" sourceRef="ExclusiveGateway_0zeb3xh" targetRef="Task_1ittz51" />
     <task id="Task_0pi8ail" name="Bedarf an eigengefertigten Teilen ermitteln">
       <incoming>SequenceFlow_10chcpr</incoming>
       <outgoing>SequenceFlow_0d7sl2t</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_0658guq" name="keine fremdbezogenen Teile benötigt" sourceRef="ExclusiveGateway_0zeb3xh" targetRef="ExclusiveGateway_1tx798a" />
+    <sequenceFlow id="SequenceFlow_0658guq" name="keine fremdbezogenen Teile benÃ¶tigt" sourceRef="ExclusiveGateway_0zeb3xh" targetRef="ExclusiveGateway_1tx798a" />
     <exclusiveGateway id="ExclusiveGateway_0o7wezq">
       <incoming>SequenceFlow_0d7sl2t</incoming>
       <outgoing>SequenceFlow_0pfktzm</outgoing>
       <outgoing>SequenceFlow_1cpzxtu</outgoing>
     </exclusiveGateway>
     <sequenceFlow id="SequenceFlow_0d7sl2t" sourceRef="Task_0pi8ail" targetRef="ExclusiveGateway_0o7wezq" />
-    <task id="Task_082kxvv" name="Fertigung an eigengefertigten Teilen anstoßen">
+    <task id="Task_082kxvv" name="Fertigung an eigengefertigten Teilen anstoÃŸen">
       <incoming>SequenceFlow_0pfktzm</incoming>
       <outgoing>SequenceFlow_00d8sma</outgoing>
     </task>

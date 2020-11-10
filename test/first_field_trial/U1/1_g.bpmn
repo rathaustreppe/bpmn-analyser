@@ -4,7 +4,7 @@
     <startEvent id="StartEvent_16shif6" name="Dokument">
       <outgoing>SequenceFlow_1ds62gm</outgoing>
     </startEvent>
-    <endEvent id="EndEvent_02fueph" name="Veröffentlichung">
+    <endEvent id="EndEvent_02fueph" name="VerÃ¶ffentlichung">
       <incoming>SequenceFlow_02rruf6</incoming>
     </endEvent>
     <task id="Task_1dx6453" name="Bewertung">

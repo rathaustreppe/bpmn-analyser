@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0">
   <process id="Process_1" isExecutable="false">
-    <task id="Task_09a9wg0" name="Berechtigte überprüft Entwurf">
+    <task id="Task_09a9wg0" name="Berechtigte Ã¼berprÃ¼ft Entwurf">
       <incoming>SequenceFlow_13uhv7w</incoming>
       <outgoing>SequenceFlow_0oa1em7</outgoing>
     </task>
@@ -37,12 +37,12 @@
       <outgoing>SequenceFlow_05dsvpc</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_1cd5g4e" sourceRef="Task_15iihbt" targetRef="Task_0nvwo9w" />
-    <task id="Task_11eibuf" name="Verfasser benachrichtigen über Freigabe">
+    <task id="Task_11eibuf" name="Verfasser benachrichtigen Ã¼ber Freigabe">
       <incoming>SequenceFlow_05dsvpc</incoming>
       <outgoing>SequenceFlow_10vuoee</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_05dsvpc" sourceRef="Task_0nvwo9w" targetRef="Task_11eibuf" />
-    <endEvent id="EndEvent_0ki022e" name="Dokument wurde veröffentlicht">
+    <endEvent id="EndEvent_0ki022e" name="Dokument wurde verÃ¶ffentlicht">
       <incoming>SequenceFlow_10vuoee</incoming>
     </endEvent>
     <sequenceFlow id="SequenceFlow_10vuoee" sourceRef="Task_11eibuf" targetRef="EndEvent_0ki022e" />

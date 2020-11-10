@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0">
   <process id="Process_1" isExecutable="false">
-    <startEvent id="StartEvent_1dhxrd1" name="Auftrag  bekommen">
+    <startEvent id="StartEvent_1dhxrd1" name="AuftragÂ  bekommen">
       <outgoing>SequenceFlow_05efqhn</outgoing>
     </startEvent>
     <task id="Task_1tv79by" name="Bedarf an eigengefertigten Teilen ermitteln">
@@ -17,11 +17,11 @@
       <incoming>SequenceFlow_1okd1lx</incoming>
       <outgoing>SequenceFlow_1u9463t</outgoing>
     </task>
-    <task id="Task_0u8om6e" name="Fertigung für eigengefertigte Teile anstoßen">
+    <task id="Task_0u8om6e" name="Fertigung fÃ¼r eigengefertigte Teile anstoÃŸen">
       <incoming>SequenceFlow_0na5szq</incoming>
       <outgoing>SequenceFlow_02i4zdz</outgoing>
     </task>
-    <task id="Task_0flggeg" name="Bestellung für fremdbezogene Teile ausgeben">
+    <task id="Task_0flggeg" name="Bestellung fÃ¼r fremdbezogene Teile ausgeben">
       <incoming>SequenceFlow_1u9463t</incoming>
       <outgoing>SequenceFlow_1ur2cla</outgoing>
     </task>
@@ -29,7 +29,7 @@
       <incoming>SequenceFlow_0wsoe1j</incoming>
       <outgoing>SequenceFlow_0cvd4jt</outgoing>
     </task>
-    <task id="Task_1fx63mv" name="Lagerbestand an Schubkarren überprüfen">
+    <task id="Task_1fx63mv" name="Lagerbestand an Schubkarren Ã¼berprÃ¼fen">
       <incoming>SequenceFlow_05efqhn</incoming>
       <outgoing>SequenceFlow_13cqfjq</outgoing>
     </task>
@@ -58,7 +58,7 @@
     <intermediateThrowEvent id="IntermediateThrowEvent_16bnhe2" name="Auftrag abgeschlossen">
       <incoming>SequenceFlow_0l9w145</incoming>
     </intermediateThrowEvent>
-    <exclusiveGateway id="ExclusiveGateway_0baqew0" name="Sind genügend Schubkarren vorhanden?">
+    <exclusiveGateway id="ExclusiveGateway_0baqew0" name="Sind genÃ¼gend Schubkarren vorhanden?">
       <incoming>SequenceFlow_13cqfjq</incoming>
       <outgoing>SequenceFlow_1y58bge</outgoing>
       <outgoing>SequenceFlow_091wnu6</outgoing>

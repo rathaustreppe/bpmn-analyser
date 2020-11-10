@@ -14,7 +14,7 @@
       <outgoing>SequenceFlow_17hjgcf</outgoing>
     </exclusiveGateway>
     <sequenceFlow id="SequenceFlow_1pxp8sf" name="Entwurf fehlerfrei" sourceRef="ExclusiveGateway_1ti6597" targetRef="Task_0ph7gyc" />
-    <task id="Task_0h8xspj" name="Berechtigter �berpr�ft Entwurf">
+    <task id="Task_0h8xspj" name="Berechtigter Ã¼berprÃ¼ft Entwurf">
       <incoming>SequenceFlow_0icvtmn</incoming>
       <outgoing>SequenceFlow_194g8lx</outgoing>
     </task>
@@ -36,13 +36,13 @@
       <incoming>SequenceFlow_0mwxq22</incoming>
       <outgoing>SequenceFlow_1yxhpy2</outgoing>
     </task>
-    <task id="Task_1xcq2ol" name="Verfasser benachrichtigen �ber Freigabe">
+    <task id="Task_1xcq2ol" name="Verfasser benachrichtigen Ã¼ber Freigabe">
       <incoming>SequenceFlow_1yxhpy2</incoming>
       <outgoing>SequenceFlow_1eehu12</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_0mwxq22" sourceRef="Task_0ph7gyc" targetRef="Task_17echc6" />
     <sequenceFlow id="SequenceFlow_1yxhpy2" sourceRef="Task_17echc6" targetRef="Task_1xcq2ol" />
-    <endEvent id="EndEvent_1x7cgt0" name="Dokument wurde ver�ffentlicht">
+    <endEvent id="EndEvent_1x7cgt0" name="Dokument wurde verÃ¶ffentlicht">
       <incoming>SequenceFlow_1eehu12</incoming>
     </endEvent>
     <sequenceFlow id="SequenceFlow_1eehu12" sourceRef="Task_1xcq2ol" targetRef="EndEvent_1x7cgt0" />

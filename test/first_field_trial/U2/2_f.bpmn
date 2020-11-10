@@ -26,12 +26,12 @@
       <outgoing>SequenceFlow_15w12kl</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_0z06bx9" sourceRef="ExclusiveGateway_0u5l43d" targetRef="Task_1h547gs" />
-    <task id="Task_1ozx0xo" name="Bestellungen für fremdbezogene Teileaufgeben">
+    <task id="Task_1ozx0xo" name="Bestellungen fÃ¼r fremdbezogene Teileaufgeben">
       <incoming>SequenceFlow_0xr7vf0</incoming>
       <outgoing>SequenceFlow_0cev1bb</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_0xr7vf0" sourceRef="Task_0kefiw8" targetRef="Task_1ozx0xo" />
-    <task id="Task_0ar9e1c" name="Fertigung für eigengefertigte Teileanstoßen">
+    <task id="Task_0ar9e1c" name="Fertigung fÃ¼r eigengefertigte TeileanstoÃŸen">
       <incoming>SequenceFlow_15w12kl</incoming>
       <outgoing>SequenceFlow_12cuqxf</outgoing>
     </task>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0">
   <process id="Process_0x3v7z2">
-    <task id="Task_0tzdqsn" name="Entwurf überprüfen">
+    <task id="Task_0tzdqsn" name="Entwurf Ã¼berprÃ¼fen">
       <incoming>SequenceFlow_1uid796</incoming>
       <incoming>SequenceFlow_05eem9o</incoming>
       <outgoing>SequenceFlow_177oju5</outgoing>
@@ -11,14 +11,14 @@
       <outgoing>SequenceFlow_1uid796</outgoing>
       <messageEventDefinition />
     </startEvent>
-    <exclusiveGateway id="ExclusiveGateway_01ic9lr" name="Prüfergebnis">
+    <exclusiveGateway id="ExclusiveGateway_01ic9lr" name="PrÃ¼fergebnis">
       <incoming>SequenceFlow_177oju5</incoming>
       <outgoing>SequenceFlow_18f01ne</outgoing>
       <outgoing>SequenceFlow_067ilr4</outgoing>
     </exclusiveGateway>
     <sequenceFlow id="SequenceFlow_177oju5" sourceRef="Task_0tzdqsn" targetRef="ExclusiveGateway_01ic9lr" />
     <sequenceFlow id="SequenceFlow_18f01ne" name="Entwurf in Ordnung" sourceRef="ExclusiveGateway_01ic9lr" targetRef="Task_1180krf" />
-    <task id="Task_1t6ng01" name="Mängel an Verfasser Melden">
+    <task id="Task_1t6ng01" name="MÃ¤ngel an Verfasser Melden">
       <incoming>SequenceFlow_067ilr4</incoming>
       <outgoing>SequenceFlow_17je4f8</outgoing>
     </task>
@@ -40,7 +40,7 @@
         <outgoing>SequenceFlow_1wah6sv</outgoing>
       </task>
       <sequenceFlow id="SequenceFlow_0y6obi6" sourceRef="StartEvent_0bshosr" targetRef="Task_1odb7us" />
-      <exclusiveGateway id="ExclusiveGateway_1xdij68" name="überprüfen der Anmeldedaten">
+      <exclusiveGateway id="ExclusiveGateway_1xdij68" name="Ã¼berprÃ¼fen der Anmeldedaten">
         <incoming>SequenceFlow_1wah6sv</incoming>
         <outgoing>SequenceFlow_1k4f50g</outgoing>
         <outgoing>SequenceFlow_0fo8ohe</outgoing>
@@ -66,7 +66,7 @@
       </task>
       <sequenceFlow id="SequenceFlow_1hg3f26" sourceRef="Task_1ea1gb8" targetRef="Task_0p39wqn" />
     </subProcess>
-    <task id="Task_1vwfbw1" name="Verfasser über Veröffentlichung benachrichtigen">
+    <task id="Task_1vwfbw1" name="Verfasser Ã¼ber VerÃ¶ffentlichung benachrichtigen">
       <incoming>SequenceFlow_0e4lk5r</incoming>
       <outgoing>SequenceFlow_192fe67</outgoing>
     </task>

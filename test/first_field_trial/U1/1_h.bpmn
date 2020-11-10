@@ -4,7 +4,7 @@
     <startEvent id="StartEvent_1sg0yt9" name="Vorlage Dokumentenentwurf">
       <outgoing>SequenceFlow_1ixw496</outgoing>
     </startEvent>
-    <task id="Task_00c9aci" name="Berechtigter prüft Entwurf">
+    <task id="Task_00c9aci" name="Berechtigter prÃ¼ft Entwurf">
       <incoming>SequenceFlow_0r2r5x0</incoming>
       <outgoing>SequenceFlow_0ie9tk2</outgoing>
     </task>
@@ -37,12 +37,12 @@
       <outgoing>SequenceFlow_0cbe2ip</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_1uxthq8" sourceRef="Task_13o1cb8" targetRef="Task_1id7eej" />
-    <task id="Task_1vd9kab" name="Verfasser über Fraigabe benachrichtigen">
+    <task id="Task_1vd9kab" name="Verfasser Ã¼ber Fraigabe benachrichtigen">
       <incoming>SequenceFlow_0cbe2ip</incoming>
       <outgoing>SequenceFlow_0mk161b</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_0cbe2ip" sourceRef="Task_1id7eej" targetRef="Task_1vd9kab" />
-    <endEvent id="EndEvent_061fciw" name="Dokument wurde veröffentlicht">
+    <endEvent id="EndEvent_061fciw" name="Dokument wurde verÃ¶ffentlicht">
       <incoming>SequenceFlow_0mk161b</incoming>
     </endEvent>
     <sequenceFlow id="SequenceFlow_0mk161b" sourceRef="Task_1vd9kab" targetRef="EndEvent_061fciw" />

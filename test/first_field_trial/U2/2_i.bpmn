@@ -9,7 +9,7 @@
       <outgoing>SequenceFlow_14pgx22</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_0srqb6a" sourceRef="StartEvent_0aciujh" targetRef="Task_04utvx9" />
-    <task id="Task_04utvx9" name="Lagerbestand überprüfen">
+    <task id="Task_04utvx9" name="Lagerbestand Ã¼berprÃ¼fen">
       <incoming>SequenceFlow_0srqb6a</incoming>
       <outgoing>SequenceFlow_01afaj7</outgoing>
     </task>
@@ -17,7 +17,7 @@
       <incoming>SequenceFlow_1fq8j0k</incoming>
       <outgoing>SequenceFlow_1xuhe4j</outgoing>
     </task>
-    <task id="Task_1dmzxe8" name="Fertigung für eigengefertigte Teile anstoßen">
+    <task id="Task_1dmzxe8" name="Fertigung fÃ¼r eigengefertigte Teile anstoÃŸen">
       <incoming>SequenceFlow_1xuhe4j</incoming>
       <outgoing>SequenceFlow_0ybw3ll</outgoing>
     </task>
@@ -26,7 +26,7 @@
       <incoming>SequenceFlow_1ftinip</incoming>
       <outgoing>SequenceFlow_0td3bfr</outgoing>
     </task>
-    <task id="Task_1p96oam" name="Bestellung für Fremdbezogene Teile aufgeben">
+    <task id="Task_1p96oam" name="Bestellung fÃ¼r Fremdbezogene Teile aufgeben">
       <incoming>SequenceFlow_0td3bfr</incoming>
       <outgoing>SequenceFlow_1rvm5eg</outgoing>
     </task>

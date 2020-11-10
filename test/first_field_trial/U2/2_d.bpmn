@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0">
   <process id="Process_1" isExecutable="false">
-    <startEvent id="StartEvent_1iuz8y5" name="Bestellung von über 200 schubkarren">
+    <startEvent id="StartEvent_1iuz8y5" name="Bestellung von Ã¼ber 200 schubkarren">
       <outgoing>SequenceFlow_1u4a72x</outgoing>
     </startEvent>
     <exclusiveGateway id="ExclusiveGateway_0y770of" name="Lagerbestand an schubkarren kontrollieren">
@@ -29,13 +29,13 @@
       <outgoing>SequenceFlow_0yjm0ih</outgoing>
     </exclusiveGateway>
     <sequenceFlow id="SequenceFlow_047c7k0" name="genug vorhanden" sourceRef="ExclusiveGateway_0nkuusw" targetRef="ExclusiveGateway_01te84t" />
-    <task id="Task_1cykfuk" name="Fertigung für eigenbezogene Teile anstoßen">
+    <task id="Task_1cykfuk" name="Fertigung fÃ¼r eigenbezogene Teile anstoÃŸen">
       <incoming>SequenceFlow_17ena90</incoming>
       <outgoing>SequenceFlow_0jekx83</outgoing>
     </task>
     <sequenceFlow id="SequenceFlow_17ena90" name="nicht genug vorhanden" sourceRef="ExclusiveGateway_0nkuusw" targetRef="Task_1cykfuk" />
     <sequenceFlow id="SequenceFlow_0jekx83" sourceRef="Task_1cykfuk" targetRef="ExclusiveGateway_01te84t" />
-    <task id="Task_0bv7384" name="Bestellung für fremdbezogene Teile aufgeben">
+    <task id="Task_0bv7384" name="Bestellung fÃ¼r fremdbezogene Teile aufgeben">
       <incoming>SequenceFlow_0hbanfx</incoming>
       <outgoing>SequenceFlow_1nthss2</outgoing>
     </task>

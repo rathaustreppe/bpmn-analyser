@@ -4,7 +4,7 @@
     <startEvent id="StartEvent_0xgyxfq" name="Bestellung des Kunden">
       <outgoing>SequenceFlow_1bemoza</outgoing>
     </startEvent>
-    <task id="Task_0garjhf" name="Bestellung für Teile aufgeben">
+    <task id="Task_0garjhf" name="Bestellung fÃ¼r Teile aufgeben">
       <incoming>SequenceFlow_1e7pnme</incoming>
       <outgoing>SequenceFlow_0btvvel</outgoing>
     </task>
