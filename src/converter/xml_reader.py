@@ -69,7 +69,7 @@ class XMLReader:
 
         # access file with x: create when not existing, leave it when existing
         try:
-            with open(new_file_path, 'w', encoding='utf8') as f:
+            with open(new_file_path, 'w') as f:
                 for line in new_file:
                     f.write(line)
         except FileExistsError:

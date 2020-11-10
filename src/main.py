@@ -48,7 +48,7 @@ if __name__ == '__main__':
     task2 = Task2Solution()
 
     # container for all 5 task solutions and their subfolder-names
-    tasks_to_check = [(task1, 'debug')]
+    tasks_to_check = [(task1, 'U1')]
 
     # run through all tasks
     for task, task_folder_name in tasks_to_check:
