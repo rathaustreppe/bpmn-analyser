@@ -1,7 +1,9 @@
 from typing import List
 
-from src.converter.bpmn_models.bpmn_model import BPMNModel
-from src.examples.i_example import IExample
+from pedantic import pedantic_class
+
+from src.models.i_solution import ISolution
+from src.models.scenario import Scenario
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
@@ -10,59 +12,72 @@ from src.nlp.IChunker import IChunker
 from src.nlp.default_chunker import DefaultChunker
 from src.nlp.synonym_cloud import SynonymCloud
 
+@pedantic_class
+class Task1Solution(ISolution):
 
-class Task1Solution(IExample):
+    def get_scenarios(self) -> List[Scenario]:
+        scenarios = []
 
-    def get_init_token(self) -> Token:
-        # Scenario 1 token
-        attributes = {
-            'vorgelegter Entwurf': True, # should be false, and set to true by startevent
+        # Scnario 1 of task 1: Entwurf ist fehlerfrei
+        description = 'ein fehlerfreier Entwurf wird vorgelegt'
+        running_token = Token(attributes={
+            'vorgelegter Entwurf': True,
+            # should be false, and set to true by startevent
             'fehlerfreier Entwurf': True,
             'geprüfter Entwurf': False,
             'korrigierter Entwurf': False,
             'Serveranmeldung': False,
             'Dokument freigegeben': False,
-            'Verfasser benachrichtigt': False,
-        }
-        return Token(attributes=attributes)
+            'Verfasser benachrichtigt': False
+        })
 
-        # Scenario 2 token
-        # attributes = {
-        #     'vorgelegter Entwurf': True,# should be false, and set to true by startevent
-        #     'fehlerfreier Entwurf': False,
-        #     'geprüfter Entwurf': False,
-        #     'korrigierter Entwurf': False,
-        #     'Serveranmeldung': False,
-        #     'Dokument freigegeben': False,
-        #     'Verfasser benachrichtigt': False,
-        # }
-        # return Token(attributes=attributes)
-
-    def get_solution_token(self) -> Token:
-        # Scenario 1 token
-        attributes = {
-            'vorgelegter Entwurf': True, # should be false, and set to true by startevent
+        expected_token = Token(attributes={
+            'vorgelegter Entwurf': True,
+            # should be false, and set to true by startevent
             'fehlerfreier Entwurf': True,
             'geprüfter Entwurf': True,
             'korrigierter Entwurf': False,
+            # note that this never changed to True
             'Serveranmeldung': True,
             'Dokument freigegeben': True,
-            'Verfasser benachrichtigt': True,
-        }
-        return Token(attributes=attributes)
+            'Verfasser benachrichtigt': True
+        })
 
-        # Scenario 2 token
-        # attributes = {
-        #     'vorgelegter Entwurf': True, # should be false, and set to true by startevent
-        #     'fehlerfreier Entwurf': True,
-        #     'geprüfter Entwurf': True,
-        #     'korrigierter Entwurf': True,
-        #     'Serveranmeldung': True,
-        #     'Dokument freigegeben': True,
-        #     'Verfasser benachrichtigt': True,
-        # }
-        # return Token(attributes=attributes)
+        scen1 = Scenario(running_token=running_token,
+                         expected_token=expected_token,
+                         description=description)
+        scenarios.append(scen1)
 
+        # Scenario 2 of task1: Entwurf ist nicht fehlerfrei
+        description = 'Entwurf ist nicht fehlerfrei. Korrekturschleife nötig'
+        running_token = Token(attributes={
+            'vorgelegter Entwurf': True,
+            # should be false, and set to true by startevent
+            'fehlerfreier Entwurf': False,
+            'geprüfter Entwurf': False,
+            'korrigierter Entwurf': False,
+            'Serveranmeldung': False,
+            'Dokument freigegeben': False,
+            'Verfasser benachrichtigt': False
+        })
+
+        expected_token = Token(attributes={
+            'vorgelegter Entwurf': True,
+            # should be false, and set to true by startevent
+            'fehlerfreier Entwurf': True,
+            'geprüfter Entwurf': True,
+            'korrigierter Entwurf': True,
+            'Serveranmeldung': True,
+            'Dokument freigegeben': True,
+            'Verfasser benachrichtigt': True
+        })
+
+        scen2 = Scenario(running_token=running_token,
+                         expected_token=expected_token,
+                         description=description)
+        scenarios.append(scen2)
+
+        return scenarios
 
     def get_ruleset(self) -> List[TokenStateRule]:
         # Verfasser benachrichtigt, wenn Dokument freigegeben:
@@ -71,7 +86,8 @@ class Task1Solution(IExample):
         cond_r1 = TokenStateCondition(tok_attribute='Dokument freigegeben',
                                       operator=Operators.EQUALS,
                                       tok_value=True)
-        modification_r1 = TokenStateModification(key='Verfasser benachrichtigt', value=True)
+        modification_r1 = TokenStateModification(key='Verfasser benachrichtigt',
+                                                 value=True)
         tsr_1 = TokenStateRule(state_conditions=[cond_r1],
                                state_modifications=[modification_r1],
                                synonym_cloud=syncloud_r1)
@@ -80,11 +96,11 @@ class Task1Solution(IExample):
         # überprüfter Entwurf fehlerfrei
         syncloud_r2 = SynonymCloud.from_list(text=['Dokument hochladen'])
         cond_r21 = TokenStateCondition(tok_attribute='Serveranmeldung',
-                                      operator=Operators.EQUALS,
-                                      tok_value=True)
+                                       operator=Operators.EQUALS,
+                                       tok_value=True)
         cond_r22 = TokenStateCondition(tok_attribute='fehlerfreier Entwurf',
-                                      operator=Operators.EQUALS,
-                                      tok_value=True)
+                                       operator=Operators.EQUALS,
+                                       tok_value=True)
         cond_r23 = TokenStateCondition(tok_attribute='geprüfter Entwurf',
                                        operator=Operators.EQUALS,
                                        tok_value=True)
@@ -103,7 +119,8 @@ class Task1Solution(IExample):
                                synonym_cloud=syncloud_r3)
 
         # Entwurf prüfen Szenario 1: ist fehlerfrei
-        syncloud_r4 = SynonymCloud.from_list(text=['Berechtigter prüft Entwurf'])
+        syncloud_r4 = SynonymCloud.from_list(
+            text=['Berechtigter prüft Entwurf'])
         cond_r41 = TokenStateCondition(tok_attribute='vorgelegter Entwurf',
                                        operator=Operators.EQUALS,
                                        tok_value=True)
@@ -115,7 +132,8 @@ class Task1Solution(IExample):
 
         # Entwurf prüfen, Szenario 2: musste korrigiert werden, dann nehmen wir
         # an, dass er fehlerfrei wurde
-        syncloud_r4_2 = SynonymCloud.from_list(text=['Berechigter prüft Entwurf'])
+        syncloud_r4_2 = SynonymCloud.from_list(
+            text=['Berechigter prüft Entwurf'])
         cond_r41_2 = TokenStateCondition(tok_attribute='korrigierter Entwurf',
                                          operator=Operators.EQUALS,
                                          tok_value=True)
@@ -126,7 +144,8 @@ class Task1Solution(IExample):
                                  synonym_cloud=syncloud_r4_2)
 
         # Entwurf korrigiert, wenn gerüft und nicht fehlerfreip
-        syncloud_r5 = SynonymCloud.from_list(text=['Verfasser korrigiert Entwurf'])
+        syncloud_r5 = SynonymCloud.from_list(
+            text=['Verfasser korrigiert Entwurf'])
         cond_r51 = TokenStateCondition(tok_attribute='geprüfter Entwurf',
                                        operator=Operators.EQUALS,
                                        tok_value=True)
@@ -134,12 +153,12 @@ class Task1Solution(IExample):
                                        operator=Operators.EQUALS,
                                        tok_value=False)
         modification_r51 = TokenStateModification(key='geprüfter Entwurf',
-                                                 value=False)
+                                                  value=False)
         modification_r52 = TokenStateModification(key='fehlerfreier Entwurf',
-                                                 value=True)
+                                                  value=True)
         modification_r53 = TokenStateModification(key='korrigierter Entwurf',
                                                   value=True)
-        tsr_5 = TokenStateRule(state_conditions=[cond_r51,cond_r52],
+        tsr_5 = TokenStateRule(state_conditions=[cond_r51, cond_r52],
                                state_modifications=[modification_r51,
                                                     modification_r52,
                                                     modification_r53],
@@ -148,13 +167,6 @@ class Task1Solution(IExample):
         return [tsr_1, tsr_2, tsr_3, tsr_4, tsr_4_2, tsr_5]
 
     def get_chunker(self) -> IChunker:
-        # we use german in our text, which isnt supported by NLTK -> use
+        # we use german in our text, which isn't supported by NLTK -> use
         # default chunker and let synonymclouds check sentences
         return DefaultChunker()
-
-    def get_students_process(self) -> BPMNModel:
-        # Students solutions are load via a file. So they dont need to be
-        # programmed here
-        pass
-
-

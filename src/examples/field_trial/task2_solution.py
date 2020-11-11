@@ -1,7 +1,7 @@
 from typing import List
 
-from src.converter.bpmn_models.bpmn_model import BPMNModel
-from src.examples.i_example import IExample
+from src.models.i_solution import ISolution
+from src.models.scenario import Scenario
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
@@ -11,10 +11,13 @@ from src.nlp.default_chunker import DefaultChunker
 from src.nlp.synonym_cloud import SynonymCloud
 
 
-class Task2Solution(IExample):
+class Task2Solution(ISolution):
 
-    def get_init_token(self) -> Token:
-        attributes = {
+    def get_scenarios(self) -> List[Scenario]:
+        scenarios = []
+
+        description = 'default scenario'
+        running_token = Token(attributes = {
             'Lagerbestand kontrolliert': False,
             'Fremdteilebedarf geprüft': False,
             'Eigenteilebedarf geprüft': False,
@@ -23,11 +26,9 @@ class Task2Solution(IExample):
             'Schubkarren zusammengebaut': False,
             'Schubkarren ausgeliefert': False,
             'Rechnung ausgestellt': False,
-        }
-        return Token(attributes=attributes)
+        })
 
-    def get_solution_token(self) -> Token:
-        attributes = {
+        expected_token = Token(attributes = {
             'Lagerbestand kontrolliert': True,
             'Fremdteilebedarf geprüft': True,
             'Eigenteilebedarf geprüft': True,
@@ -36,9 +37,13 @@ class Task2Solution(IExample):
             'Schubkarren zusammengebaut': True,
             'Schubkarren ausgeliefert': True,
             'Rechnung ausgestellt': True,
-        }
-        return Token(attributes=attributes)
+        })
+        scen1 = Scenario(running_token=running_token,
+                         expected_token=expected_token,
+                         description=description)
+        scenarios.append(scen1)
 
+        return scenarios
 
     def get_ruleset(self) -> List[TokenStateRule]:
         # Rechnung ausstellen, nur wenn Schubkarren geliefert wurden
@@ -167,8 +172,4 @@ class Task2Solution(IExample):
         # we use german in our text, which isnt supported by NLTK -> use
         # default chunker and let synonymclouds check sentences
         return DefaultChunker()
-
-    def get_students_process(self) -> BPMNModel:
-        pass
-
 
