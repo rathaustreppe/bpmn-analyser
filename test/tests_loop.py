@@ -3,6 +3,7 @@ from typing import List
 
 from src.converter.converter import Converter
 from src.graph_pointer import GraphPointer
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
@@ -40,11 +41,11 @@ class TestLoop:
         return self.run_pointer(graph_pointer=graph_pointer)
 
     def test_simple_increment_loop(self, xml_folders_path, nn_chunker):
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :'0'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -70,12 +71,12 @@ class TestLoop:
 
 
     def test_two_simple_increment_loops(self, xml_folders_path, nn_chunker):
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :'0',
                 'b' :'0'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -102,12 +103,12 @@ class TestLoop:
         assert solution_token == return_token
 
     def test_two_interlaced_loops(self, xml_folders_path, nn_chunker):
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :'0',
                 'b' :'0'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -136,12 +137,12 @@ class TestLoop:
         # This loop increments b twice but while doing it, it is connected
         # to a parallel gateway which branches twice into incrementing a.
         # So while looping b, a is modified as well. (Side effects)
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :'0',
                 'b' :'0'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -171,12 +172,12 @@ class TestLoop:
         # in the generator_loop test a is modified first,
         # then b. In this test we changed the order, so
         # b is modified first, then a.
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a': '0',
                 'b': '0'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {

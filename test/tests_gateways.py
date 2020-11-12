@@ -8,6 +8,7 @@ from src.examples.gateway_example import GatewayExample
 from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
     BranchingGatewayError
 from src.graph_pointer import GraphPointer
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
@@ -20,7 +21,7 @@ class TestGateway:
     Containing tests for all different kinds of gateways and gateway-combinations
     """
 
-    def run_pointer(self, graph_pointer: GraphPointer) -> Token:
+    def run_pointer(self, graph_pointer: GraphPointer) -> RunningToken:
         ret = graph_pointer.iterate_model()
         if ret[0] == 0:
             return graph_pointer.token
@@ -32,7 +33,7 @@ class TestGateway:
                         xml_folders_path,
                         chunker,
                         ruleset,
-                        init_token) -> Token:
+                        init_token) -> RunningToken:
 
         xml_file_path = os.path.join(xml_folders_path, 'gateway', filename)
 
@@ -68,7 +69,7 @@ class TestGateway:
             'act3': False,
             'k1': 'v1' # used for branch condition of XOR
         }
-        token = Token(attributes=init_attibutes)
+        token = RunningToken(attributes=init_attibutes)
 
         file = os.path.join('exclusive_in_parallel_gateway.bpmn')
         return_token = self.execute_process(filename=file,
@@ -103,13 +104,13 @@ class TestGateway:
 
     def test_3_gateways(self, xml_folders_path):
 
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'abc': False,
                 'ghi1': False,
                 'ghi2': False
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -151,13 +152,13 @@ class TestGateway:
         # checks if both branches are beeing processed and the gateway
         # switches to output
 
-        def get_init_token() -> Token:
+        def get_init_token() -> RunningToken:
             init_attributes = {
                 'a': '0',
                 'b': '0',
                 'c': '-1'
             }
-            return Token(attributes=init_attributes)
+            return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
@@ -186,7 +187,7 @@ class TestGateway:
             'a': '0',
             'b':'0'
         }
-        init_token = Token(attributes=init_attributes)
+        init_token = RunningToken(attributes=init_attributes)
 
         with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor.bpmn',
@@ -202,7 +203,7 @@ class TestGateway:
             'a': '0',
             'b': '0'
         }
-        init_token = Token(attributes=init_attributes)
+        init_token = RunningToken(attributes=init_attributes)
 
         with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor_changed_order.bpmn',

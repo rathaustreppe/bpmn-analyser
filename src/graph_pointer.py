@@ -20,6 +20,7 @@ from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
 from src.exception.model_errors import MultipleStartEventsError, \
     NoStartEventError
 from src.exception.wrong_type_errors import NotImplementedTypeError
+from src.models.running_token import RunningToken
 from src.models.stack import Stack
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
@@ -32,12 +33,12 @@ class GraphPointer:
     """
     GraphPointer is the object that points to a
     single vertex in the BPMN-graph and reads its values
-    to change the token attributes --> the tokens current
+    to change the RunningToken attributes --> the tokens current
     state. It knows how to deal with gateways.
     """
 
     def __init__(self,
-                 token: Token,
+                 token: RunningToken,
                  ruleset: List[TokenStateRule],
                  chunker: IChunker,
                  model: BPMNModel) -> None:
@@ -51,14 +52,14 @@ class GraphPointer:
         if self.stack is None:
             self.stack = Stack()
 
-    def iterate_model(self, number_of_steps: Optional[int] = 0) -> Tuple[int, Token]:
+    def iterate_model(self, number_of_steps: Optional[int] = 0) -> Tuple[int, RunningToken]:
         """
         Iterates through the BPMNModel, analyses the texts
-        and performs state transitions on token.
+        and performs state transitions on RunningToken.
         Returns a tuple containing the information:
         int: 0 if processing was ok, 1 if processing took to many steps. This
         is an indicator of an infinite loop.
-        Token: the modified token
+        Token: the modified RunningToken
         """
 
         # specify how many steps are done before
@@ -105,7 +106,7 @@ class GraphPointer:
             raise MultipleStartEventsError(model=self.model)
 
     def _modify_token_with_rules(self,
-                                 matching_rules: List[TokenStateRule]) -> Token:
+                                 matching_rules: List[TokenStateRule]) -> RunningToken:
         """
         We apply rules (==change token state), when their SynonymClouds are
         matching and their conditions are true.

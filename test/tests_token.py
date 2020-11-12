@@ -2,6 +2,7 @@ import copy
 
 import pytest
 
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_modification import \
     TokenStateModification
@@ -43,23 +44,23 @@ class TestToken:
         r = empty_token.get_attribute(key=k1)
         assert r is None
 
-    def test_override_value(self, empty_token):
+    def test_override_value(self, empty_running_token):
         v1 = 'v1'
         k1 = 'k1'
         v2 = 'v2'
-        empty_token.new_attribute(key=k1, value=v1)
+        empty_running_token.new_attribute(key=k1, value=v1)
         tsm = TokenStateModification(key=k1, value=v2)
-        empty_token.change_value(modification=tsm)
-        r = empty_token.get_attribute(key=k1)
+        empty_running_token.change_value(modification=tsm)
+        r = empty_running_token.get_attribute(key=k1)
         assert v2 == r
 
-    def test_change_value_not_present(self, empty_token):
+    def test_change_value_not_present(self, empty_running_token):
         # changing value of non existing key
         k1 = 'k1'
         v1 = 'v1'
         with pytest.raises(RuntimeError):
             tsm = TokenStateModification(key=k1, value=v1)
-            empty_token.change_value(modification=tsm)
+            empty_running_token.change_value(modification=tsm)
 
     def test_get_nonexisting_key(self, empty_token):
         with pytest.raises(KeyError):
@@ -104,29 +105,34 @@ class TestToken:
         token2 = Token(attributes=attributes2)
         assert token1 != token2
 
-    def test_equal_different_value(self, example_token):
-        token2 = copy.deepcopy(example_token)
+    def test_equal_different_value(self, example_running_token):
+        token2 = copy.deepcopy(example_running_token)
         tsm = TokenStateModification(key='k1', value='v42')
         token2.change_value(modification=tsm)
-        assert token2 != example_token
+        assert token2 != example_running_token
 
-    def test_equal_two_none_values(self):
-        attributes = {'k1': None}
-        token1 = Token(attributes=attributes)
+    def test_equals_different_type_combinations(self):
+        # comparing Token, RunningToken with Token and RunningToken
+        # to check if there are type erros in equal-function
+        attributes = {'a': 1}
+        token = Token(attributes=attributes)
         token2 = Token(attributes=attributes)
-        assert token1 == token2
+        running_token = RunningToken(attributes=attributes)
+        running_token2 = RunningToken(attributes=attributes)
+        #expected_token = ExpectedToken(attributes=attributes)
+        #expected_token2 = ExpectedToken(attributes=attributes)
 
-    def test_equal_one_none_value(self):
-        attributes1 = {'k1': None}
-        attributes2 = {'k1': 'v1'}
-        token1 = Token(attributes=attributes1)
-        token2 = Token(attributes=attributes2)
-        assert token1 != token2
+        assert token == token2
+        assert running_token == running_token2
+        assert token == running_token
+        assert running_token == token
+
+
 
     def test_increment(self):
         key = 'k1'
         attributes = {key: '0'}
-        token = Token(attributes=attributes)
+        token = RunningToken(attributes=attributes)
         tsm = TokenStateModification(key=key, value='++')
 
         token.change_value(modification=tsm)

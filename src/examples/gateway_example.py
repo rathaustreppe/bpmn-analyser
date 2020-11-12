@@ -3,6 +3,7 @@ from typing import List
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.converter import Converter
 from src.examples.i_example import IExample
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
@@ -11,7 +12,7 @@ from src.nlp.synonym_cloud import SynonymCloud
 
 
 class GatewayExample(IExample):
-    def get_init_token(self) -> Token:
+    def get_init_token(self) -> RunningToken:
         init_attributes = {
             'v1': '1',
             'v2': '1',
@@ -22,7 +23,7 @@ class GatewayExample(IExample):
             'mno2': False,
             'pqr': False
         }
-        return Token(attributes=init_attributes)
+        return RunningToken(attributes=init_attributes)
 
     def get_solution_token(self) -> Token:
         init_attributes = {

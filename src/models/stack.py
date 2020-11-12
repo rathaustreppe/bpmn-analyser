@@ -33,6 +33,3 @@ class Stack(Generic[T]):
             return self.items[len(self.items) - 1]
         else:
             return None
-
-    # def __len__(self) -> int:
-    #     return self.len()

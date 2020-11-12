@@ -3,6 +3,7 @@ from typing import List
 from pedantic import pedantic_class
 
 from src.models.i_solution import ISolution
+from src.models.running_token import RunningToken
 from src.models.scenario import Scenario
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
@@ -20,7 +21,7 @@ class Task1Solution(ISolution):
 
         # Scnario 1 of task 1: Entwurf ist fehlerfrei
         description = 'ein fehlerfreier Entwurf wird vorgelegt'
-        running_token = Token(attributes={
+        running_token = RunningToken(attributes={
             'vorgelegter Entwurf': True,
             # should be false, and set to true by startevent
             'fehlerfreier Entwurf': True,
@@ -50,7 +51,7 @@ class Task1Solution(ISolution):
 
         # Scenario 2 of task1: Entwurf ist nicht fehlerfrei
         description = 'Entwurf ist nicht fehlerfrei. Korrekturschleife nötig'
-        running_token = Token(attributes={
+        running_token = RunningToken(attributes={
             'vorgelegter Entwurf': True,
             # should be false, and set to true by startevent
             'fehlerfreier Entwurf': False,

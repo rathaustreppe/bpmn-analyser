@@ -2,7 +2,7 @@ from typing import List
 
 from pedantic import pedantic_class
 
-from src.models.token_state_condition import TokenStateCondition, Operators
+from src.models.token_state_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.IChunker import IChunker

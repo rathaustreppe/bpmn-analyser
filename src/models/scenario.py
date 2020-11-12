@@ -1,5 +1,6 @@
 from pedantic import pedantic_class
 
+from src.models.running_token import RunningToken
 from src.models.token import Token
 
 
@@ -38,7 +39,7 @@ class Scenario():
     in a complex business process. So you may need to find a balanced way.
     """
 
-    def __init__(self, running_token: Token,
+    def __init__(self, running_token: RunningToken,
                  expected_token: Token,
                  description: str) -> None:
         self.running_token = running_token

@@ -1,11 +1,8 @@
 from typing import List, Tuple, Optional
 
 import nltk
-import logging
 from pedantic import pedantic_class
 
-from src.exception.language_processing_errors import NoChunkFoundError, \
-    MultipleChunksFoundError
 from src.nlp.IChunker import IChunker
 
 

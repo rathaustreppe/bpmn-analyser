@@ -5,6 +5,7 @@ from nltk.corpus import wordnet as wn
 
 from src.converter.converter import Converter
 from src.graph_pointer import GraphPointer
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_modification import TokenStateModification
@@ -23,14 +24,14 @@ class TestIntegrationBillProcess:
     startendevent_placeholder = 'startendevent'
 
     @staticmethod
-    def solution_token() -> Token:
+    def solution_token() -> RunningToken:
         attributes_solution = {
             'place': 'Dresden',
             'signature ML': True,
             'signature Zittau': True,
             'contract checked': True
         }
-        return Token(attributes=attributes_solution)
+        return RunningToken(attributes=attributes_solution)
 
     @staticmethod
     def ruleset() -> List[TokenStateRule]:
@@ -123,7 +124,7 @@ class TestIntegrationBillProcess:
                        tagged_words_bypass=tagged_words_bypass)
 
     @staticmethod
-    def init_token() -> Token:
+    def init_token() -> RunningToken:
         # important to have scope='function' on this fixture. Init-token will
         # change its attributes in GraphPointer.
         # Perhaps copy.copy or copy.deepcopy may work aswell.
@@ -133,10 +134,10 @@ class TestIntegrationBillProcess:
             "signature Zittau": False,
             "contract checked": False
         }
-        return Token(attributes=init_attributes)
+        return RunningToken(attributes=init_attributes)
 
     @staticmethod
-    def run_pointer(graph_pointer: GraphPointer) -> Token:
+    def run_pointer(graph_pointer: GraphPointer) -> RunningToken:
         ret = graph_pointer.iterate_model()
         if ret[0] == 0:
             return graph_pointer.token
@@ -148,7 +149,7 @@ class TestIntegrationBillProcess:
                         xml_folders_path,
                         chunker,
                         ruleset,
-                        init_token) -> Token:
+                        init_token:RunningToken) -> RunningToken:
 
         xml_file_path = os.path.join(xml_folders_path, filename)
 

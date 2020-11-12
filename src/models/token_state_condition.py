@@ -25,7 +25,7 @@ class Operators(Enum):
 class TokenStateCondition:
     """
     This class defines a single condition that is checked
-    before a token state can change.
+    before a RunningToken state can change.
     """
 
     def __init__(self, tok_attribute: str = '',

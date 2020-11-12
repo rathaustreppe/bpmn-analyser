@@ -5,6 +5,7 @@ from typing import List, Tuple
 import pytest
 from nltk.corpus import wordnet as wn
 
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.nlp.chunker import Chunker
 
@@ -76,9 +77,20 @@ def empty_token() -> Token:
 
 
 @pytest.fixture(scope='function', autouse=True)
+def empty_running_token() -> RunningToken:
+    return RunningToken(attributes=None)
+
+
+@pytest.fixture(scope='function', autouse=True)
 def example_token() -> Token:
     attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
     return Token(attributes=attributes)
+
+
+@pytest.fixture(scope='function', autouse=True)
+def example_running_token() -> RunningToken:
+    attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
+    return RunningToken(attributes=attributes)
 
 
 @pytest.fixture(scope='module', autouse=True)

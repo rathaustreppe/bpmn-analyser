@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Union, Type
 
 from pedantic import overrides, pedantic_class
 
@@ -7,14 +7,13 @@ from src.models.token_state_modification import \
     TokenStateModification
 
 
-@pedantic_class
 class Token:
     """
     Is the class for a token-object to be passed through
     the business-process-model.
     """
 
-    def __init__(self, attributes: Optional[Dict[str, Any]] = None) -> None:
+    def __init__(self, attributes: Optional[Dict[str, Union[str, bool, int, float]]] = None) -> None:
         if attributes is None:
             self.attributes = {}
         else:
@@ -23,36 +22,6 @@ class Token:
     def new_attribute(self, key: str, value: Any) -> None:
         if key not in self.attributes:
             self.attributes[key] = value
-
-    def change_value(self, modification: TokenStateModification) -> None:
-        key = modification.get_key()
-
-        if key not in self.attributes.keys():
-            msg = f'Key >{key}< not in token attributes. Token: {self}'
-            logging.error(msg)
-            raise RuntimeError(msg)
-
-        token_value_before = self.attributes[key]
-        value = modification.get_value()
-
-        if value == '++':
-            # try to add 1 to token value
-            try:
-                int_value = int(token_value_before)
-                int_value += 1
-            except ValueError:
-                msg = f'Tried to add 1 to a non-integer string: {token_value_before}'
-                logging.error(msg)
-                raise ValueError(msg)
-
-            token_value_after = str(int_value)
-            self.attributes[key] = token_value_after
-
-        else:
-            # simply set the string to new value
-            self.attributes[key] = value
-
-        logging.info(f'Token changed: {key}: {token_value_before} -> {value}')
 
     def get_attribute(self, key: str) -> Any:
         return self.attributes[key]
@@ -69,7 +38,7 @@ class Token:
         return item in self.attributes
 
     @overrides(object)
-    def __eq__(self, other: 'Token') -> bool:
+    def __eq__(self, other: Type['Token']) -> bool:
         """
         Compares two tokens if they have equal dict-
         attributes.

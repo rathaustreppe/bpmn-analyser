@@ -1,4 +1,4 @@
-from src.models.token import Token
+from src.models.running_token import RunningToken
 from src.nlp.rule_finder import RuleFinder
 
 
@@ -16,7 +16,7 @@ class TestRuleFinder:
         assert len(tsr_list) == 1
         tsr = tsr_list[0]
 
-        token = Token(attributes={tok_attribute: value})
+        token = RunningToken(attributes={tok_attribute: value})
         return_token = tsr.check_and_modify(token=token)
 
         assert return_token.attributes[tok_attribute] == str((int(value)+1))

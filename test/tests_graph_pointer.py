@@ -21,6 +21,7 @@ from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
 from src.exception.model_errors import NoStartEventError, \
     MultipleStartEventsError
 from src.graph_pointer import GraphPointer
+from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
 from src.models.token_state_rule import TokenStateRule
@@ -31,7 +32,7 @@ class TestGraphPointer:
 
     @staticmethod
     def graph_pointer(model: BPMNModel,
-                      token: Token = Token(),
+                      token: Token = RunningToken(),
                       ruleset: List[TokenStateRule] = [],
                       chunker: Chunker = Chunker()) -> GraphPointer:
         return GraphPointer(model=model, token=token,
@@ -119,7 +120,7 @@ class TestGraphPointer:
 
         assert graph_pointer.reached_end_event() is False
 
-    def test_condition_fulfilling_sequence_flows(self, example_token):
+    def test_condition_fulfilling_sequence_flows(self, example_running_token):
         # no error here: check if all sequence_flows are treated right
         k1, v1 = 'k1', 'v1'
         k2, v2 = 'k2', 'v2'
@@ -133,7 +134,7 @@ class TestGraphPointer:
         sequence_flow_2 = BPMNSequenceFlow(id_='2', condition=condition2)
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
-        graph_pointer = self.graph_pointer(model=model, token=example_token)
+        graph_pointer = self.graph_pointer(model=model, token=example_running_token)
 
         flows = graph_pointer.condition_fulfilling_sequence_flows(
             flows_to_check=model.sequence_flows)
@@ -142,7 +143,7 @@ class TestGraphPointer:
         assert flows[0].id_ == 0 or 1
 
     def test_condition_fulfulling_sequence_flows_no_condition(self,
-                                                              example_token):
+                                                              example_running_token):
         # no error here: check if flow without condition is accepted:
         # first flow with explicit none, second flow with implicit none.
         # just in case constructor changes
@@ -151,7 +152,7 @@ class TestGraphPointer:
 
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
-        graph_pointer = self.graph_pointer(model=model, token=example_token)
+        graph_pointer = self.graph_pointer(model=model, token=example_running_token)
 
         flows = graph_pointer.condition_fulfilling_sequence_flows(
             flows_to_check=model.sequence_flows)
@@ -176,7 +177,7 @@ class TestGraphPointer:
         assert flows[0].id_ == 0 or 1
 
     def test_collect_conditional_sequence_flows_of_inclusive_gateway(self,
-                                                                     example_token):
+                                                                     example_running_token):
         # no error here: checks if all sequence_flows make it through
 
         k1, v1 = 'k1', 'v1'
@@ -196,7 +197,7 @@ class TestGraphPointer:
         flows = [sequence_flow_1, sequence_flow_2]
         gateway = BPMNInclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
-        graph_pointer = self.graph_pointer(model=model, token=example_token)
+        graph_pointer = self.graph_pointer(model=model, token=example_running_token)
 
         flows = graph_pointer.collect_conditional_sequence_flows_of_gateway(
             gateway=gateway)
@@ -204,7 +205,7 @@ class TestGraphPointer:
         assert flows[0].id_ == id_of_cond_flow
 
     def test_collect_conditional_sequence_flows_of_exclusive_gateway_0_conditions_meet(
-            self, example_token):
+            self, example_running_token):
         # error here: have an exclusive gateway but 0 flows meet the conditions
 
         k1 = 'k1'
@@ -223,14 +224,14 @@ class TestGraphPointer:
 
         gateway = BPMNExclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
-        graph_pointer = self.graph_pointer(model=model, token=example_token)
+        graph_pointer = self.graph_pointer(model=model, token=example_running_token)
 
         with pytest.raises(BranchingGatewayError):
             graph_pointer.collect_conditional_sequence_flows_of_gateway(gateway=
                                                                         gateway)
 
     def test_collect_conditional_sequence_flows_of_exclusive_gateway(self,
-                                                                     example_token):
+                                                                     example_running_token):
         # no error here: checks if exclusive gateway with 1 branch works
         k1, v1 = 'k1', 'v1'
         id_of_cond_flow = '1'
@@ -249,7 +250,7 @@ class TestGraphPointer:
 
         gateway = BPMNExclusiveGateway(id_='gw', sequence_flows_out=flows)
         model = self.make_model(elements=[gateway], flows=flows)
-        graph_pointer = self.graph_pointer(model=model, token=example_token)
+        graph_pointer = self.graph_pointer(model=model, token=example_running_token)
 
         flows = graph_pointer.collect_conditional_sequence_flows_of_gateway(
             gateway=gateway)

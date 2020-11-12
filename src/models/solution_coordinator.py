@@ -67,6 +67,7 @@ class SolutionCoordinator():
                     self.check_solution(graph_pointer=students_graphpointer,
                                         expected_token=scenario.expected_token)
                 except Exception:
+                    logging.error(traceback.format_exc())
                     logging.info('failure in executing BPMNModel')
                     continue # with next file
                 logging.info(f'went trough scenario <{scenario}>\n')
