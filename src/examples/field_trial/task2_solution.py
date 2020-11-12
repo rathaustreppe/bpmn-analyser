@@ -16,7 +16,7 @@ class Task2Solution(ISolution):
     def get_scenarios(self) -> List[Scenario]:
         scenarios = []
 
-        description = 'default scenario'
+        description = 'Von allem nix da'
         running_token = Token(attributes = {
             'Lagerbestand kontrolliert': False,
             'Fremdteilebedarf geprüft': False,
@@ -26,6 +26,7 @@ class Task2Solution(ISolution):
             'Schubkarren zusammengebaut': False,
             'Schubkarren ausgeliefert': False,
             'Rechnung ausgestellt': False,
+            'nix da': True,
         })
 
         expected_token = Token(attributes = {
@@ -37,6 +38,7 @@ class Task2Solution(ISolution):
             'Schubkarren zusammengebaut': True,
             'Schubkarren ausgeliefert': True,
             'Rechnung ausgestellt': True,
+            'nix da': True
         })
         scen1 = Scenario(running_token=running_token,
                          expected_token=expected_token,

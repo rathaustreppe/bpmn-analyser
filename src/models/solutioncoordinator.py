@@ -22,13 +22,15 @@ class SolutionCoordinator():
     diagrams of a single task. Instantiate multiple objects to check
     multiple diagrams.
     """
-    def __init__(self, folder_path: str, sample_solution: ISolution) -> None:
+    def __init__(self, folder_path: str,
+                 sample_solution: ISolution,
+                 file_mask:str = r'*.bpmn') -> None:
 
         if not os.path.isabs(folder_path):
             folder_path = os.path.abspath(folder_path)
 
         self.abs_folder_path = folder_path
-        self.file_mask = r'*.bpmn' # only bpmn-files
+        self.file_mask = file_mask
         self.sample_solution = sample_solution
 
     def run_all_solution_checking(self) -> None:
@@ -60,9 +62,13 @@ class SolutionCoordinator():
                                                  token=running_token,
                                                  ruleset=ruleset,
                                                  chunker=chunker)
-                logging.debug(f'starting scenario {scenario.description}')
-                self.check_solution(graph_pointer=students_graphpointer,
-                                    expected_token=scenario.expected_token)
+                logging.debug(f'starting scenario <{scenario.description}>')
+                try:
+                    self.check_solution(graph_pointer=students_graphpointer,
+                                        expected_token=scenario.expected_token)
+                except Exception:
+                    logging.info('failure in executing BPMNModel')
+                    continue # with next file
                 logging.info(f'went trough scenario <{scenario}>\n')
 
 

@@ -16,11 +16,14 @@ if __name__ == '__main__':
     file_mask = r'*.bpmn'
 
     # the sample_solution you want to apply and the subfolder
-    solution = Task1Solution()
-    subfolder = 'U1'
+    solution = Task2Solution()
+    subfolder = 'U2'
+    file_mask = r'*corrected.bpmn'
+    #file_mask = r'*.bpmn'
 
     # check all diagrams
     folder_path = os.path.join(folder_path, subfolder)
     coordinator = SolutionCoordinator(folder_path=folder_path,
-                                      sample_solution=solution)
+                                      sample_solution=solution,
+                                      file_mask=file_mask)
     coordinator.run_all_solution_checking()
