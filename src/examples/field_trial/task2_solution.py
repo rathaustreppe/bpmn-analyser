@@ -1,6 +1,7 @@
 from typing import List
 
 from src.models.i_solution import ISolution
+from src.models.running_token import RunningToken
 from src.models.scenario import Scenario
 from src.models.token import Token
 from src.models.token_state_condition import TokenStateCondition, Operators
@@ -17,7 +18,7 @@ class Task2Solution(ISolution):
         scenarios = []
 
         description = 'Von allem nix da'
-        running_token = Token(attributes = {
+        running_token = RunningToken(attributes = {
             'Lagerbestand kontrolliert': False,
             'Fremdteilebedarf geprüft': False,
             'Eigenteilebedarf geprüft': False,

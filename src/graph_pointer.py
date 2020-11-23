@@ -66,7 +66,7 @@ class GraphPointer:
         # quitting. This prevents infinite loops and is easier to implement
         # then an infinite-loop-detector.
         if number_of_steps == 0:
-            number_of_steps = len(self.model.bpmn_elements) * 10
+            number_of_steps = len(self.model.bpmn_elements) * 5
 
         for _ in range(number_of_steps):
 

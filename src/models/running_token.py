@@ -17,12 +17,12 @@ class RunningToken(Token):
     def change_value(self, modification: TokenStateModification) -> None:
         key = modification.get_key()
 
-        if key not in self.attributes.keys():
+        if key not in self._attributes.keys():
             msg = f'Key >{key}< not in token attributes. Token: {self}'
             logging.error(msg)
             raise RuntimeError(msg)
 
-        token_value_before = self.attributes[key]
+        token_value_before = self._attributes[key]
         value = modification.get_value()
 
         if value == '++':
@@ -36,10 +36,10 @@ class RunningToken(Token):
                 raise ValueError(msg)
 
             token_value_after = str(int_value)
-            self.attributes[key] = token_value_after
+            self._attributes[key] = token_value_after
 
         else:
             # simply set the string to new value
-            self.attributes[key] = value
+            self._attributes[key] = value
 
         logging.info(f'Token changed: {key}: {token_value_before} -> {value}')
