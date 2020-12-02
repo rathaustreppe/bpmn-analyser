@@ -2,6 +2,7 @@ import os
 
 from src.examples.field_trial.task1_solution import Task1Solution
 from src.examples.field_trial.task2_solution import Task2Solution
+from src.examples.field_trial.task4_solution import Task4Solution
 from src.models.solution_coordinator import SolutionCoordinator
 from src.util.logger.logging_config import setup_logger_config
 
@@ -16,8 +17,8 @@ if __name__ == '__main__':
     file_mask = r'*.bpmn'
 
     # the sample_solution you want to apply and the subfolder
-    solution = Task2Solution()
-    subfolder = 'U2'
+    solution = Task4Solution()
+    subfolder = 'debug'
     #file_mask = r'*corrected.bpmn'
     file_mask = r'*.bpmn'
 

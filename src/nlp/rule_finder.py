@@ -1,7 +1,9 @@
+import logging
 from typing import List
 
 from pedantic import pedantic_class
 
+from src.exception.language_processing_errors import NoChunkFoundError
 from src.models.token_state_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
@@ -32,8 +34,11 @@ class RuleFinder:
         if text.endswith('++'):
             return [self._make_increment_rule(text=text)]
 
-
-        chunk = self.chunker.find_chunk(text=text)
+        try:
+            chunk = self.chunker.find_chunk(text=text)
+        except NoChunkFoundError as e:
+            # logging.error(e.message) # enable if exception is not logged
+            return [] # no chunk found -> no rules to try -> empty rules list
 
         matching_rules = []
         for rule in self.ruleset:
