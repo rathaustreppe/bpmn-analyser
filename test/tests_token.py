@@ -12,46 +12,45 @@ class TestToken:
 
     def test_new_attribute(self, empty_token):
         v1 = 'v1'
-        k1 = 'k1'
-        empty_token.new_attribute(key=k1, value=v1)
-        r = empty_token.get_attribute(key=k1)
+        empty_token.k = v1
+        r = empty_token.k
         assert r == v1
 
     def test_new_attribute2(self, empty_token):
-        v1, k1 = 'v1', 'k1'
-        v2, k2 = 'v2', 'k2'
-        empty_token.new_attribute(key=k1, value=v1)
-        empty_token.new_attribute(key=k2, value=v2)
-        r1 = empty_token.get_attribute(key=k1)
-        r2 = empty_token.get_attribute(key=k2)
+        v1 = 'v1'
+        v2 = 'v2',
+        empty_token.k1 =v1
+        empty_token.k2 = v2
+        r1 = empty_token.k1
+        r2 = empty_token.k2
         assert v1 == r1
         assert v2 == r2
 
     def test_new_attribute3(self, empty_token):
         # trying to override existing attribute with
-        # new_attribute() - should not work
-        k1, v1 = 'k1', 'v1'
+        # a new value - should work
+        v1 = 'v1'
         v2 = 'v2'
-        empty_token.new_attribute(key=k1, value=v1)
-        r1 = empty_token.get_attribute(key=k1)
-        empty_token.new_attribute(key=k1, value=v2)
-        r2 = empty_token.get_attribute(key=k1)
-        assert v1 == r1 == r2
+        empty_token.k1 = v1
+        r1 = empty_token.k1
+        empty_token.k1 = v2
+        r2 = empty_token.k1
+        assert v1 == r1 != r2
 
     def test_new_attribute_none(self, empty_token):
-        k1, v1 = 'k1', None
-        empty_token.new_attribute(key=k1, value=v1)
-        r = empty_token.get_attribute(key=k1)
+        v1 = None
+        empty_token.k1 = v1
+        r = empty_token.k1
         assert r is None
 
     def test_override_value(self, empty_running_token):
         v1 = 'v1'
         k1 = 'k1'
         v2 = 'v2'
-        empty_running_token.new_attribute(key=k1, value=v1)
+        empty_running_token.k1 = v1
         tsm = TokenStateModification(key=k1, value=v2)
         empty_running_token.change_value(modification=tsm)
-        r = empty_running_token.get_attribute(key=k1)
+        r = empty_running_token.k1
         assert v2 == r
 
     def test_change_value_not_present(self, empty_running_token):
@@ -63,8 +62,8 @@ class TestToken:
             empty_running_token.change_value(modification=tsm)
 
     def test_get_nonexisting_key(self, empty_token):
-        with pytest.raises(KeyError):
-            empty_token.get_attribute(key='k42')
+        with pytest.raises(AttributeError):
+            empty_token.k42
 
     def test_not_contains_syntax(self, empty_token):
         assert 'k42' not in empty_token
@@ -136,4 +135,4 @@ class TestToken:
         tsm = TokenStateModification(key=key, value='++')
 
         token.change_value(modification=tsm)
-        assert token.attributes[key] == '1'
+        assert token[key] == '1'

@@ -7,7 +7,7 @@ from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 
 
-@pedantic_class
+#@pedantic_class
 class RunningToken(Token):
     def __init__(self,
                  attributes: Optional[Dict[str, Union[str, bool, int, float]]] = None) -> None:
@@ -17,12 +17,12 @@ class RunningToken(Token):
     def change_value(self, modification: TokenStateModification) -> None:
         key = modification.get_key()
 
-        if key not in self._attributes.keys():
+        if key not in self.keys():
             msg = f'Key >{key}< not in token attributes. Token: {self}'
             logging.error(msg)
             raise RuntimeError(msg)
 
-        token_value_before = self._attributes[key]
+        token_value_before = self[key]
         value = modification.get_value()
 
         if value == '++':
@@ -36,10 +36,10 @@ class RunningToken(Token):
                 raise ValueError(msg)
 
             token_value_after = str(int_value)
-            self._attributes[key] = token_value_after
+            self[key] = token_value_after
 
         else:
             # simply set the string to new value
-            self._attributes[key] = value
+            self[key] = value
 
         logging.info(f'Token changed: {key}: {token_value_before} -> {value}')

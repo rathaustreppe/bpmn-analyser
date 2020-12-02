@@ -102,7 +102,7 @@ class TokenStateCondition:
                 attribute=self._tok_attribute,
                 token=token)
 
-        token_val = token.get_attribute(key=self._tok_attribute)
+        token_val = token[self._tok_attribute]
 
         if self._operator == Operators.EQUALS:
             # pay attention to True/False values:

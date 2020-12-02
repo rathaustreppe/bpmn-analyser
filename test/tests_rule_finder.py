@@ -19,4 +19,4 @@ class TestRuleFinder:
         token = RunningToken(attributes={tok_attribute: value})
         return_token = tsr.check_and_modify(token=token)
 
-        assert return_token.attributes[tok_attribute] == str((int(value)+1))
+        assert return_token[tok_attribute] == str((int(value)+1))

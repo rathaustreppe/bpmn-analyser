@@ -58,4 +58,4 @@ class TestTokenStateRule:
         tsr = TokenStateRule(state_conditions=[condition],
                              state_modifications=[modification])
         return_token = tsr.check_and_modify(token=token)
-        assert return_token.attributes[key] == '1'  # 0++ => 1
+        assert return_token[key] == '1'  # 0++ => 1
