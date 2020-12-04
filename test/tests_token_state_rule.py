@@ -46,16 +46,25 @@ class TestTokenStateRule:
         example_running_token.change_value(modification=modification2)
         assert ret == example_running_token
 
-    def test_increment(self):
+    def test_increment_string(self):
         key = 'k'
         value = '0'
         token = RunningToken(attributes={key: value})
-        condition = TokenStateCondition(tok_attribute=key,
-                                        operator=Operators.EQUALS,
-                                        tok_value=value)
+        condition = TokenStateCondition(condition="t.k == '0'")
         modification = TokenStateModification(key=key, value='++')
 
         tsr = TokenStateRule(state_conditions=[condition],
                              state_modifications=[modification])
         return_token = tsr.check_and_modify(token=token)
         assert return_token[key] == '1'  # 0++ => 1
+
+    def test_increment_int(self):
+        key = 'k'
+        value = 0
+        token = RunningToken(attributes={key: value})
+        condition = TokenStateCondition(condition="t.k == 0")
+        modification = TokenStateModification(key=key, value='++')
+        tsr = TokenStateRule(state_conditions=[condition],
+                             state_modifications=[modification])
+        return_token = tsr.check_and_modify(token=token)
+        assert return_token[key] == 1  # 0++ => 1

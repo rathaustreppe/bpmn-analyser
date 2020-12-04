@@ -29,3 +29,4 @@ class MissingAttributeInTokenError(Exception):
                        f'empty, none or non-existing.'
         super().__init__(self.message)
         logging.error(self.message)
+

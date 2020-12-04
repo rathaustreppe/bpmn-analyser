@@ -13,7 +13,7 @@
       <outgoing>SequenceFlow_1pxp8sf</outgoing>
       <outgoing>SequenceFlow_17hjgcf</outgoing>
     </exclusiveGateway>
-    <sequenceFlow id="SequenceFlow_1pxp8sf" name="fehlerfreier Entwurf == True" sourceRef="ExclusiveGateway_1ti6597" targetRef="Task_0ph7gyc" />
+    <sequenceFlow id="SequenceFlow_1pxp8sf" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_1ti6597" targetRef="Task_0ph7gyc" />
     <task id="Task_0h8xspj" name="Berechtigter Ã¼berprÃ¼ft Entwurf">
       <incoming>SequenceFlow_0icvtmn</incoming>
       <outgoing>SequenceFlow_194g8lx</outgoing>
@@ -24,7 +24,7 @@
       <incoming>SequenceFlow_17hjgcf</incoming>
       <outgoing>SequenceFlow_1d4fam1</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_17hjgcf" name="fehlerfreier Entwurf == False" sourceRef="ExclusiveGateway_1ti6597" targetRef="Task_02293d5" />
+    <sequenceFlow id="SequenceFlow_17hjgcf" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_1ti6597" targetRef="Task_02293d5" />
     <sequenceFlow id="SequenceFlow_1d4fam1" sourceRef="Task_02293d5" targetRef="ExclusiveGateway_0hn8sla" />
     <exclusiveGateway id="ExclusiveGateway_0hn8sla">
       <incoming>SequenceFlow_0i3uvpi</incoming>

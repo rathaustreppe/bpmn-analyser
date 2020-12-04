@@ -35,8 +35,11 @@ class RunningToken(Token):
                 logging.error(msg)
                 raise ValueError(msg)
 
-            token_value_after = str(int_value)
-            self[key] = token_value_after
+            # convert back to string if it was a string
+            if isinstance(token_value_before, str):
+                self[key] = str(int_value)
+            else:
+                self[key] = int_value
 
         else:
             # simply set the string to new value

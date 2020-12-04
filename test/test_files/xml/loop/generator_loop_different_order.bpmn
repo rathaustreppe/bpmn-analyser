@@ -26,8 +26,8 @@
       <bpmn:outgoing>SequenceFlow_185fihw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1ipbj9e" sourceRef="Task_1ctoe3c" targetRef="ExclusiveGateway_0obsf8b" />
-    <bpmn:sequenceFlow id="SequenceFlow_1pc2xqg" name="b&#60;2" sourceRef="ExclusiveGateway_0obsf8b" targetRef="Gateway_0ztlhbu" />
-    <bpmn:sequenceFlow id="SequenceFlow_185fihw" name="b==2" sourceRef="ExclusiveGateway_0obsf8b" targetRef="Gateway_04qe0h1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1pc2xqg" name="t.b&#60;2" sourceRef="ExclusiveGateway_0obsf8b" targetRef="Gateway_0ztlhbu" />
+    <bpmn:sequenceFlow id="SequenceFlow_185fihw" name="t.b==2" sourceRef="ExclusiveGateway_0obsf8b" targetRef="Gateway_04qe0h1" />
     <bpmn:sequenceFlow id="SequenceFlow_1dyvgvg" sourceRef="Task_1bib8z4" targetRef="Gateway_04qe0h1" />
     <bpmn:parallelGateway id="ExclusiveGateway_1mttasu">
       <bpmn:incoming>SequenceFlow_0zkhtwm</bpmn:incoming>

@@ -1,71 +1,7 @@
+import logging
 from typing import Dict, Any, Optional, Union, Type
 
-from pedantic import overrides, pedantic_class
-
-
-# @pedantic_class #activate when Type['A'] is implemented in a version > 1.2.7
-# class Token(object):
-#     """
-#     Is the base class for tokens.
-#     Refer to RunningToken and ExpectedToken to express their functionality
-#     better.
-#     """
-#     def __init__(self, attributes: Optional[
-#         Dict[str, Union[str, bool, int, float]]] = None) -> None:
-#         if attributes is None:
-#             self._attributes = {}
-#         else:
-#             self._attributes = attributes
-#
-#     @property
-#     def attributes(self) -> Dict[str, Union[str, bool, int, float]]:
-#         return self._attributes
-#
-#     # def new_attribute(self, key: str, value: Any) -> None:
-#     #     if key not in self._attributes:
-#     #         self._attributes[key] = value
-#
-#     def get_attribute(self, key: str) -> Any:
-#          return self._attributes[key]
-#
-#     @overrides(str)
-#     def __contains__(self, item: str) -> bool:
-#         # Enables easy syntax for in-operator:
-#         # Example:
-#         # >>> token contains 'abc in _attributes
-#         # >>> if 'abc' in token # True
-#         return item in self._attributes
-#
-#     @overrides(object)
-#     def __eq__(self, other: Type['Token']) -> bool:
-#         """
-#         Compares two tokens if they have equal dict-
-#         _attributes.
-#         Overriding __eq__ means you can use '==' syntax:
-#         if token1 == token2: # do something
-#         Args:
-#             other (Token): token you want to compare to
-#
-#         Returns:
-#             bool: True if tokens are equal. Returns false otherwise
-#
-#         """
-#         if len(self._attributes) == len(other._attributes):
-#             for key in self._attributes.keys():
-#                 if key not in other._attributes.keys() or \
-#                         self._attributes[key] != other._attributes[key]:
-#                     return False
-#         else:
-#             return False
-#         return True
-#
-#     def __str__(self) -> str:
-#         return 'token _attributes: ' + str(self._attributes)
-#
-#     def __repr__(self) -> str:
-#         return self.__str__()
-from src.util.decorators.deprecated import deprecated
-
+from pedantic import overrides
 
 class Token(dict):
     # taken from
@@ -77,15 +13,26 @@ class Token(dict):
     def __init__(self, attributes: Optional[Dict[str, Union[str, bool, int, float]]] = None) -> None:
         if attributes is not None:
             for attribute_key in attributes.keys():
+                # We use eval() in TokenStateConditions. Eval() cannot handle
+                # spaces in attribute names:
+                # token = Token(attributes={'my attribute': 42})
+                # TokenStateCondition(condition='t.my attribute == 42')
+                # this will break.
+                # So there are two options: use []-brackets notation:
+                # TokenStateCondition(condition="t['my attribute'] == 42")
+                # or disallow spaces in attribute names.
+                # We decided for disallowing spaces, because we want the
+                # syntax of conditions easy. And using _ instead of space
+                # is better.
+                # We could automatically replace space with underscore. But we
+                # would have to do this in the TokenStateConditions as well.
+                # This is not so easy, so we decided just to warn the user
+                # about spaces in token-attributes.
+                if ' ' in attribute_key:
+                    msg = f'Cannot have spaces in token attribute: {attribute_key}'
+                    logging.error(msg)
+                    raise SyntaxError(msg)
                 self.__setattr__(key=attribute_key, value=attributes[attribute_key])
-
-
-    def new_attribute(self, key: str, value: Any) -> None:
-        self.__setattr__(key=key, value=value)
-
-    @deprecated('Replace token.get_attribute(key) with token.key')
-    def get_attribute(self, key: str) -> Any:
-        return self.__getattr__(key=key)
 
     def __getattr__(self, key):
         try:
@@ -129,3 +76,12 @@ class Token(dict):
         else:
             return False
         return True
+
+
+    @overrides(str)
+    def __contains__(self, item: str) -> bool:
+        # Enables easy syntax for in-operator:
+        # Example:
+        # >>> token contains 'abc in _attributes
+        # >>> if 'abc' in token # True
+        return item in self.keys()

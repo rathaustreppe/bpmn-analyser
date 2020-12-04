@@ -375,7 +375,7 @@ class TestBPMNConverter:
         assert len(sequene_flows) == 1
 
         assert sequene_flows[0].condition ==\
-               TokenStateCondition.from_string(condition='attr==42')
+               TokenStateCondition(condition='t.attr==42')
 
     def test_conditional_edge_gateway(self):
         model = self.create_model(filename='conditional_edge_exclusive_gateway.bpmn')
@@ -386,6 +386,6 @@ class TestBPMNConverter:
         cond_flow_1 = self.find_by_id(elements=sequence_flows, id='F2')
         cond_flow_2 = self.find_by_id(elements=sequence_flows, id='F3')
 
-        assert cond_flow_1.condition == TokenStateCondition.from_string(condition='k1==v1')
-        assert cond_flow_2.condition == TokenStateCondition.from_string(condition='k1==v2')
+        assert cond_flow_1.condition == TokenStateCondition(condition='t.k1==v1')
+        assert cond_flow_2.condition == TokenStateCondition(condition='t.k1==v2')
 

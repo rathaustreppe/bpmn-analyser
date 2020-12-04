@@ -154,17 +154,17 @@ class TestGateway:
 
         def get_init_token() -> RunningToken:
             init_attributes = {
-                'a': '0',
-                'b': '0',
-                'c': '-1'
+                'a': 0,
+                'b': 0,
+                'c': -1
             }
             return RunningToken(attributes=init_attributes)
 
         def get_solution_token() -> Token:
             init_attributes = {
-                'a': '1',
-                'b': '1',
-                'c': '-1'
+                'a': 1,
+                'b': 1,
+                'c': -1
             }
             return Token(attributes=init_attributes)
 

@@ -17,8 +17,8 @@ if __name__ == '__main__':
     file_mask = r'*.bpmn'
 
     # the sample_solution you want to apply and the subfolder
-    solution = Task4Solution()
-    subfolder = 'debug'
+    solution = Task1Solution()
+    subfolder = 'U1'
     #file_mask = r'*corrected.bpmn'
     file_mask = r'*.bpmn'
 

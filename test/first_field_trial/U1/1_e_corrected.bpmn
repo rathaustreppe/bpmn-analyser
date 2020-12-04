@@ -23,8 +23,8 @@
       <incoming>SequenceFlow_1ydo2h0</incoming>
       <outgoing>SequenceFlow_0mnpenx</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1whd1xz" name="fehlerfreier Entwurf == True" sourceRef="ExclusiveGateway_1mycx7u" targetRef="Task_1cxcbai" />
-    <sequenceFlow id="SequenceFlow_1ydo2h0" name="fehlerfreier Entwurf == False" sourceRef="ExclusiveGateway_1mycx7u" targetRef="Task_0niessx" />
+    <sequenceFlow id="SequenceFlow_1whd1xz" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_1mycx7u" targetRef="Task_1cxcbai" />
+    <sequenceFlow id="SequenceFlow_1ydo2h0" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_1mycx7u" targetRef="Task_0niessx" />
     <exclusiveGateway id="ExclusiveGateway_1jyet7r">
       <incoming>SequenceFlow_0tvs1r3</incoming>
       <incoming>SequenceFlow_0mnpenx</incoming>

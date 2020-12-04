@@ -121,7 +121,7 @@ class BPMNFactory():
         # name tag in xml (== the text of the element) is treated as a condition
         condition = sequence_flow.get(BPMNEnum.NAME.value)
         if condition is not None:
-            condition = TokenStateCondition.from_string(condition=condition)
+            condition = TokenStateCondition(condition=condition)
 
         source_ref = sequence_flow.get('sourceRef')
         target_ref = sequence_flow.get('targetRef')

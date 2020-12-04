@@ -126,7 +126,9 @@ class TestToken:
         assert token == running_token
         assert running_token == token
 
-
+    def test_space_in_token_attribute(self):
+        with pytest.raises(SyntaxError):
+            Token(attributes={'attr attr': 43})
 
     def test_increment(self):
         key = 'k1'

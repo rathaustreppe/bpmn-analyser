@@ -27,9 +27,9 @@ class TestIntegrationBillProcess:
     def solution_token() -> RunningToken:
         attributes_solution = {
             'place': 'Dresden',
-            'signature ML': True,
-            'signature Zittau': True,
-            'contract checked': True
+            'signature_ML': True,
+            'signature_Zittau': True,
+            'contract_checked': True
         }
         return RunningToken(attributes=attributes_solution)
 
@@ -46,10 +46,8 @@ class TestIntegrationBillProcess:
                                                    wn.synset('sign.v.01'),
                                                    wn_synset_bill,
                                                    ])
-        cond_r1 = TokenStateCondition(tok_attribute='place',
-                                      operator=Operators.EQUALS,
-                                      tok_value='Goerlitz')
-        modification_r1 = TokenStateModification(key='signature ML', value=True)
+        cond_r1 = TokenStateCondition(condition="t.place == 'Goerlitz'")
+        modification_r1 = TokenStateModification(key='signature_ML', value=True)
         tsr_1 = TokenStateRule(state_conditions=[cond_r1],
                                state_modifications=[modification_r1],
                                synonym_cloud=syncloud_r1)
@@ -75,10 +73,8 @@ class TestIntegrationBillProcess:
         syncloud_r3 = SynonymCloud.from_list(text=['Zittau',
                                                    wn.synset('check.v.03'),
                                                    wn.synset('contract.n.01')])
-        cond_r3 = TokenStateCondition(tok_attribute='place',
-                                      operator=Operators.EQUALS,
-                                      tok_value='Zittau')
-        modification_r3 = TokenStateModification(key='contract checked',
+        cond_r3 = TokenStateCondition(condition="t.place == 'Zittau'")
+        modification_r3 = TokenStateModification(key='contract_checked',
                                                  value=True)
         tsr_3 = TokenStateRule(state_conditions=[cond_r3],
                                state_modifications=[modification_r3],
@@ -90,13 +86,9 @@ class TestIntegrationBillProcess:
                                                    wn.synset('sign.v.01'),
                                                    wn_synset_bill,
                                                    ])
-        cond1_r4 = TokenStateCondition(tok_attribute='place',
-                                       operator=Operators.EQUALS,
-                                       tok_value='Zittau')
-        cond2_r4 = TokenStateCondition(tok_attribute='contract checked',
-                                       operator=Operators.EQUALS,
-                                       tok_value=True)
-        modification_r4 = TokenStateModification(key='signature Zittau',
+        cond1_r4 = TokenStateCondition(condition="t.place == 'Zittau'")
+        cond2_r4 = TokenStateCondition(condition="t.contract_checked == True")
+        modification_r4 = TokenStateModification(key='signature_Zittau',
                                                  value=True)
         tsr_4 = TokenStateRule(state_conditions=[cond1_r4, cond2_r4],
                                state_modifications=[modification_r4],
@@ -130,9 +122,9 @@ class TestIntegrationBillProcess:
         # Perhaps copy.copy or copy.deepcopy may work aswell.
         init_attributes = {
             "place": "Zittau",
-            "signature ML": False,
-            "signature Zittau": False,
-            "contract checked": False
+            "signature_ML": False,
+            "signature_Zittau": False,
+            "contract_checked": False
         }
         return RunningToken(attributes=init_attributes)
 
@@ -219,4 +211,4 @@ class TestIntegrationBillProcess:
                                             init_token=self.init_token())
 
         assert return_token != self.solution_token()
-        assert return_token.get_attribute(key='signature ML') is False
+        assert return_token['signature_ML'] is False

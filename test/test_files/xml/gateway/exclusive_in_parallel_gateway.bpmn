@@ -35,9 +35,9 @@
       <incoming>F_act1_to_xor</incoming>
       <outgoing>F_xor_to_and</outgoing>
     </exclusiveGateway>
-    <sequenceFlow id="F_to_act2" name="k1==v2" sourceRef="XOR_OPENING" targetRef="A2" />
+    <sequenceFlow id="F_to_act2" name="t.k1=='v2'" sourceRef="XOR_OPENING" targetRef="A2" />
     <sequenceFlow id="F_act2_to_xor" sourceRef="A2" targetRef="XOR_CLOSING" />
-    <sequenceFlow id="F_to_act1" name="k1==v1" sourceRef="XOR_OPENING" targetRef="A1" />
+    <sequenceFlow id="F_to_act1" name="t.k1=='v1'" sourceRef="XOR_OPENING" targetRef="A1" />
     <sequenceFlow id="F_act1_to_xor" sourceRef="A1" targetRef="XOR_CLOSING" />
     <sequenceFlow id="F_and_to_act3" sourceRef="AND_OPENING" targetRef="A3" />
     <parallelGateway id="AND_CLOSING">

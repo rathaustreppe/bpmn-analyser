@@ -10,6 +10,24 @@ def deprecated(reason):
     This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used.
+    Taken from:
+    https://stackoverflow.com/questions/2536307/decorators-in-the-python-standard-lib-deprecated-specifically
+
+    USAGE:
+    @deprecated("use another function")
+    def some_old_function(x, y):
+        return x + y
+
+
+    class SomeClass(object):
+        @deprecated("use another method")
+        def some_old_method(self, x, y):
+            return x + y
+
+
+    @deprecated("use another class")
+    class SomeOldClass(object):
+        pass
     """
 
     if isinstance(reason, string_types):
