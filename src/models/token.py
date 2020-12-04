@@ -1,7 +1,8 @@
 import logging
-from typing import Dict, Any, Optional, Union, Type
+from typing import Dict, Optional, Union, Type
 
 from pedantic import overrides
+
 
 class Token(dict):
     # taken from

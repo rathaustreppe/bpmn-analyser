@@ -13,6 +13,13 @@ class RunningToken(Token):
                  attributes: Optional[Dict[str, Union[str, bool, int, float]]] = None) -> None:
         super().__init__(attributes=attributes)
 
+    @classmethod
+    def from_token(cls, token:Token) -> 'RunningToken':
+        # Sometimes you have a Token and want an identical RunningToken of
+        # this Token. Then you use this function. Changes made to one are NOT
+        # reflected to the other.
+        return RunningToken(attributes=dict(token.items()))
+
 
     def change_value(self, modification: TokenStateModification) -> None:
         key = modification.get_key()

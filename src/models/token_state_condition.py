@@ -57,14 +57,14 @@ class TokenStateCondition:
         try:
            return eval(self.condition)
         except NameError:
-            msg = f'You probably forget to put >>t.<< at beginning of every attribute: {self.condition}'
+            msg = f'You probably forget to put >>t.<< at beginning of every attribute. Got condition: {self.condition}'
             logging.error(msg)
-            raise NameError
+            raise NameError(msg)
         except AttributeError:
-            msg = f'Your defined attribute is not present in the token: {self.condition}'
+            msg = f'Your defined attribute is not present in the token. Got conition:{self.condition} for token: {token}'
             logging.error(msg)
-            raise MissingAttributeInTokenError(token=t, attribute='an attribute')
-            # ToDo: Instead of 'an attribute' find out the exact name of the attribute from the error message
+            raise MissingAttributeInTokenError(token=t, attribute=self.condition)
+            # ToDo: Instead of self.condition find out the exact name of the attribute from the error message
         except SyntaxError:
             msg = f'TokenStateCondition {self} has a syntax error'
             logging.error(msg)

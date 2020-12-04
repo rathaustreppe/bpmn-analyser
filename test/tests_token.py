@@ -138,3 +138,15 @@ class TestToken:
 
         token.change_value(modification=tsm)
         assert token[key] == '1'
+
+    def test_from_token(self):
+        token = Token(attributes={'a':0})
+        running_token = RunningToken.from_token(token=token)
+        assert token == running_token
+
+        # test if changes on one are not reflected to other token
+        running_token.a = 1
+        assert running_token != token
+
+        token.a = 2
+        assert running_token != token

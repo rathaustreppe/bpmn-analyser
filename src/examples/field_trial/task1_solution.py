@@ -21,17 +21,6 @@ class Task1Solution(ISolution):
 
         # Scnario 1 of task 1: Entwurf ist fehlerfrei
         description = 'ein fehlerfreier Entwurf wird vorgelegt'
-        running_token = RunningToken(attributes={
-            'vorgelegter_Entwurf': True,
-            # should be false, and set to true by startevent
-            'fehlerfreier_Entwurf': True,
-            'geprüfter_Entwurf': False,
-            'korrigierter_Entwurf': False,
-            'Serveranmeldung': False,
-            'Dokument_freigegeben': False,
-            'Verfasser_benachrichtigt': False
-        })
-
         expected_token = Token(attributes={
             'vorgelegter_Entwurf': True,
             # should be false, and set to true by startevent
@@ -44,6 +33,12 @@ class Task1Solution(ISolution):
             'Verfasser_benachrichtigt': True
         })
 
+        running_token = RunningToken.from_token(token=expected_token)
+        running_token.geprüfter_Entwurf = False
+        running_token.Serveranmeldung = False,
+        running_token.Dokument_freigegeben = False,
+        running_token.Verfasser_benachrichtigt = False
+
         scen1 = Scenario(running_token=running_token,
                          expected_token=expected_token,
                          description=description)
@@ -51,16 +46,6 @@ class Task1Solution(ISolution):
 
         # Scenario 2 of task1: Entwurf ist nicht fehlerfrei
         description = 'Entwurf ist nicht fehlerfrei. Korrekturschleife nötig'
-        running_token = RunningToken(attributes={
-            'vorgelegter_Entwurf': True,
-            # should be false, and set to true by startevent
-            'fehlerfreier_Entwurf': False,
-            'geprüfter_Entwurf': False,
-            'korrigierter_Entwurf': False,
-            'Serveranmeldung': False,
-            'Dokument_freigegeben': False,
-            'Verfasser_benachrichtigt': False
-        })
 
         expected_token = Token(attributes={
             'vorgelegter_Entwurf': True,
@@ -72,6 +57,14 @@ class Task1Solution(ISolution):
             'Dokument_freigegeben': True,
             'Verfasser_benachrichtigt': True
         })
+
+        running_token = RunningToken.from_token(token=expected_token)
+        running_token.fehlerfreier_Entwurf = False
+        running_token.geprüfter_Entwurf = False
+        running_token.korrigierter_Entwurf = False
+        running_token.Serveranmeldung = False
+        running_token.Dokument_freigegeben = False
+        running_token.Verfasser_benachrichtigt = False
 
         scen2 = Scenario(running_token=running_token,
                          expected_token=expected_token,
@@ -94,12 +87,12 @@ class Task1Solution(ISolution):
         # Dokument freigegeben, wenn auf Server angemeldet und
         # überprüfter Entwurf fehlerfrei
         syncloud_r2 = SynonymCloud.from_list(text=['Dokument hochladen'])
-        cond_r21 = TokenStateCondition(condition="t.Serveranmeldung == True")
-        cond_r22 = TokenStateCondition(condition="t.fehlerfreier_Entwurf == True")
-        cond_r23 = TokenStateCondition(condition="t.geprüfter_Entwurf == True")
+        cond_r21 = TokenStateCondition(condition="t.Serveranmeldung == True and "
+                                                 "t.fehlerfreier_Entwurf == True and "
+                                                 "t.geprüfter_Entwurf == True")
         modification_r2 = TokenStateModification(key='Dokument_freigegeben',
                                                  value=True)
-        tsr_2 = TokenStateRule(state_conditions=[cond_r21, cond_r22, cond_r23],
+        tsr_2 = TokenStateRule(state_conditions=[cond_r21],
                                state_modifications=[modification_r2],
                                synonym_cloud=syncloud_r2)
 
@@ -135,15 +128,14 @@ class Task1Solution(ISolution):
         # Entwurf korrigiert, wenn gerüft und nicht fehlerfreip
         syncloud_r5 = SynonymCloud.from_list(
             text=['Verfasser korrigiert Entwurf'])
-        cond_r51 = TokenStateCondition(condition="t.geprüfter_Entwurf == True")
-        cond_r52 = TokenStateCondition(condition="t.fehlerfreier_Entwurf == False")
+        cond_r51 = TokenStateCondition(condition="t.geprüfter_Entwurf == True and t.fehlerfreier_Entwurf == False")
         modification_r51 = TokenStateModification(key='geprüfter_Entwurf',
                                                   value=False)
         modification_r52 = TokenStateModification(key='fehlerfreier_Entwurf',
                                                   value=True)
         modification_r53 = TokenStateModification(key='korrigierter_Entwurf',
                                                   value=True)
-        tsr_5 = TokenStateRule(state_conditions=[cond_r51, cond_r52],
+        tsr_5 = TokenStateRule(state_conditions=[cond_r51],
                                state_modifications=[modification_r51,
                                                     modification_r52,
                                                     modification_r53],
