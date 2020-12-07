@@ -8,7 +8,7 @@ class TestRuleFinder:
         # chunking, instead just return th TokenStateRule which can
         # be used to increment the token attribute
         tok_attribute = 'k1'
-        value = '0'
+        value = 0
 
         rule_finder = RuleFinder(chunker=nn_chunker, ruleset=[])
         tsr_list = rule_finder.find_rules(text=f'{tok_attribute} ++')
@@ -19,4 +19,4 @@ class TestRuleFinder:
         token = RunningToken(attributes={tok_attribute: value})
         return_token = tsr.check_and_modify(token=token)
 
-        assert return_token[tok_attribute] == str((int(value)+1))
+        assert return_token[tok_attribute] == value + 1

@@ -47,7 +47,7 @@ class TestIntegrationBillProcess:
                                                    wn_synset_bill,
                                                    ])
         cond_r1 = TokenStateCondition(condition="t.place == 'Goerlitz'")
-        modification_r1 = TokenStateModification(key='signature_ML', value=True)
+        modification_r1 = TokenStateModification(modification='t.signature_ML = True')
         tsr_1 = TokenStateRule(state_conditions=[cond_r1],
                                state_modifications=[modification_r1],
                                synonym_cloud=syncloud_r1)
@@ -62,7 +62,7 @@ class TestIntegrationBillProcess:
             syncloud = SynonymCloud.from_list(text=[wn.synset('send.v.03'),
                                                     wn_synset_bill,
                                                     'to', place])
-            modification = TokenStateModification(key='place', value=place)
+            modification = TokenStateModification(modification=''.join(['t.place=','"' , place, '"']))
             tsr = TokenStateRule(state_conditions=[],
                                  state_modifications=[modification],
                                  synonym_cloud=syncloud)
@@ -74,8 +74,7 @@ class TestIntegrationBillProcess:
                                                    wn.synset('check.v.03'),
                                                    wn.synset('contract.n.01')])
         cond_r3 = TokenStateCondition(condition="t.place == 'Zittau'")
-        modification_r3 = TokenStateModification(key='contract_checked',
-                                                 value=True)
+        modification_r3 = TokenStateModification(modification='t.contract_checked = True')
         tsr_3 = TokenStateRule(state_conditions=[cond_r3],
                                state_modifications=[modification_r3],
                                synonym_cloud=syncloud_r3)
@@ -88,8 +87,7 @@ class TestIntegrationBillProcess:
                                                    ])
         cond1_r4 = TokenStateCondition(condition="t.place == 'Zittau'")
         cond2_r4 = TokenStateCondition(condition="t.contract_checked == True")
-        modification_r4 = TokenStateModification(key='signature_Zittau',
-                                                 value=True)
+        modification_r4 = TokenStateModification(modification='t.signature_Zittau = True')
         tsr_4 = TokenStateRule(state_conditions=[cond1_r4, cond2_r4],
                                state_modifications=[modification_r4],
                                synonym_cloud=syncloud_r4)
@@ -168,9 +166,9 @@ class TestIntegrationBillProcess:
 
     def test_bill_process_from_graph2(self, xml_folders_path):
         # bill first arrives in goerlitz
-        modification = TokenStateModification(key='place',value='Goerlitz')
+        modification = TokenStateModification(modification="t.place = 'Goerlitz'")
         bill_process_init_token = self.init_token()
-        bill_process_init_token.change_value(modification=modification)
+        modification.change_token(token=bill_process_init_token)
 
         file = os.path.join('bill process', 'bill_process_2.bpmn')
         return_token = self.execute_process(filename=file,

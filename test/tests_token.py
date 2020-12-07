@@ -2,6 +2,7 @@ import copy
 
 import pytest
 
+from src.exception.token_state_errors import MissingAttributeInTokenError
 from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_modification import \
@@ -45,21 +46,17 @@ class TestToken:
 
     def test_override_value(self, empty_running_token):
         v1 = 'v1'
-        k1 = 'k1'
-        v2 = 'v2'
         empty_running_token.k1 = v1
-        tsm = TokenStateModification(key=k1, value=v2)
-        empty_running_token.change_value(modification=tsm)
-        r = empty_running_token.k1
-        assert v2 == r
+        tsm = TokenStateModification(modification="t.k1 = 'v2'")
+
+        tsm.change_token(token=empty_running_token)
+        assert empty_running_token.k1 == 'v2'
 
     def test_change_value_not_present(self, empty_running_token):
         # changing value of non existing key
-        k1 = 'k1'
-        v1 = 'v1'
-        with pytest.raises(RuntimeError):
-            tsm = TokenStateModification(key=k1, value=v1)
-            empty_running_token.change_value(modification=tsm)
+        with pytest.raises(MissingAttributeInTokenError):
+            tsm = TokenStateModification(modification="t.k1 = 'v1'")
+            tsm.change_token(token=empty_running_token)
 
     def test_get_nonexisting_key(self, empty_token):
         with pytest.raises(AttributeError):
@@ -106,8 +103,8 @@ class TestToken:
 
     def test_equal_different_value(self, example_running_token):
         token2 = copy.deepcopy(example_running_token)
-        tsm = TokenStateModification(key='k1', value='v42')
-        token2.change_value(modification=tsm)
+        tsm = TokenStateModification(modification="t.k1 = 'v42'")
+        tsm.change_token(token=token2)
         assert token2 != example_running_token
 
     def test_equals_different_type_combinations(self):
@@ -132,12 +129,11 @@ class TestToken:
 
     def test_increment(self):
         key = 'k1'
-        attributes = {key: '0'}
+        attributes = {key: 0}
         token = RunningToken(attributes=attributes)
-        tsm = TokenStateModification(key=key, value='++')
-
-        token.change_value(modification=tsm)
-        assert token[key] == '1'
+        tsm = TokenStateModification(modification='t.k1 += 1')
+        tsm.change_token(token=token)
+        assert token[key] == 1
 
     def test_from_token(self):
         token = Token(attributes={'a':0})

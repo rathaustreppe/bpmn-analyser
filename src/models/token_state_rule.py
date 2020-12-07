@@ -30,7 +30,7 @@ class TokenStateRule:
 
     def _apply_modifications(self, token: RunningToken) -> RunningToken:
         for modification in self.token_state_modifications:
-            token.change_value(modification=modification)
+            modification.change_token(token=token)
         return token
 
     def check_and_modify(self, token: RunningToken) -> RunningToken:

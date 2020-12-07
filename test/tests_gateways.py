@@ -54,9 +54,9 @@ class TestGateway:
         ruleset = []
         for act in ['act1', 'act2', 'act3']:
             syncloud = SynonymCloud.from_list(text=[act])
-            modification = TokenStateModification(key=act, value=True)
+            tsm = TokenStateModification(modification=''.join(['t.', act, '= True']))
             tsr_act = TokenStateRule(state_conditions=[],
-                                    state_modifications=[modification],
+                                    state_modifications=[tsm],
                                     synonym_cloud=syncloud)
             ruleset.append(tsr_act)
 
@@ -122,9 +122,9 @@ class TestGateway:
         ruleset = []
         for attribute in all_attributes_to_look_for:
             syncloud = SynonymCloud.from_list(text=[attribute])
-            mod = TokenStateModification(key=attribute, value=True)
+            tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
             ruleset.append(TokenStateRule(state_conditions=[],
-                                          state_modifications=[mod],
+                                          state_modifications=[tsm],
                                           synonym_cloud=syncloud))
 
         return_token = self.execute_process(filename='gateway_example.bpmn',
@@ -160,9 +160,9 @@ class TestGateway:
             ruleset = []
             for attribute in all_attributes_to_look_for:
                 syncloud = SynonymCloud.from_list(text=[attribute])
-                mod = TokenStateModification(key=attribute, value=True)
+                tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
                 ruleset.append(TokenStateRule(state_conditions=[],
-                                              state_modifications=[mod],
+                                              state_modifications=[tsm],
                                               synonym_cloud=syncloud))
             return ruleset
 

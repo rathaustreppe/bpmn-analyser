@@ -8,6 +8,7 @@ sys.path.append(os.getcwd())
 # data structures
 from test.tests_token import TestToken
 from test.tests_token_state_condition import TestTokenStateCondition
+from test.tests_token_state_modification import TestTokenStateModication
 from test.tests_token_state_rule import TestTokenStateRule
 from test.tests_stack import TestStack
 

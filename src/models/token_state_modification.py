@@ -1,27 +1,39 @@
-from typing import Any
+import copy
+import logging
 
-from pedantic import pedantic_class
+from pedantic import pedantic
+
+from src.exception.token_state_errors import MissingAttributeInTokenError
+from src.models.running_token import RunningToken
 
 
-@pedantic_class
 class TokenStateModification:
-    """
-    E.g. Saves token state e.g. 'weather is good' --> 'weather' = 'good'
-    Simple key - value to keep things organized
-    """
+    # a python interpretable statement to change a token value
+    # Examples:
+    # 't.key == 0' --> changes attribute >key< to int 0
+    # "t.key == 'apple'" --> changes attribute >key< to string 'apple'
+    # ''.join(['t.place=','"' , place, '"'] == f't.place = {place}'
+    # -> changes place to a pre-defined value of the variable >place<
+    # Sadly we cannot use f-strings!
+    # Because the {xy}-term in an f-string is evaluated inside TokenStateModification
+    # and not on declaration of this string. And TSM doesnt know about this variable.
+    def __init__(self, modification: str = '') -> None:
+        self.modification = modification
 
-    def __init__(self, key: str = '', value: Any = '') -> None:
-        self.key = key
-        self.value = value
+    @pedantic
+    def change_token(self, token: RunningToken) -> None:
+        t = token #used to have statements like 't.haha = 32'.
+        token_before = copy.copy(token)
+        exec(self.modification)
 
-    def get_key(self) -> str:
-        return self.key
+        # if you run exec('t.haha = 42) but haha is not in the token-dict, it
+        # will be added. This is not a desired functionality. We check here
+        # if there were attributes added and print an error message.
+        if not token_before.keys() == token.keys():
+            # find out the added attribute by using difference set
+            difference = set(token.keys()).difference(set(token_before.keys()))
 
-    def get_value(self) -> Any:
-        return self.value
+            logging.error(f'attribute {difference} not in token')
+            raise MissingAttributeInTokenError(token=token_before, attribute=list(difference)[0])
 
-    def __str__(self) -> str:
-        return f'{self.key}=={self.value}'
 
-    def __repr__(self) -> str:
-        return self.__str__()

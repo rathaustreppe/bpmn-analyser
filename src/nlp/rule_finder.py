@@ -51,14 +51,14 @@ class RuleFinder:
         return matching_rules
 
     def _make_increment_rule(self, text:str) -> TokenStateRule:
-        # needs sth. like "a ++" or "a++" (without space)
+        # converts 'haha++' to executable statement 't.haha += 1'
 
         # remove increment and space to have only the name
         token_attribute = text
         token_attribute = token_attribute.replace(Operators.INCREMENT.value, '')
         token_attribute = token_attribute.replace(' ', '')
 
-        modification = TokenStateModification(key=token_attribute, value='++')
+        tsm = TokenStateModification(modification=''.join(['t.', token_attribute, '+= 1']))
 
         return TokenStateRule(state_conditions=[],
-                             state_modifications=[modification])
+                             state_modifications=[tsm])

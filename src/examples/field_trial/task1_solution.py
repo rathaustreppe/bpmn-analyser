@@ -77,9 +77,8 @@ class Task1Solution(ISolution):
         # Verfasser benachrichtigt, wenn Dokument_freigegeben:
         syncloud_r1 = SynonymCloud.from_list(text=['Verfasser benachrichtigen'])
 
-        cond_r1 = TokenStateCondition(condition="t.Dokument_freigegeben == True")
-        modification_r1 = TokenStateModification(key='Verfasser_benachrichtigt',
-                                                 value=True)
+        cond_r1 = TokenStateCondition("t.Dokument_freigegeben == True")
+        modification_r1 = TokenStateModification('t.Verfasser_benachrichtigt = True')
         tsr_1 = TokenStateRule(state_conditions=[cond_r1],
                                state_modifications=[modification_r1],
                                synonym_cloud=syncloud_r1)
@@ -87,19 +86,17 @@ class Task1Solution(ISolution):
         # Dokument freigegeben, wenn auf Server angemeldet und
         # überprüfter Entwurf fehlerfrei
         syncloud_r2 = SynonymCloud.from_list(text=['Dokument hochladen'])
-        cond_r21 = TokenStateCondition(condition="t.Serveranmeldung == True and "
+        cond_r21 = TokenStateCondition("t.Serveranmeldung == True and "
                                                  "t.fehlerfreier_Entwurf == True and "
                                                  "t.geprüfter_Entwurf == True")
-        modification_r2 = TokenStateModification(key='Dokument_freigegeben',
-                                                 value=True)
+        modification_r2 = TokenStateModification('t.Dokument_freigegeben =True')
         tsr_2 = TokenStateRule(state_conditions=[cond_r21],
                                state_modifications=[modification_r2],
                                synonym_cloud=syncloud_r2)
 
         # Serveranmeldung
         syncloud_r3 = SynonymCloud.from_list(text=['Anmelden beim Server'])
-        modification_r3 = TokenStateModification(key='Serveranmeldung',
-                                                 value=True)
+        modification_r3 = TokenStateModification('t.Serveranmeldung = True')
         tsr_3 = TokenStateRule(state_conditions=[],
                                state_modifications=[modification_r3],
                                synonym_cloud=syncloud_r3)
@@ -107,9 +104,8 @@ class Task1Solution(ISolution):
         # Entwurf prüfen Szenario 1: ist fehlerfrei
         syncloud_r4 = SynonymCloud.from_list(
             text=['Berechtigter prüft Entwurf'])
-        cond_r41 = TokenStateCondition(condition="t.vorgelegter_Entwurf == True")
-        modification_r4 = TokenStateModification(key='geprüfter_Entwurf',
-                                                 value=True)
+        cond_r41 = TokenStateCondition("t.vorgelegter_Entwurf == True")
+        modification_r4 = TokenStateModification('t.geprüfter_Entwurf = True')
         tsr_4 = TokenStateRule(state_conditions=[cond_r41],
                                state_modifications=[modification_r4],
                                synonym_cloud=syncloud_r4)
@@ -118,9 +114,8 @@ class Task1Solution(ISolution):
         # an, dass er fehlerfrei wurde
         syncloud_r4_2 = SynonymCloud.from_list(
             text=['Berechigter prüft Entwurf'])
-        cond_r41_2 = TokenStateCondition(condition="t.korrigierter_Entwurf == True")
-        modification_r4_2 = TokenStateModification(key='fehlerfreier_Entwurf',
-                                                   value=True)
+        cond_r41_2 = TokenStateCondition("t.korrigierter_Entwurf == True")
+        modification_r4_2 = TokenStateModification('t.fehlerfreier_Entwurf = True')
         tsr_4_2 = TokenStateRule(state_conditions=[cond_r41_2],
                                  state_modifications=[modification_r4_2],
                                  synonym_cloud=syncloud_r4_2)
@@ -128,13 +123,10 @@ class Task1Solution(ISolution):
         # Entwurf korrigiert, wenn gerüft und nicht fehlerfreip
         syncloud_r5 = SynonymCloud.from_list(
             text=['Verfasser korrigiert Entwurf'])
-        cond_r51 = TokenStateCondition(condition="t.geprüfter_Entwurf == True and t.fehlerfreier_Entwurf == False")
-        modification_r51 = TokenStateModification(key='geprüfter_Entwurf',
-                                                  value=False)
-        modification_r52 = TokenStateModification(key='fehlerfreier_Entwurf',
-                                                  value=True)
-        modification_r53 = TokenStateModification(key='korrigierter_Entwurf',
-                                                  value=True)
+        cond_r51 = TokenStateCondition("t.geprüfter_Entwurf == True and t.fehlerfreier_Entwurf == False")
+        modification_r51 = TokenStateModification('t.geprüfter_Entwurf = False')
+        modification_r52 = TokenStateModification('t.fehlerfreier_Entwurf = True')
+        modification_r53 = TokenStateModification('t.korrigierter_Entwurf =True')
         tsr_5 = TokenStateRule(state_conditions=[cond_r51],
                                state_modifications=[modification_r51,
                                                     modification_r52,

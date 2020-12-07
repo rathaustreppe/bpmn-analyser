@@ -1,15 +1,10 @@
 import logging
-import re
 from enum import Enum
-from typing import Any, Union
 
-from pedantic import pedantic_class
+from pedantic import pedantic
 
 from src.exception.token_state_errors import \
-    MissingOperatorInConditionError, \
-    MissingAttributeInConditionError, MissingValueInConditionError, \
     MissingAttributeInTokenError
-from src.exception.wrong_type_errors import WrongTypeError
 from src.models.token import Token
 
 
@@ -20,8 +15,6 @@ class Operators(Enum):
     SMALLER_THEN = '<'
     INCREMENT = '++'
 
-
-@pedantic_class
 class TokenStateCondition:
     """
     This class defines a single condition that is checked
@@ -42,6 +35,7 @@ class TokenStateCondition:
             raise TypeError('condition cannot be empty')
         self.condition = condition
 
+    @pedantic
     def check_condition(self, token: Token) -> bool:
         """
         Takes a token and checks if its pre-defined
