@@ -1,10 +1,13 @@
+import inspect
 import logging
 from enum import Enum
+from typing import Callable
 
 from pedantic import pedantic
 
 from src.exception.token_state_errors import \
     MissingAttributeInTokenError
+from src.models.running_token import RunningToken
 from src.models.token import Token
 
 
@@ -19,53 +22,33 @@ class TokenStateCondition:
     """
     This class defines a single condition that is checked
     before a RunningToken state can change.
-
-    TokenStateCondition(condition="t.k1 == 'v1'")
     """
 
-    def __init__(self, condition: str) -> None:
-        """
-        Example: If you want to define the condition, where
-        the token attribute foo has to be bar, then you
-        define the condition:
-        TokenStateCondition(tok_attribute = 'foo',
-            operator = '=', tok_value='bar')
-        """
-        if condition == '':
-            raise TypeError('condition cannot be empty')
+    def __init__(self, condition: Callable[[RunningToken], bool]) -> None:
         self.condition = condition
 
     @pedantic
-    def check_condition(self, token: Token) -> bool:
+    def check_condition(self, token: RunningToken) -> bool:
         """
         Takes a token and checks if its pre-defined
         condition is true or false wth the given token.
-        Args:
-            token (Token): a Token object you want to check
-
-        Returns:
-             bool: True if condition applied to token is okay.
-             False if token does not comply with condition
         """
-        t = token
-        try:
-           return eval(self.condition)
-        except NameError:
-            msg = f'You probably forget to put >>t.<< at beginning of every attribute. Got condition: {self.condition}'
-            logging.error(msg)
-            raise NameError(msg)
-        except AttributeError:
-            msg = f'Your defined attribute is not present in the token. Got conition:{self.condition} for token: {token}'
-            logging.error(msg)
-            raise MissingAttributeInTokenError(token=t, attribute=self.condition)
-            # ToDo: Instead of self.condition find out the exact name of the attribute from the error message
-        except SyntaxError:
-            msg = f'TokenStateCondition {self} has a syntax error'
-            logging.error(msg)
-            raise SyntaxError(msg)
+
+        return self.condition(token)
+        # except NameError:
+        #     msg = f'You probably forget to put >>t.<< at beginning of every attribute. Got condition: {self.condition}'
+        #     logging.error(msg)
+        #     raise NameError(msg)
+
+        # except SyntaxError:
+        #     msg = f'TokenStateCondition {self} has a syntax error'
+        #     logging.error(msg)
+        #     raise SyntaxError(msg)
+
 
     def __str__(self) -> str:
-        return self.condition
+        #return inspect.getsource(self.condition)
+        return '>>TokenStateCondition<<'
 
     def __repr__(self) -> str:
         return self.__str__()

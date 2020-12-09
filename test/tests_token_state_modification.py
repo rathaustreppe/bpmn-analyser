@@ -12,23 +12,21 @@ class TestTokenStateModication():
 
     def test_empty_condition_single_modification(self, example_running_token):
         # no conditions but single modifications
-        tsm = TokenStateModification(modification="t.k1 = 'v42'")
-        tsr = TokenStateRule(state_conditions=[],
-                             state_modifications=[tsm])
-        ret = tsr.check_and_modify(token=example_running_token)
-
+        def a(t): t.k1 = 'v42'
+        tsm = TokenStateModification(a)
         tsm.change_token(token=example_running_token)
-        assert ret == example_running_token
+
+        assert example_running_token.k1 == 'v42'
 
     def test_empty_condition_multiple_modification(self, example_running_token):
-        tsm1 = TokenStateModification(modification="t.k1 = 42")
-        tsm2 = TokenStateModification(modification="t.k2 = 43")
-        tsr = TokenStateRule(state_conditions=[],
-                             state_modifications=[tsm1, tsm2])
+        def m1(t):
+            t.k1 = 42
+            t.k2 = 43
+        tsm1 = TokenStateModification(m1)
+        tsr = TokenStateRule(modification=tsm1)
         ret = tsr.check_and_modify(token=example_running_token)
 
         tsm1.change_token(token=example_running_token)
-        tsm2.change_token(token=example_running_token)
         assert ret == example_running_token
 
 
@@ -36,18 +34,19 @@ class TestTokenStateModication():
         key = 'k'
         value = 0
         token = RunningToken(attributes={key: value})
-        condition = TokenStateCondition(condition="t.k == 0")
-        modification = TokenStateModification(modification="t.k += 1")
-        tsr = TokenStateRule(state_conditions=[condition],
-                             state_modifications=[modification])
+        condition = TokenStateCondition(lambda t: t.k == 0)
+        def m1(t): t.k += 1
+        modification = TokenStateModification(m1)
+        tsr = TokenStateRule(condition=condition,
+                             modification=modification)
         return_token = tsr.check_and_modify(token=token)
         assert return_token[key] == 1  # 0++ => 1
 
     def test_wrong_attribute(self):
         token = RunningToken(attributes={'a': 1})
-        tsm = TokenStateModification(modification='t.b = 1')
-        tsr = TokenStateRule(state_conditions = [],
-                             state_modifications=[tsm])
+        def m(t): t.b = 1
+        tsm = TokenStateModification(m)
+        tsr = TokenStateRule(modification=tsm)
 
         with pytest.raises(MissingAttributeInTokenError):
             tsr.check_and_modify(token=token)
@@ -55,6 +54,7 @@ class TestTokenStateModication():
     def test_f_string(self):
         token = RunningToken(attributes={'a': 0})
         val = 42
-        tsm = TokenStateModification(modification=f't.a = {val}')
+        def m(t): t.a = val
+        tsm = TokenStateModification(m)
         tsm.change_token(token=token)
         assert token.a == val

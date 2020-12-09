@@ -1,5 +1,6 @@
 import copy
 import logging
+from typing import Callable
 
 from pedantic import pedantic
 
@@ -17,16 +18,15 @@ class TokenStateModification:
     # Sadly we cannot use f-strings!
     # Because the {xy}-term in an f-string is evaluated inside TokenStateModification
     # and not on declaration of this string. And TSM doesnt know about this variable.
-    def __init__(self, modification: str = '') -> None:
+    def __init__(self, modification: Callable[[RunningToken], None]) -> None:
         self.modification = modification
 
     @pedantic
     def change_token(self, token: RunningToken) -> None:
-        t = token #used to have statements like 't.haha = 32'.
-        token_before = copy.copy(token)
-        exec(self.modification)
+        token_before = token.copy()
+        self.modification(token)
 
-        # if you run exec('t.haha = 42) but haha is not in the token-dict, it
+        # if you run the statement 't.haha = 42' but haha is not in the token-dict, it
         # will be added. This is not a desired functionality. We check here
         # if there were attributes added and print an error message.
         if not token_before.keys() == token.keys():

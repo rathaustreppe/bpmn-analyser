@@ -124,9 +124,9 @@ class TestGraphPointer:
         # no error here: check if all sequence_flows are treated right
         k1, v1 = 'k1', 'v1'
         k2, v2 = 'k2', 'v2'
-        condition1 = TokenStateCondition(condition="t.k1 == 'v1'")
+        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
         sequence_flow_1 = BPMNSequenceFlow(id_='1', condition=condition1)
-        condition2 = TokenStateCondition(condition="t.k2 == 'v2'")
+        condition2 = TokenStateCondition(lambda t: t.k2 == 'v2')
         sequence_flow_2 = BPMNSequenceFlow(id_='2', condition=condition2)
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
@@ -179,10 +179,10 @@ class TestGraphPointer:
         k1, v1 = 'k1', 'v1'
         k2 = 'k2'
         id_of_cond_flow = '1'
-        condition1 = TokenStateCondition(condition="t.k1 == 'v1'")
+        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
         sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
                                            condition=condition1)
-        condition2 = TokenStateCondition(condition="t.k2 == 'a value that is wrong'")
+        condition2 = TokenStateCondition(lambda t: t.k2 == 'a value that is wrong')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow',
                                            condition=condition2)
 
@@ -201,11 +201,11 @@ class TestGraphPointer:
         # error here: have an exclusive gateway but 0 flows meet the conditions
 
         k1 = 'k1'
-        condition1 = TokenStateCondition(condition="t.k1 == 'wrong value'")
+        condition1 = TokenStateCondition(lambda t: t.k1 == 'wrong value')
         sequence_flow_1 = BPMNSequenceFlow(id_='no cond flow',
                                            condition=condition1)
 
-        condition2 = TokenStateCondition(condition="t.k1 == 'another wrong value'")
+        condition2 = TokenStateCondition(lambda t: t.k1 == 'another wrong value')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
                                            condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]
@@ -223,11 +223,11 @@ class TestGraphPointer:
         # no error here: checks if exclusive gateway with 1 branch works
         k1, v1 = 'k1', 'v1'
         id_of_cond_flow = '1'
-        condition1 = TokenStateCondition(condition="t.k1 == 'v1'")
+        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
         sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
                                            condition=condition1)
 
-        condition2 = TokenStateCondition(condition="t.k1 == 'wrong value'")
+        condition2 = TokenStateCondition(lambda t: t.k1 == 'wrong value')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
                                            condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]

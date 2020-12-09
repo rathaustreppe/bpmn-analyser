@@ -79,26 +79,34 @@ class Task1Solution(ISolution):
 
         cond_r1 = TokenStateCondition("t.Dokument_freigegeben == True")
         modification_r1 = TokenStateModification('t.Verfasser_benachrichtigt = True')
-        tsr_1 = TokenStateRule(state_conditions=[cond_r1],
-                               state_modifications=[modification_r1],
+        tsr_1 = TokenStateRule(condition=[cond_r1],
+                               modification=[modification_r1],
                                synonym_cloud=syncloud_r1)
 
         # Dokument freigegeben, wenn auf Server angemeldet und
         # überprüfter Entwurf fehlerfrei
         syncloud_r2 = SynonymCloud.from_list(text=['Dokument hochladen'])
-        cond_r21 = TokenStateCondition("t.Serveranmeldung == True and "
-                                                 "t.fehlerfreier_Entwurf == True and "
-                                                 "t.geprüfter_Entwurf == True")
+
+        def func(token: Token) -> bool:
+            t = token
+            return t.Serveranmeldung and t.fehlerfreier_Entwurf and t.geprüfter_Entwurf
+
+        a = lambda t: t.Serveranmeldung and t.fehlerfreier_Entwurf and t.geprüfter_Entwurf
+
+        cond_r21 = TokenStateCondition(func)
+
+
+
         modification_r2 = TokenStateModification('t.Dokument_freigegeben =True')
-        tsr_2 = TokenStateRule(state_conditions=[cond_r21],
-                               state_modifications=[modification_r2],
+        tsr_2 = TokenStateRule(condition=[cond_r21],
+                               modification=[modification_r2],
                                synonym_cloud=syncloud_r2)
 
         # Serveranmeldung
         syncloud_r3 = SynonymCloud.from_list(text=['Anmelden beim Server'])
         modification_r3 = TokenStateModification('t.Serveranmeldung = True')
-        tsr_3 = TokenStateRule(state_conditions=[],
-                               state_modifications=[modification_r3],
+        tsr_3 = TokenStateRule(condition=[],
+                               modification=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
         # Entwurf prüfen Szenario 1: ist fehlerfrei
@@ -106,8 +114,8 @@ class Task1Solution(ISolution):
             text=['Berechtigter prüft Entwurf'])
         cond_r41 = TokenStateCondition("t.vorgelegter_Entwurf == True")
         modification_r4 = TokenStateModification('t.geprüfter_Entwurf = True')
-        tsr_4 = TokenStateRule(state_conditions=[cond_r41],
-                               state_modifications=[modification_r4],
+        tsr_4 = TokenStateRule(condition=[cond_r41],
+                               modification=[modification_r4],
                                synonym_cloud=syncloud_r4)
 
         # Entwurf prüfen, Szenario 2: musste korrigiert werden, dann nehmen wir
@@ -116,8 +124,8 @@ class Task1Solution(ISolution):
             text=['Berechigter prüft Entwurf'])
         cond_r41_2 = TokenStateCondition("t.korrigierter_Entwurf == True")
         modification_r4_2 = TokenStateModification('t.fehlerfreier_Entwurf = True')
-        tsr_4_2 = TokenStateRule(state_conditions=[cond_r41_2],
-                                 state_modifications=[modification_r4_2],
+        tsr_4_2 = TokenStateRule(condition=[cond_r41_2],
+                                 modification=[modification_r4_2],
                                  synonym_cloud=syncloud_r4_2)
 
         # Entwurf korrigiert, wenn gerüft und nicht fehlerfreip
@@ -127,10 +135,10 @@ class Task1Solution(ISolution):
         modification_r51 = TokenStateModification('t.geprüfter_Entwurf = False')
         modification_r52 = TokenStateModification('t.fehlerfreier_Entwurf = True')
         modification_r53 = TokenStateModification('t.korrigierter_Entwurf =True')
-        tsr_5 = TokenStateRule(state_conditions=[cond_r51],
-                               state_modifications=[modification_r51,
-                                                    modification_r52,
-                                                    modification_r53],
+        tsr_5 = TokenStateRule(condition=[cond_r51],
+                               modification=[modification_r51,
+                                             modification_r52,
+                                             modification_r53],
                                synonym_cloud=syncloud_r5)
 
         return [tsr_1, tsr_2, tsr_3, tsr_4, tsr_4_2, tsr_5]

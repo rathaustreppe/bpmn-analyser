@@ -13,24 +13,23 @@ from src.nlp.synonym_cloud import SynonymCloud
 
 @pedantic_class
 class TokenStateRule:
-    def __init__(self, state_conditions: List[TokenStateCondition],
-                 state_modifications: List[TokenStateModification],
+    def __init__(self, condition: Optional[TokenStateCondition] = None,
+                 modification: Optional[TokenStateModification] = None,
                  synonym_cloud: Optional[SynonymCloud] = None) -> None:
         self.synonym_cloud = synonym_cloud
-        self.token_state_conditions = state_conditions
-        self.token_state_modifications = state_modifications
+        self.condition = condition
+        self.modification = modification
 
     def _check_conditions(self, token: RunningToken) -> bool:
-        if len(self.token_state_conditions) > 0:
-            for condition in self.token_state_conditions:
-                if not condition.check_condition(token=token):
-                    logging.debug(f'Rule not meet! Token: {token}')
-                    return False
+        if self.condition is not None:
+            if not self.condition.check_condition(token=token):
+                logging.debug(f'Rule not meet! Token: {token}')
+                return False
         return True
 
     def _apply_modifications(self, token: RunningToken) -> RunningToken:
-        for modification in self.token_state_modifications:
-            modification.change_token(token=token)
+        if self.modification is not None:
+            self.modification.change_token(token=token)
         return token
 
     def check_and_modify(self, token: RunningToken) -> RunningToken:
@@ -41,8 +40,8 @@ class TokenStateRule:
 
     def __str__(self) -> str:
         return f'TokenStateRule:[SynCloud:{self.synonym_cloud}' \
-               f' Conditions: {self.token_state_conditions}' \
-               f' Modifications: {self.token_state_modifications}]'
+               f' Conditions: {self.condition}' \
+               f' Modifications: {self.modification}]'
 
     def __repr__(self) -> str:
         return self.__str__()

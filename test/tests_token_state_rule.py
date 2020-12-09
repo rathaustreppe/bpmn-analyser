@@ -5,8 +5,8 @@ from src.models.token_state_rule import TokenStateRule
 
 class TestTokenStateRule:
     @pytest.fixture(autouse=True)
-    def empty_rule(self):
-        return TokenStateRule(state_conditions=[], state_modifications=[])
+    def empty_rule(self) -> TokenStateRule:
+        return TokenStateRule()
 
     def test_empty_rule_on_empty_token(self, empty_rule, empty_running_token):
         # empty token with empty rule

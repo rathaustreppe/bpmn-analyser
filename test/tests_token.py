@@ -47,7 +47,8 @@ class TestToken:
     def test_override_value(self, empty_running_token):
         v1 = 'v1'
         empty_running_token.k1 = v1
-        tsm = TokenStateModification(modification="t.k1 = 'v2'")
+        def m(t): t.k1 = 'v2'
+        tsm = TokenStateModification(m)
 
         tsm.change_token(token=empty_running_token)
         assert empty_running_token.k1 == 'v2'
@@ -55,11 +56,12 @@ class TestToken:
     def test_change_value_not_present(self, empty_running_token):
         # changing value of non existing key
         with pytest.raises(MissingAttributeInTokenError):
-            tsm = TokenStateModification(modification="t.k1 = 'v1'")
+            def m(t): t.k1 = 'v1'
+            tsm = TokenStateModification(m)
             tsm.change_token(token=empty_running_token)
 
     def test_get_nonexisting_key(self, empty_token):
-        with pytest.raises(AttributeError):
+        with pytest.raises(MissingAttributeInTokenError):
             empty_token.k42
 
     def test_not_contains_syntax(self, empty_token):
@@ -73,12 +75,12 @@ class TestToken:
         assert token_copy == example_token
 
     def test_equal_deepcopy_token(self, example_token):
-        token_copy = copy.deepcopy(example_token)
-        assert token_copy == example_token
+        with pytest.raises(NotImplementedError):
+            token_copy = copy.deepcopy(example_token)
 
     def test_equal_copy_token(self, example_token):
-        token_copy = copy.copy(example_token)
-        assert token_copy == example_token
+        with pytest.raises(NotImplementedError):
+            token_copy = copy.copy(example_token)
 
     def test_equal_new_token(self, example_token):
         # same keys and values from examples token above
@@ -86,10 +88,10 @@ class TestToken:
         token2 = Token(attributes=attributes)
         assert token2 == example_token
 
-    def test_equal_both_empty(self, example_token):
-        empty1 = example_token
-        empty2 = copy.copy(empty1)
-        assert empty1 == empty2
+    def test_dict_copy(self, example_token):
+        attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
+        token = Token(attributes=attributes)
+        assert token == token.copy()
 
     def test_equal_one_empty(self, empty_token, example_token):
         assert empty_token != example_token
@@ -102,8 +104,9 @@ class TestToken:
         assert token1 != token2
 
     def test_equal_different_value(self, example_running_token):
-        token2 = copy.deepcopy(example_running_token)
-        tsm = TokenStateModification(modification="t.k1 = 'v42'")
+        token2 = RunningToken.from_token(token=example_running_token)
+        def m(t): t.k1 = 'v42'
+        tsm = TokenStateModification(m)
         tsm.change_token(token=token2)
         assert token2 != example_running_token
 
@@ -131,7 +134,8 @@ class TestToken:
         key = 'k1'
         attributes = {key: 0}
         token = RunningToken(attributes=attributes)
-        tsm = TokenStateModification(modification='t.k1 += 1')
+        def m(t): t.k1 += 1
+        tsm = TokenStateModification(m)
         tsm.change_token(token=token)
         assert token[key] == 1
 

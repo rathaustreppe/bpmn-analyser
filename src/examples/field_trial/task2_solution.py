@@ -52,12 +52,10 @@ class Task2Solution(ISolution):
         # Rechnung ausstellen, nur wenn Schubkarren geliefert wurden
         syncloud_r1 = SynonymCloud.from_list(text=['Rechnung austellen'])
 
-        cond_r1 = TokenStateCondition(tok_attribute='Schubkarren ausgeliefert',
-                                      operator=Operators.EQUALS,
-                                      tok_value=True)
+        cond_r1 = TokenStateCondition('Schubkarren ausgeliefert',Operators.EQUALS,True)
         modification_r1 = TokenStateModification(key='Rechnung ausgestellt', value=True)
-        tsr_1 = TokenStateRule(state_conditions=[cond_r1],
-                               state_modifications=[modification_r1],
+        tsr_1 = TokenStateRule(condition=[cond_r1],
+                               modification=[modification_r1],
                                synonym_cloud=syncloud_r1)
 
         # Schubkarren nur ausliefern, wenn Schubkarren zusammengebaut
@@ -68,8 +66,8 @@ class Task2Solution(ISolution):
                                       tok_value=True)
         modification_r2 = TokenStateModification(key='Schubkarren ausgeliefert',
                                                  value=True)
-        tsr_2 = TokenStateRule(state_conditions=[cond_r2],
-                               state_modifications=[modification_r2],
+        tsr_2 = TokenStateRule(condition=[cond_r2],
+                               modification=[modification_r2],
                                synonym_cloud=syncloud_r2)
 
         # Schubkarren nur zusammengebauen, wenn Eigenteile gefertigt und Fremdteile bestellt
@@ -87,8 +85,8 @@ class Task2Solution(ISolution):
 
         modification_r3 = TokenStateModification(key='Schubkarren zusammengebaut',
                                                  value=True)
-        tsr_3 = TokenStateRule(state_conditions=[cond_r31, cond_r32],
-                               state_modifications=[modification_r3],
+        tsr_3 = TokenStateRule(condition=[cond_r31, cond_r32],
+                               modification=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
         # Fremdteile nur bestellen, wenn Bedarf geprüft wurde
@@ -103,8 +101,8 @@ class Task2Solution(ISolution):
             key='Fremdteile bestellt',
             value=True)
 
-        tsr_4 = TokenStateRule(state_conditions=[cond_r4],
-                               state_modifications=[modification_r4],
+        tsr_4 = TokenStateRule(condition=[cond_r4],
+                               modification=[modification_r4],
                                synonym_cloud=syncloud_r4)
 
         # Eigenteile nur fertigen, wenn Bedarf geprüft wurde
@@ -120,16 +118,16 @@ class Task2Solution(ISolution):
             key='Eigenteile gefertigt',
             value=True)
 
-        tsr_5 = TokenStateRule(state_conditions=[cond_r5],
-                               state_modifications=[modification_r5],
+        tsr_5 = TokenStateRule(condition=[cond_r5],
+                               modification=[modification_r5],
                                synonym_cloud=syncloud_r5)
 
         # Lagerbestand wird kontrolliert
         syncloud_r6 = SynonymCloud.from_list(text=['Lagerbestand an Schubkarren kontrollieren'])
 
         modification_r6 = TokenStateModification(key='Lagerbestand kontrolliert', value=True)
-        tsr_6 = TokenStateRule(state_conditions=[],
-                               state_modifications=[modification_r6],
+        tsr_6 = TokenStateRule(condition=[],
+                               modification=[modification_r6],
                                synonym_cloud=syncloud_r6)
 
 
@@ -146,8 +144,8 @@ class Task2Solution(ISolution):
             key='Fremdteilebedarf geprüft',
             value=True)
 
-        tsr_7 = TokenStateRule(state_conditions=[cond_r7],
-                               state_modifications=[modification_r7],
+        tsr_7 = TokenStateRule(condition=[cond_r7],
+                               modification=[modification_r7],
                                synonym_cloud=syncloud_r7)
 
         # Bedarf eigener Teile wird geprüft, nur wenn Lager vorher kontrolliert wurde
@@ -163,8 +161,8 @@ class Task2Solution(ISolution):
             key='Eigenteilebedarf geprüft',
             value=True)
 
-        tsr_8 = TokenStateRule(state_conditions=[cond_r8],
-                               state_modifications=[modification_r8],
+        tsr_8 = TokenStateRule(condition=[cond_r8],
+                               modification=[modification_r8],
                                synonym_cloud=syncloud_r8)
 
 

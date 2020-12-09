@@ -60,5 +60,4 @@ class RuleFinder:
 
         tsm = TokenStateModification(modification=''.join(['t.', token_attribute, '+= 1']))
 
-        return TokenStateRule(state_conditions=[],
-                             state_modifications=[tsm])
+        return TokenStateRule(modification=tsm)

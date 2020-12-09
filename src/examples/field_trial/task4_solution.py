@@ -85,8 +85,8 @@ class Task4Solution(ISolution):
 
         modification_r1 = TokenStateModification(key='card inserted',
                                                  value=True)
-        tsr_1 = TokenStateRule(state_conditions=[],
-                               state_modifications=[modification_r1],
+        tsr_1 = TokenStateRule(condition=[],
+                               modification=[modification_r1],
                                synonym_cloud=syncloud_r1)
 
         # enter pin only when card is in atm and cash withdrawal is selected
@@ -101,8 +101,8 @@ class Task4Solution(ISolution):
         #                               tok_value=True)
         modification_r2 = TokenStateModification(key='correct pin',
                                                  value=True)
-        tsr_2 = TokenStateRule(state_conditions=[cond_r21],#, cond_r22],
-                               state_modifications=[modification_r2],
+        tsr_2 = TokenStateRule(condition=[cond_r21],  #, cond_r22],
+                               modification=[modification_r2],
                                synonym_cloud=syncloud_r2)
 
         # choose amount of money to withdraw only when PIN is correct
@@ -114,8 +114,8 @@ class Task4Solution(ISolution):
 
         modification_r3 = TokenStateModification(key='amount choosen',
                                                  value=False)
-        tsr_3 = TokenStateRule(state_conditions=[cond_r3],
-                               state_modifications=[modification_r3],
+        tsr_3 = TokenStateRule(condition=[cond_r3],
+                               modification=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
         # take card after amount choosen
@@ -127,8 +127,8 @@ class Task4Solution(ISolution):
 
         modification_r4 = TokenStateModification(key='card taken',
                                                  value=True)
-        tsr_4 = TokenStateRule(state_conditions=[cond_r4],
-                               state_modifications=[modification_r4],
+        tsr_4 = TokenStateRule(condition=[cond_r4],
+                               modification=[modification_r4],
                                synonym_cloud=syncloud_r4)
 
         # or take card, after inserting cash
@@ -140,8 +140,8 @@ class Task4Solution(ISolution):
 
         modification_r5 = TokenStateModification(key='card taken',
                                                  value=True)
-        tsr_5 = TokenStateRule(state_conditions=[cond_r5],
-                               state_modifications=[modification_r5],
+        tsr_5 = TokenStateRule(condition=[cond_r5],
+                               modification=[modification_r5],
                                synonym_cloud=syncloud_r5)
 
         # take cash after amount choosen
@@ -153,8 +153,8 @@ class Task4Solution(ISolution):
 
         modification_r6 = TokenStateModification(key='card taken',
                                                  value=True)
-        tsr_6 = TokenStateRule(state_conditions=[cond_r6],
-                               state_modifications=[modification_r6],
+        tsr_6 = TokenStateRule(condition=[cond_r6],
+                               modification=[modification_r6],
                                synonym_cloud=syncloud_r6)
 
         # take receipt after inserting cash
@@ -166,8 +166,8 @@ class Task4Solution(ISolution):
 
         modification_r7 = TokenStateModification(key='receipt taken',
                                                  value=True)
-        tsr_7 = TokenStateRule(state_conditions=[cond_r7],
-                               state_modifications=[modification_r7],
+        tsr_7 = TokenStateRule(condition=[cond_r7],
+                               modification=[modification_r7],
                                synonym_cloud=syncloud_r7)
 
         return [tsr_1, tsr_2, tsr_3, tsr_4, tsr_5, tsr_6, tsr_7]

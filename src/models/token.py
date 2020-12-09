@@ -3,6 +3,8 @@ from typing import Dict, Optional, Union, Type
 
 from pedantic import overrides
 
+from src.exception.token_state_errors import MissingAttributeInTokenError
+
 
 class Token(dict):
     # taken from
@@ -36,10 +38,20 @@ class Token(dict):
                 self.__setattr__(key=attribute_key, value=attributes[attribute_key])
 
     def __getattr__(self, key):
+        # __deepcopy__ when using copy.deepcopy
+        # __getstate__ when using copy.copy
+        # instead token.copy() - the build in function of every dict can be used
+        if key == '__deepcopy__' or key == '__getstate__':
+            msg = 'Cannot copy/deepcopy token class. ' \
+                  'Use token.copy() or RunningToken.from_token() instead.'
+            logging.error(msg)
+            raise NotImplementedError
         try:
             return self[key]
-        except KeyError as k:
-            raise AttributeError(k)
+        except KeyError:
+            msg = f'Your defined attribute {key} is not present in the token.'
+            logging.error(msg)
+            raise MissingAttributeInTokenError(token=self, attribute=key)
 
     def __setattr__(self, key, value):
         self[key] = value

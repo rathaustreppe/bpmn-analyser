@@ -51,14 +51,25 @@ class TestGateway:
         # define the rules
         # when finding 'act1' change act1-attribute of token to true
         # same with 'act2' and 'act3'
-        ruleset = []
-        for act in ['act1', 'act2', 'act3']:
-            syncloud = SynonymCloud.from_list(text=[act])
-            tsm = TokenStateModification(modification=''.join(['t.', act, '= True']))
-            tsr_act = TokenStateRule(state_conditions=[],
-                                    state_modifications=[tsm],
-                                    synonym_cloud=syncloud)
-            ruleset.append(tsr_act)
+        syncloud_act1 = SynonymCloud.from_list(text=['act1'])
+        def m(t): t.act1 = True
+        tsm_1 = TokenStateModification(m)
+        tsr_act1 = TokenStateRule(modification=tsm_1,
+                                  synonym_cloud=syncloud_act1)
+
+        syncloud_act2 = SynonymCloud.from_list(text=['act2'])
+        def m(t): t.act2 = True
+        tsm_2 = TokenStateModification(m)
+        tsr_act2 = TokenStateRule(modification=tsm_2,
+                                  synonym_cloud=syncloud_act2)
+
+        syncloud_act3 = SynonymCloud.from_list(text=['act3'])
+        def m(t): t.act3 = True
+        tsm_3 = TokenStateModification(m)
+        tsr_act3 = TokenStateRule(modification=tsm_3,
+                                  synonym_cloud=syncloud_act3)
+
+        ruleset = [tsr_act1, tsr_act2, tsr_act3]
 
         # define the token
         init_attibutes = {
@@ -123,8 +134,7 @@ class TestGateway:
         for attribute in all_attributes_to_look_for:
             syncloud = SynonymCloud.from_list(text=[attribute])
             tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
-            ruleset.append(TokenStateRule(state_conditions=[],
-                                          state_modifications=[tsm],
+            ruleset.append(TokenStateRule(modification=tsm,
                                           synonym_cloud=syncloud))
 
         return_token = self.execute_process(filename='gateway_example.bpmn',
@@ -161,8 +171,7 @@ class TestGateway:
             for attribute in all_attributes_to_look_for:
                 syncloud = SynonymCloud.from_list(text=[attribute])
                 tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
-                ruleset.append(TokenStateRule(state_conditions=[],
-                                              state_modifications=[tsm],
+                ruleset.append(TokenStateRule(modification=tsm,
                                               synonym_cloud=syncloud))
             return ruleset
 

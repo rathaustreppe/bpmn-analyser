@@ -46,10 +46,11 @@ class TestIntegrationBillProcess:
                                                    wn.synset('sign.v.01'),
                                                    wn_synset_bill,
                                                    ])
-        cond_r1 = TokenStateCondition(condition="t.place == 'Goerlitz'")
-        modification_r1 = TokenStateModification(modification='t.signature_ML = True')
-        tsr_1 = TokenStateRule(state_conditions=[cond_r1],
-                               state_modifications=[modification_r1],
+        cond_r1 = TokenStateCondition(lambda t: t.place == 'Goerlitz')
+        def m(t): t.signature_ML = True
+        modification_r1 = TokenStateModification(m)
+        tsr_1 = TokenStateRule(condition=[cond_r1],
+                               modification=[modification_r1],
                                synonym_cloud=syncloud_r1)
 
         # Rule 2: send to <places>: no condition, but change 'place' to a value
@@ -63,8 +64,8 @@ class TestIntegrationBillProcess:
                                                     wn_synset_bill,
                                                     'to', place])
             modification = TokenStateModification(modification=''.join(['t.place=','"' , place, '"']))
-            tsr = TokenStateRule(state_conditions=[],
-                                 state_modifications=[modification],
+            tsr = TokenStateRule(condition=[],
+                                 modification=[modification],
                                  synonym_cloud=syncloud)
             tsr_2.append(tsr)
 
@@ -73,10 +74,11 @@ class TestIntegrationBillProcess:
         syncloud_r3 = SynonymCloud.from_list(text=['Zittau',
                                                    wn.synset('check.v.03'),
                                                    wn.synset('contract.n.01')])
-        cond_r3 = TokenStateCondition(condition="t.place == 'Zittau'")
-        modification_r3 = TokenStateModification(modification='t.contract_checked = True')
-        tsr_3 = TokenStateRule(state_conditions=[cond_r3],
-                               state_modifications=[modification_r3],
+        cond_r3 = TokenStateCondition(lambda t: t.place == 'Zittau')
+        def m(t): t.contract_checked = True
+        modification_r3 = TokenStateModification(m)
+        tsr_3 = TokenStateRule(condition=[cond_r3],
+                               modification=[modification_r3],
                                synonym_cloud=syncloud_r3)
 
         # Rule 4: Zittau signs: only in Zittau and with a ckecked contract
@@ -85,11 +87,10 @@ class TestIntegrationBillProcess:
                                                    wn.synset('sign.v.01'),
                                                    wn_synset_bill,
                                                    ])
-        cond1_r4 = TokenStateCondition(condition="t.place == 'Zittau'")
-        cond2_r4 = TokenStateCondition(condition="t.contract_checked == True")
+        cond1_r4 = TokenStateCondition(lambda t: t.place == 'Zittau' and t.contract_checked == True)
         modification_r4 = TokenStateModification(modification='t.signature_Zittau = True')
-        tsr_4 = TokenStateRule(state_conditions=[cond1_r4, cond2_r4],
-                               state_modifications=[modification_r4],
+        tsr_4 = TokenStateRule(condition=[cond1_r4],
+                               modification=[modification_r4],
                                synonym_cloud=syncloud_r4)
 
         ruleset = [tsr_1, tsr_3, tsr_4]
@@ -166,7 +167,8 @@ class TestIntegrationBillProcess:
 
     def test_bill_process_from_graph2(self, xml_folders_path):
         # bill first arrives in goerlitz
-        modification = TokenStateModification(modification="t.place = 'Goerlitz'")
+        def m(t): t.place = 'Goerlitz'
+        modification = TokenStateModification(m)
         bill_process_init_token = self.init_token()
         modification.change_token(token=bill_process_init_token)
 
