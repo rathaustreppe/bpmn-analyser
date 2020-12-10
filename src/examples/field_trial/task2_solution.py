@@ -4,7 +4,8 @@ from src.models.i_solution import ISolution
 from src.models.running_token import RunningToken
 from src.models.scenario import Scenario
 from src.models.token import Token
-from src.models.token_state_condition import TokenStateCondition, Operators
+from src.models.token_state_condition import TokenStateCondition
+from src.converter.bpmn_models.gateway.branch_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker

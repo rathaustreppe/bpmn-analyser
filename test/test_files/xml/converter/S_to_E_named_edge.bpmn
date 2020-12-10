@@ -6,5 +6,5 @@
     <endEvent id="E" name="EE">
       <incoming>F1</incoming>
     </endEvent>
-    <sequenceFlow id="F1" name="t.attr==42" sourceRef="S" targetRef="E" />
+    <sequenceFlow id="F1" name="attr==42" sourceRef="S" targetRef="E" />
   </process>

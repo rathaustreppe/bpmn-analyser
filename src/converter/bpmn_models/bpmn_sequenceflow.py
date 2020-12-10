@@ -5,13 +5,13 @@ from pedantic import pedantic_class
 # local imports
 from src.converter.bpmn_models.bpmn_element import \
     BPMNFlowObject
-from src.models.token_state_condition import TokenStateCondition
+from src.converter.bpmn_models.gateway.branch_condition import BranchCondition
 
 
 @pedantic_class
 class BPMNSequenceFlow(BPMNFlowObject):
     def __init__(self, id_: str,
-                 condition: Optional[TokenStateCondition] = None,
+                 condition: Optional[BranchCondition] = None,
                  source: Optional[BPMNFlowObject] = None,
                  target: Optional[BPMNFlowObject] = None) -> None:
         super().__init__(id_=id_)

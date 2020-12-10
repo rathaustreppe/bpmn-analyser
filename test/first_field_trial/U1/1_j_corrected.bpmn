@@ -20,12 +20,12 @@
       <bpmn:incoming>Flow_005py77</bpmn:incoming>
       <bpmn:outgoing>Flow_0mbsafk</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_005py77" name="t.fehlerfreier_Entwurf == True" sourceRef="Gateway_0t0thw9" targetRef="Activity_1sez2ze" />
+    <bpmn:sequenceFlow id="Flow_005py77" name="fehlerfreier_Entwurf == True" sourceRef="Gateway_0t0thw9" targetRef="Activity_1sez2ze" />
     <bpmn:task id="Activity_0wj7xtw" name="Dokument fehlerhaft">
       <bpmn:incoming>Flow_1tclh4t</bpmn:incoming>
       <bpmn:outgoing>Flow_0oswvsy</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_1tclh4t" name="t.fehlerfreier_Entwurf == False" sourceRef="Gateway_0t0thw9" targetRef="Activity_0wj7xtw" />
+    <bpmn:sequenceFlow id="Flow_1tclh4t" name="fehlerfreier_Entwurf == False" sourceRef="Gateway_0t0thw9" targetRef="Activity_0wj7xtw" />
     <bpmn:task id="Activity_00206kl" name="Doukement wird korrigiert">
       <bpmn:incoming>Flow_0oswvsy</bpmn:incoming>
       <bpmn:incoming>Flow_08lkwtr</bpmn:incoming>

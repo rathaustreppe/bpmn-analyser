@@ -44,17 +44,17 @@
       <incoming>Flow_0zz4eoo</incoming>
       <outgoing>Flow_14q28d1</outgoing>
     </task>
-    <sequenceFlow id="Flow_0zz4eoo" name="t.v1=='1'" sourceRef="Gateway_16u4r8l" targetRef="Activity_0v85xhj" />
+    <sequenceFlow id="Flow_0zz4eoo" name="v1==1" sourceRef="Gateway_16u4r8l" targetRef="Activity_0v85xhj" />
     <task id="Activity_0lvsu0x" name="jkl2">
       <incoming>Flow_1rgpufq</incoming>
       <outgoing>Flow_1pxkg54</outgoing>
     </task>
-    <sequenceFlow id="Flow_1rgpufq" name="t.v1=='2'" sourceRef="Gateway_16u4r8l" targetRef="Activity_0lvsu0x" />
+    <sequenceFlow id="Flow_1rgpufq" name="v1==2" sourceRef="Gateway_16u4r8l" targetRef="Activity_0lvsu0x" />
     <task id="Activity_02w8zcp" name="jkl3">
       <incoming>Flow_113lhzo</incoming>
       <outgoing>Flow_1lp20jn</outgoing>
     </task>
-    <sequenceFlow id="Flow_113lhzo" name="t.v2=='1'" sourceRef="Gateway_16u4r8l" targetRef="Activity_02w8zcp" />
+    <sequenceFlow id="Flow_113lhzo" name="v2==1" sourceRef="Gateway_16u4r8l" targetRef="Activity_02w8zcp" />
     <sequenceFlow id="Flow_1lp20jn" sourceRef="Activity_02w8zcp" targetRef="Gateway_1h3gt0v" />
     <parallelGateway id="Gateway_1h3gt0v">
       <incoming>Flow_1lp20jn</incoming>

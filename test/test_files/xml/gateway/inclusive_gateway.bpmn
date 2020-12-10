@@ -15,7 +15,7 @@
       <outgoing>SequenceFlow_1x0mgco</outgoing>
       <outgoing>SequenceFlow_0s0jmnz</outgoing>
     </inclusiveGateway>
-    <sequenceFlow id="SequenceFlow_1ltrm4m" name="t.a==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_11cqukf" />
+    <sequenceFlow id="SequenceFlow_1ltrm4m" name="a==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_11cqukf" />
     <sequenceFlow id="SequenceFlow_1hm1vfg" sourceRef="Task_11cqukf" targetRef="ExclusiveGateway_08yly1y" />
     <inclusiveGateway id="ExclusiveGateway_08yly1y" name="_">
       <incoming>SequenceFlow_1hm1vfg</incoming>
@@ -31,13 +31,13 @@
       <incoming>SequenceFlow_1x0mgco</incoming>
       <outgoing>SequenceFlow_1o2tysn</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1x0mgco" name="t.b==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_13qsw40" />
+    <sequenceFlow id="SequenceFlow_1x0mgco" name="b==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_13qsw40" />
     <sequenceFlow id="SequenceFlow_1o2tysn" sourceRef="Task_13qsw40" targetRef="ExclusiveGateway_08yly1y" />
     <task id="Task_1q20ho9" name="c++">
       <incoming>SequenceFlow_0s0jmnz</incoming>
       <outgoing>SequenceFlow_0648wgg</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_0s0jmnz" name="t.c==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_1q20ho9" />
+    <sequenceFlow id="SequenceFlow_0s0jmnz" name="c==0" sourceRef="ExclusiveGateway_02r881l" targetRef="Task_1q20ho9" />
     <sequenceFlow id="SequenceFlow_0648wgg" sourceRef="Task_1q20ho9" targetRef="ExclusiveGateway_08yly1y" />
   </process>
   <bpmndi:BPMNDiagram id="BpmnDiagram_1">

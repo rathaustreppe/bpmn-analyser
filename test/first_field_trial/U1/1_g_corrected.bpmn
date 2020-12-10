@@ -21,13 +21,13 @@
       <incoming>SequenceFlow_01qqpw0</incoming>
       <outgoing>SequenceFlow_0nptg95</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_01qqpw0" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_0pm07z2" targetRef="Task_075tsmw" />
+    <sequenceFlow id="SequenceFlow_01qqpw0" name="fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_0pm07z2" targetRef="Task_075tsmw" />
     <sequenceFlow id="SequenceFlow_1ds62gm" sourceRef="StartEvent_16shif6" targetRef="ExclusiveGateway_067xou8" />
     <task id="Task_0gxbc81" name="Hochladen">
       <incoming>SequenceFlow_0kli53i</incoming>
       <outgoing>SequenceFlow_0wzgpib</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1ichjky" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_0pm07z2" targetRef="Task_09rdp4q" />
+    <sequenceFlow id="SequenceFlow_1ichjky" name="fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_0pm07z2" targetRef="Task_09rdp4q" />
     <sequenceFlow id="SequenceFlow_0wzgpib" sourceRef="Task_0gxbc81" targetRef="Task_1uz2skq" />
     <exclusiveGateway id="ExclusiveGateway_067xou8" name="Einreichen">
       <incoming>SequenceFlow_1ds62gm</incoming>

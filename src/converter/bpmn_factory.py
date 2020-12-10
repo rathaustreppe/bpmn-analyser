@@ -20,8 +20,8 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
+from src.converter.bpmn_models.gateway.branch_condition import BranchCondition
 from src.exception.wrong_type_errors import NotImplementedTypeError
-from src.models.token_state_condition import TokenStateCondition
 
 
 @pedantic_class
@@ -121,7 +121,7 @@ class BPMNFactory():
         # name tag in xml (== the text of the element) is treated as a condition
         condition = sequence_flow.get(BPMNEnum.NAME.value)
         if condition is not None:
-            condition = TokenStateCondition(condition=condition)
+            condition = BranchCondition.from_string(condition=condition)
 
         source_ref = sequence_flow.get('sourceRef')
         target_ref = sequence_flow.get('targetRef')

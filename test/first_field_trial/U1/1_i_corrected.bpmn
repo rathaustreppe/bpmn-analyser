@@ -19,12 +19,12 @@
       <incoming>SequenceFlow_0dvscyi</incoming>
       <outgoing>SequenceFlow_1mwr8yb</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_0dvscyi" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_05xqgmr" targetRef="Task_0rmcrtt" />
+    <sequenceFlow id="SequenceFlow_0dvscyi" name="fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_05xqgmr" targetRef="Task_0rmcrtt" />
     <task id="Task_02q9qci" name="Anmelden beim Server">
       <incoming>SequenceFlow_1x6yzg3</incoming>
       <outgoing>SequenceFlow_0n7fhlt</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1x6yzg3" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_05xqgmr" targetRef="Task_02q9qci" />
+    <sequenceFlow id="SequenceFlow_1x6yzg3" name="fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_05xqgmr" targetRef="Task_02q9qci" />
     <sequenceFlow id="SequenceFlow_1mwr8yb" sourceRef="Task_0rmcrtt" targetRef="ExclusiveGateway_0wmibfx" />
     <exclusiveGateway id="ExclusiveGateway_0wmibfx">
       <incoming>SequenceFlow_16hqs35</incoming>

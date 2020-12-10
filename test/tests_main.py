@@ -1,5 +1,4 @@
 import unittest
-import pytest
 
 import sys
 import os
@@ -24,6 +23,7 @@ from test.tests_synonym_cloud import TestSynonymCloud
 from test.tests_rule_finder import TestRuleFinder
 
 # loops and gateways
+from test.tests_branch_condition import TestBranchCondition
 from test.tests_gateways import TestGateway
 from test.tests_loop import TestLoop
 

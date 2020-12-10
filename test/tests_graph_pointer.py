@@ -23,7 +23,9 @@ from src.exception.model_errors import NoStartEventError, \
 from src.graph_pointer import GraphPointer
 from src.models.running_token import RunningToken
 from src.models.token import Token
-from src.models.token_state_condition import TokenStateCondition, Operators
+from src.models.token_state_condition import TokenStateCondition
+from src.converter.bpmn_models.gateway.branch_condition import Operators, \
+    BranchCondition
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.chunker import Chunker
 
@@ -124,9 +126,9 @@ class TestGraphPointer:
         # no error here: check if all sequence_flows are treated right
         k1, v1 = 'k1', 'v1'
         k2, v2 = 'k2', 'v2'
-        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
+        condition1 = BranchCondition.from_string(condition='k1 == v1')
         sequence_flow_1 = BPMNSequenceFlow(id_='1', condition=condition1)
-        condition2 = TokenStateCondition(lambda t: t.k2 == 'v2')
+        condition2 = BranchCondition.from_string(condition='k2 == v2')
         sequence_flow_2 = BPMNSequenceFlow(id_='2', condition=condition2)
         model = self.make_model(elements=[],
                                 flows=[sequence_flow_1, sequence_flow_2])
@@ -179,10 +181,10 @@ class TestGraphPointer:
         k1, v1 = 'k1', 'v1'
         k2 = 'k2'
         id_of_cond_flow = '1'
-        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
+        condition1 = BranchCondition.from_string(condition='k1 == v1')
         sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
                                            condition=condition1)
-        condition2 = TokenStateCondition(lambda t: t.k2 == 'a value that is wrong')
+        condition2 = BranchCondition.from_string(condition='k2 == a value that is wrong')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow',
                                            condition=condition2)
 
@@ -201,11 +203,11 @@ class TestGraphPointer:
         # error here: have an exclusive gateway but 0 flows meet the conditions
 
         k1 = 'k1'
-        condition1 = TokenStateCondition(lambda t: t.k1 == 'wrong value')
+        condition1 = BranchCondition.from_string(condition='k1 == wrong value')
         sequence_flow_1 = BPMNSequenceFlow(id_='no cond flow',
                                            condition=condition1)
 
-        condition2 = TokenStateCondition(lambda t: t.k1 == 'another wrong value')
+        condition2 = BranchCondition.from_string(condition='k1 == another wrong value')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
                                            condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]
@@ -223,11 +225,11 @@ class TestGraphPointer:
         # no error here: checks if exclusive gateway with 1 branch works
         k1, v1 = 'k1', 'v1'
         id_of_cond_flow = '1'
-        condition1 = TokenStateCondition(lambda t: t.k1 == 'v1')
+        condition1 = BranchCondition.from_string(condition='k1 == v1')
         sequence_flow_1 = BPMNSequenceFlow(id_=id_of_cond_flow,
                                            condition=condition1)
 
-        condition2 = TokenStateCondition(lambda t: t.k1 == 'wrong value')
+        condition2 = BranchCondition.from_string(condition='k1 == wrong value')
         sequence_flow_2 = BPMNSequenceFlow(id_='no cond flow2',
                                            condition=condition2)
         flows = [sequence_flow_1, sequence_flow_2]

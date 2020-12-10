@@ -19,12 +19,12 @@
       <incoming>SequenceFlow_1r5tz54</incoming>
       <outgoing>SequenceFlow_0j12k3b</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1r5tz54" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_0co83ah" />
+    <sequenceFlow id="SequenceFlow_1r5tz54" name="fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_0co83ah" />
     <task id="Task_193bcrs" name="Verfasser korrigiert">
       <incoming>SequenceFlow_0fjxd0q</incoming>
       <outgoing>SequenceFlow_1g05sp8</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_0fjxd0q" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_193bcrs" />
+    <sequenceFlow id="SequenceFlow_0fjxd0q" name="fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_193bcrs" />
     <sequenceFlow id="SequenceFlow_1g05sp8" sourceRef="Task_193bcrs" targetRef="ExclusiveGateway_1djvjka" />
     <exclusiveGateway id="ExclusiveGateway_1djvjka">
       <incoming>SequenceFlow_1k3582g</incoming>

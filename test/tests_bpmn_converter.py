@@ -1,13 +1,10 @@
 import os
-from typing import List, Generic, TypeVar
-
-import pytest
+from typing import List
 
 from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
-from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
@@ -17,8 +14,8 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
+from src.converter.bpmn_models.gateway.branch_condition import BranchCondition
 from src.converter.xml_reader import XMLReader
-from src.models.token_state_condition import TokenStateCondition
 
 
 class TestBPMNConverter:
@@ -375,7 +372,7 @@ class TestBPMNConverter:
         assert len(sequene_flows) == 1
 
         assert sequene_flows[0].condition ==\
-               TokenStateCondition(condition='t.attr==42')
+               BranchCondition.from_string(condition='attr==42')
 
     def test_conditional_edge_gateway(self):
         model = self.create_model(filename='conditional_edge_exclusive_gateway.bpmn')
@@ -386,6 +383,6 @@ class TestBPMNConverter:
         cond_flow_1 = self.find_by_id(elements=sequence_flows, id='F2')
         cond_flow_2 = self.find_by_id(elements=sequence_flows, id='F3')
 
-        assert cond_flow_1.condition == TokenStateCondition(condition='t.k1==v1')
-        assert cond_flow_2.condition == TokenStateCondition(condition='t.k1==v2')
+        assert cond_flow_1.condition == BranchCondition.from_string(condition='k1==v1')
+        assert cond_flow_2.condition == BranchCondition.from_string(condition='k1==v2')
 

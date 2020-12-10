@@ -100,8 +100,8 @@ class TestGateway:
 
     def test_interlaced_gateways_2(self, xml_folders_path):
         init_token = RunningToken(attributes={
-            'v1': '1',
-            'v2': '1',
+            'v1': 1,
+            'v2': 1,
             'def3': False,
             'jkl1': False,
             'jkl2': False,
@@ -112,8 +112,8 @@ class TestGateway:
         )
 
         solution_token = Token(attributes={
-            'v1': '1',
-            'v2': '1',
+            'v1': 1,
+            'v2': 1,
             'def3': True,
             'jkl1': True,
             'jkl2': False,
@@ -128,12 +128,26 @@ class TestGateway:
                 """
         chunker = Chunker(chunk_grams=grammar)
 
-        all_attributes_to_look_for = ['def3', 'jkl1', 'jkl2',
-                                      'mno1', 'mno2', 'pqr']
+
         ruleset = []
+
+        # modification-functions for every BPMNActivity
+        # in this test: BPMNActivity == function name == token attribute
+        # set token attribute to True to see if algorithm reached the BPMNAcitivity
+        def def3(t): t.def3 = True
+        def jkl1(t): t.jkl1 = True
+        def jkl2(t): t.jkl2 = True
+        def mno1(t): t.mno1 = True
+        def mno2(t): t.mno2 = True
+        def pqr(t): t.pqr = True
+
+        all_attributes_to_look_for = [('def3',def3), ('jkl1',jkl1),
+                                      ('jkl2',jkl2), ('mno1',mno1),
+                                      ('mno2',mno2), ('pqr', pqr)]
+
         for attribute in all_attributes_to_look_for:
-            syncloud = SynonymCloud.from_list(text=[attribute])
-            tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
+            syncloud = SynonymCloud.from_list(text=[attribute[0]])
+            tsm = TokenStateModification(modification=attribute[1])
             ruleset.append(TokenStateRule(modification=tsm,
                                           synonym_cloud=syncloud))
 
@@ -166,11 +180,19 @@ class TestGateway:
 
         def get_ruleset() -> List[TokenStateRule]:
             # ruleset for all attributes (all are the same):
-            all_attributes_to_look_for = ['abc', 'ghi1', 'ghi2']
             ruleset = []
+
+            # modification-functions for every BPMNActivity
+            # in this test: BPMNActivity == function name == token attribute
+            # set token attribute to True to see if algorithm reached the BPMNAcitivity
+            def abc(t): t.abc = True
+            def ghi1(t): t.ghi1 = True
+            def ghi2(t): t.ghi2 = True
+
+            all_attributes_to_look_for = [('abc', abc), ('ghi1',ghi1), ('ghi2',ghi2)]
             for attribute in all_attributes_to_look_for:
-                syncloud = SynonymCloud.from_list(text=[attribute])
-                tsm = TokenStateModification(modification=''.join(['t.', attribute, '= True']))
+                syncloud = SynonymCloud.from_list(text=[attribute[0]])
+                tsm = TokenStateModification(modification=attribute[1])
                 ruleset.append(TokenStateRule(modification=tsm,
                                               synonym_cloud=syncloud))
             return ruleset

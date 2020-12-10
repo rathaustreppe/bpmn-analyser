@@ -12,8 +12,8 @@
       <incoming>F3</incoming>
       <outgoing>F5</outgoing>
     </task>
-    <sequenceFlow id="F2" name="t.k1==v1" sourceRef="GW1" targetRef="A1" />
-    <sequenceFlow id="F3" name="t.k1==v2" sourceRef="GW1" targetRef="A2" />
+    <sequenceFlow id="F2" name="k1==v1" sourceRef="GW1" targetRef="A1" />
+    <sequenceFlow id="F3" name="k1==v2" sourceRef="GW1" targetRef="A2" />
     <endEvent id="E" name="EE">
       <incoming>F6</incoming>
     </endEvent>

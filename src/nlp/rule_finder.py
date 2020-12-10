@@ -4,7 +4,7 @@ from typing import List
 from pedantic import pedantic_class
 
 from src.exception.language_processing_errors import NoChunkFoundError
-from src.models.token_state_condition import Operators
+from src.converter.bpmn_models.gateway.branch_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
 from src.nlp.IChunker import IChunker
@@ -31,6 +31,9 @@ class RuleFinder:
         if text == 'startendevent':
             return []
 
+        # if an BPMNActitivy contains text like 'a++' it means, the
+        # token attribute 'a' should be increment by 1. We will generate such a
+        # modification on the fly right now.
         if text.endswith('++'):
             return [self._make_increment_rule(text=text)]
 
@@ -58,6 +61,18 @@ class RuleFinder:
         token_attribute = token_attribute.replace(Operators.INCREMENT.value, '')
         token_attribute = token_attribute.replace(' ', '')
 
-        tsm = TokenStateModification(modification=''.join(['t.', token_attribute, '+= 1']))
+
+        # This block of code is a closure. To change the specific token attribute
+        # we need to know the token and the attribute. Right now, we know the
+        # attribute but not the token. Later, we will know the token but not
+        # the attribute. So we define a closure to store the attribute inside
+        # the function and later we can call this function with the token-paramter.
+        def increment_function(a):
+            attribute = a
+            def increment_template(t):
+                t[attribute] += 1
+            return increment_template
+
+        tsm = TokenStateModification(modification=increment_function(a=token_attribute))
 
         return TokenStateRule(modification=tsm)

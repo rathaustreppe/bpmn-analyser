@@ -18,12 +18,12 @@
       <incoming>SequenceFlow_1n4yvrd</incoming>
       <outgoing>SequenceFlow_1xfrzec</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_1n4yvrd" name="t.fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_0g1p4zg" targetRef="Task_0olrwmk" />
+    <sequenceFlow id="SequenceFlow_1n4yvrd" name="fehlerfreier_Entwurf == True" sourceRef="ExclusiveGateway_0g1p4zg" targetRef="Task_0olrwmk" />
     <task id="Task_00plkbh" name="Verfasser korrigiert Entfwurf">
       <incoming>SequenceFlow_0xp6xyt</incoming>
       <outgoing>SequenceFlow_07sb96k</outgoing>
     </task>
-    <sequenceFlow id="SequenceFlow_0xp6xyt" name="t.fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_0g1p4zg" targetRef="Task_00plkbh" />
+    <sequenceFlow id="SequenceFlow_0xp6xyt" name="fehlerfreier_Entwurf == False" sourceRef="ExclusiveGateway_0g1p4zg" targetRef="Task_00plkbh" />
     <sequenceFlow id="SequenceFlow_07sb96k" sourceRef="Task_00plkbh" targetRef="ExclusiveGateway_0st2bld" />
     <exclusiveGateway id="ExclusiveGateway_0st2bld">
       <incoming>SequenceFlow_0igqi3r</incoming>
