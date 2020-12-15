@@ -7,6 +7,7 @@ from pedantic import pedantic
 
 from src.exception.token_state_errors import MissingAttributeInTokenError
 from src.models.running_token import RunningToken
+from src.util.string_operations.format_code_string import format_code_string
 
 
 class TokenStateModification:
@@ -60,15 +61,20 @@ class TokenStateModification:
             raise MissingAttributeInTokenError(token=token_before,
                                                attribute=list(difference)[0])
 
+        # for logging purposes it is nice to see what token state has changed
+        # and warn the user if the data type of a token value has changed.
+        diff = {}
+        for key in token:
+            if token[key] != token_before[key]:
+                diff[key] = (token_before[key], token[key])
+        logging.debug(f'Token changed: {diff}')
+
     def __str__(self) -> str:
         # Print sourcecode of the defined modification. But remove \n
         # and appending spaces and tabs
         src = inspect.getsource(self.modification)
-        src = src.lstrip()
-        src = src.rstrip()
-        src = src.replace('\t', '')
-        src = src.replace('\n', '')
-        return f'TokenStateModification: {src}'
+        src = format_code_string(text=src)
+        return f'TokenStateCondition: {src}'
 
     def __repr__(self) -> str:
         return self.__str__()

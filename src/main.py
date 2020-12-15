@@ -1,8 +1,8 @@
 import os
 
 from src.examples.field_trial.task1_solution import Task1Solution
-from src.examples.field_trial.task2_solution import Task2Solution
-from src.examples.field_trial.task4_solution import Task4Solution
+# from src.examples.field_trial.task2_solution import Task2Solution
+# from src.examples.field_trial.task4_solution import Task4Solution
 from src.models.solution_coordinator import SolutionCoordinator
 from src.util.logger.logging_config import setup_logger_config
 

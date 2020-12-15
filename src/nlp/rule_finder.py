@@ -1,19 +1,15 @@
-import logging
 from typing import List
 
 from pedantic import pedantic_class
 
-from src.exception.language_processing_errors import NoChunkFoundError
 from src.converter.bpmn_models.gateway.branch_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.IChunker import IChunker
 
 
 @pedantic_class
 class RuleFinder:
-    def __init__(self, chunker: IChunker, ruleset: List[TokenStateRule]) -> None:
-        self.chunker = chunker
+    def __init__(self, ruleset: List[TokenStateRule]) -> None:
         self.ruleset = ruleset
 
     def find_rules(self, text: str) -> List[TokenStateRule]:
@@ -37,16 +33,10 @@ class RuleFinder:
         if text.endswith('++'):
             return [self._make_increment_rule(text=text)]
 
-        try:
-            chunk = self.chunker.find_chunk(text=text)
-        except NoChunkFoundError as e:
-            # logging.error(e.message) # enable if exception is not logged
-            return [] # no chunk found -> no rules to try -> empty rules list
-
         matching_rules = []
         for rule in self.ruleset:
             try:
-                if rule.synonym_cloud.are_synonyms(chunk=chunk):
+                if rule.text == text:
                     matching_rules.append(rule)
             except Exception:
                 continue

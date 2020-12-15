@@ -13,3 +13,9 @@ class BPMNExclusiveGateway(BPMNGateway):
                  sequence_flows_out: Optional[List[BPMNSequenceFlow]] = None) -> None:
         super().__init__(id_=id_, sequence_flows_in=sequence_flows_in,
                          sequence_flows_out=sequence_flows_out)
+
+    def __str__(self) -> str:
+        return 'BPMNExclusiveGateway'
+
+    def __repr__(self) -> str:
+        return self.__str__()

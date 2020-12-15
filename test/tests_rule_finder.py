@@ -3,14 +3,14 @@ from src.nlp.rule_finder import RuleFinder
 
 
 class TestRuleFinder:
-    def test_increment(self, nn_chunker):
+    def test_increment(self):
         # if increment (usually '++') is in the text, make no
         # chunking, instead just return th TokenStateRule which can
         # be used to increment the token attribute
         tok_attribute = 'k1'
         value = 0
 
-        rule_finder = RuleFinder(chunker=nn_chunker, ruleset=[])
+        rule_finder = RuleFinder(ruleset=[])
         tsr_list = rule_finder.find_rules(text=f'{tok_attribute} ++')
 
         assert len(tsr_list) == 1

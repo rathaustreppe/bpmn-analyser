@@ -7,7 +7,6 @@ from nltk.corpus import wordnet as wn
 
 from src.models.running_token import RunningToken
 from src.models.token import Token
-from src.nlp.chunker import Chunker
 
 contract_checked = 'contract checked'
 wn_synset_bill = wn.synset('bill.n.02')
@@ -91,30 +90,6 @@ def example_token() -> Token:
 def example_running_token() -> RunningToken:
     attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
     return RunningToken(attributes=attributes)
-
-
-@pytest.fixture(scope='module', autouse=True)
-def nn_vb_nn_chunker() -> Chunker:
-    grammar = r"""
-    NN_VB_NN:     {<NN.?><VB.?><NN.?>}
-    """
-    return Chunker(chunk_grams=grammar)
-
-
-@pytest.fixture(scope='module', autouse=True)
-def nn_chunker() -> Chunker:
-    grammar = r"""
-    NN_Chunk:     {<NN.?>}
-    """
-    return Chunker(chunk_grams=grammar)
-
-
-@pytest.fixture(scope='module', autouse=True)
-def adj_chunker() -> Chunker:
-    grammar = r"""
-    ADJ_Chunk:      {<JJ.?>}
-    """
-    return Chunker(chunk_grams=grammar)
 
 
 @pytest.fixture(scope='module', autouse=True)

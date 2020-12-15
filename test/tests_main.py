@@ -16,10 +16,6 @@ from test.tests_xml_reader import TestXMLReader
 from test.tests_bpmn_converter import TestBPMNConverter
 from test.tests_bpmn_factory import TestBPMNFactory
 
-# NLP
-from test.tests_chunker import TestChunker
-from test.tests_synonym_composite import TestSynonymComposite
-from test.tests_synonym_cloud import TestSynonymCloud
 from test.tests_rule_finder import TestRuleFinder
 
 # loops and gateways

@@ -6,7 +6,6 @@ from src.graph_pointer import GraphPointer
 from src.models.running_token import RunningToken
 from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
 
 
 class TestLoop:
@@ -24,7 +23,6 @@ class TestLoop:
 
     def execute_process(self, filename: str,
                         xml_folders_path,
-                        chunker,
                         ruleset,
                         init_token) -> Token:
 
@@ -35,12 +33,11 @@ class TestLoop:
 
         graph_pointer = GraphPointer(model=model,
                                      token=init_token,
-                                     ruleset=ruleset,
-                                     chunker=chunker)
+                                     ruleset=ruleset)
 
         return self.run_pointer(graph_pointer=graph_pointer)
 
-    def test_simple_increment_loop(self, xml_folders_path, nn_chunker):
+    def test_simple_increment_loop(self, xml_folders_path):
         def get_init_token() -> RunningToken:
             init_attributes = {
                 'a':0
@@ -57,20 +54,16 @@ class TestLoop:
             # empty ruleset, because RuleFinder generates rule for increment
             return []
 
-        def get_chunker() -> Chunker:
-            # just return any chunker, because increments bypass Chunker
-            return nn_chunker
 
         solution_token = get_solution_token()
         return_token = self.execute_process(filename='simple_increment_loop.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=get_chunker(),
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
 
 
-    def test_two_simple_increment_loops(self, xml_folders_path, nn_chunker):
+    def test_two_simple_increment_loops(self, xml_folders_path):
         def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :0,
@@ -89,20 +82,15 @@ class TestLoop:
             # empty ruleset, because RuleFinder generates rule for increment
             return []
 
-        def get_chunker() -> Chunker:
-            # just return any chunker, because increments bypass Chunker
-            return nn_chunker
-
         solution_token = get_solution_token()
         return_token = self.execute_process \
             (filename='two_simple_increment_loops.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=get_chunker(),
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
 
-    def test_two_interlaced_loops(self, xml_folders_path, nn_chunker):
+    def test_two_interlaced_loops(self, xml_folders_path):
         def get_init_token() -> RunningToken:
             init_attributes = {
                 'a' :0,
@@ -121,19 +109,15 @@ class TestLoop:
             # empty ruleset, because RuleFinder generates rule for increment
             return []
 
-        def get_chunker() -> Chunker:
-            # just return any chunker, because increments bypass Chunker
-            return nn_chunker
 
         solution_token = get_solution_token()
         return_token = self.execute_process(filename='two_interlaced_loops.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=get_chunker(),
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
 
-    def test_generator_loop(self, xml_folders_path, nn_chunker):
+    def test_generator_loop(self, xml_folders_path):
         # This loop increments b twice but while doing it, it is connected
         # to a parallel gateway which branches twice into incrementing a.
         # So while looping b, a is modified as well. (Side effects)
@@ -155,20 +139,15 @@ class TestLoop:
             # empty ruleset, because RuleFinder generates rule for increment
             return []
 
-        def get_chunker() -> Chunker:
-            # just return any chunker, because increments bypass Chunker
-            return nn_chunker
 
         solution_token = get_solution_token()
         return_token = self.execute_process(filename='generator_loop.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=get_chunker(),
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
 
-    def test_generator_loop_different_order(self, xml_folders_path,
-                            nn_chunker):
+    def test_generator_loop_different_order(self, xml_folders_path):
         # in the generator_loop test a is modified first,
         # then b. In this test we changed the order, so
         # b is modified first, then a.
@@ -190,15 +169,10 @@ class TestLoop:
             # empty ruleset, because RuleFinder generates rule for increment
             return []
 
-        def get_chunker() -> Chunker:
-            # just return any chunker, because increments bypass Chunker
-            return nn_chunker
-
         solution_token = get_solution_token()
         return_token = self.execute_process(
             filename='generator_loop_different_order.bpmn',
             xml_folders_path=xml_folders_path,
-            chunker=get_chunker(),
             ruleset=get_ruleset(),
             init_token=get_init_token())
         assert solution_token == return_token

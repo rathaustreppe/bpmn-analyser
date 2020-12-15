@@ -1,3 +1,4 @@
+import logging
 from typing import List, Union, Optional, Set, Tuple
 
 from pedantic import pedantic_class
@@ -22,9 +23,7 @@ from src.exception.model_errors import MultipleStartEventsError, \
 from src.exception.wrong_type_errors import NotImplementedTypeError
 from src.models.running_token import RunningToken
 from src.models.stack import Stack
-from src.models.token import Token
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.IChunker import IChunker
 from src.nlp.rule_finder import RuleFinder
 
 
@@ -40,11 +39,10 @@ class GraphPointer:
     def __init__(self,
                  token: RunningToken,
                  ruleset: List[TokenStateRule],
-                 chunker: IChunker,
                  model: BPMNModel) -> None:
         self.model = model
         self.token = token
-        self.rule_finder = RuleFinder(chunker=chunker, ruleset=ruleset)
+        self.rule_finder = RuleFinder(ruleset=ruleset)
         self.stack = Stack[Union[BPMNFlowObject]]()
         self._model_start = None
         self.processed_flows: Set[BPMNSequenceFlow] = set()
@@ -348,6 +346,7 @@ class GraphPointer:
         BPMNInclusiveGateway.
         """
         current = self.stack.pop()
+        logging.debug(f'Processing BPMNElement: {current}')
 
         inflows_of_current = self.get_inflows(element=current)
 

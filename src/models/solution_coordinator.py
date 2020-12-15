@@ -54,14 +54,12 @@ class SolutionCoordinator():
 
             scenarios = self.sample_solution.get_scenarios()
             ruleset = self.sample_solution.get_ruleset()
-            chunker = self.sample_solution.get_chunker()
 
             for scenario in scenarios:
                 running_token = scenario.running_token
                 students_graphpointer = GraphPointer(model=students_bpmn_model,
                                                  token=running_token,
-                                                 ruleset=ruleset,
-                                                 chunker=chunker)
+                                                 ruleset=ruleset)
                 logging.debug(f'starting scenario <{scenario.description}>')
                 try:
                     self.check_solution(graph_pointer=students_graphpointer,

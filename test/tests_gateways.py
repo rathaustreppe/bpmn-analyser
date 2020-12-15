@@ -7,11 +7,10 @@ from src.converter.converter import Converter
 from src.exception.gateway_errors import BranchingGatewayError
 from src.graph_pointer import GraphPointer
 from src.models.running_token import RunningToken
+from src.models.text import Text
 from src.models.token import Token
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
-from src.nlp.synonym_cloud import SynonymCloud
 
 
 class TestGateway:
@@ -29,7 +28,6 @@ class TestGateway:
 
     def execute_process(self, filename: str,
                         xml_folders_path,
-                        chunker,
                         ruleset,
                         init_token) -> RunningToken:
 
@@ -40,34 +38,32 @@ class TestGateway:
 
         graph_pointer = GraphPointer(model=model,
                                      token=init_token,
-                                     ruleset=ruleset,
-                                     chunker=chunker)
+                                     ruleset=ruleset)
 
         return self.run_pointer(graph_pointer=graph_pointer)
 
-    def test_interlaced_gateways(self, xml_folders_path,
-                                 nn_chunker):
+    def test_interlaced_gateways(self, xml_folders_path):
 
         # define the rules
         # when finding 'act1' change act1-attribute of token to true
         # same with 'act2' and 'act3'
-        syncloud_act1 = SynonymCloud.from_list(text=['act1'])
+        text_act1 = Text('act1')
         def m(t): t.act1 = True
         tsm_1 = TokenStateModification(m)
         tsr_act1 = TokenStateRule(modification=tsm_1,
-                                  synonym_cloud=syncloud_act1)
+                                  text=text_act1)
 
-        syncloud_act2 = SynonymCloud.from_list(text=['act2'])
+        text_act2 = Text('act2')
         def m(t): t.act2 = True
         tsm_2 = TokenStateModification(m)
         tsr_act2 = TokenStateRule(modification=tsm_2,
-                                  synonym_cloud=syncloud_act2)
+                                  text=text_act2)
 
-        syncloud_act3 = SynonymCloud.from_list(text=['act3'])
+        text_act3 = Text('act3')
         def m(t): t.act3 = True
         tsm_3 = TokenStateModification(m)
         tsr_act3 = TokenStateRule(modification=tsm_3,
-                                  synonym_cloud=syncloud_act3)
+                                  text=text_act3)
 
         ruleset = [tsr_act1, tsr_act2, tsr_act3]
 
@@ -83,7 +79,6 @@ class TestGateway:
         file = os.path.join('exclusive_in_parallel_gateway.bpmn')
         return_token = self.execute_process(filename=file,
                                             xml_folders_path=xml_folders_path,
-                                            chunker=nn_chunker,
                                             ruleset=ruleset,
                                             init_token=token)
 
@@ -123,12 +118,6 @@ class TestGateway:
             }
         )
 
-        grammar = r"""
-                NN_Chunk:     {<NN.?>}
-                """
-        chunker = Chunker(chunk_grams=grammar)
-
-
         ruleset = []
 
         # modification-functions for every BPMNActivity
@@ -146,14 +135,13 @@ class TestGateway:
                                       ('mno2',mno2), ('pqr', pqr)]
 
         for attribute in all_attributes_to_look_for:
-            syncloud = SynonymCloud.from_list(text=[attribute[0]])
+            text = Text(attribute[0])
             tsm = TokenStateModification(modification=attribute[1])
             ruleset.append(TokenStateRule(modification=tsm,
-                                          synonym_cloud=syncloud))
+                                          text=text))
 
         return_token = self.execute_process(filename='gateway_example.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=chunker,
                                             ruleset=ruleset,
                                             init_token=init_token)
 
@@ -191,28 +179,21 @@ class TestGateway:
 
             all_attributes_to_look_for = [('abc', abc), ('ghi1',ghi1), ('ghi2',ghi2)]
             for attribute in all_attributes_to_look_for:
-                syncloud = SynonymCloud.from_list(text=[attribute[0]])
+                text = Text(attribute[0])
                 tsm = TokenStateModification(modification=attribute[1])
                 ruleset.append(TokenStateRule(modification=tsm,
-                                              synonym_cloud=syncloud))
+                                              text=text))
             return ruleset
-
-        def get_chunker() -> Chunker:
-            grammar = r"""
-                        NN_Chunk:     {<NN.?>}
-                        """
-            return Chunker(chunk_grams=grammar)
 
         solution_token = get_solution_token()
         return_token = self.execute_process(filename='3_gateways_see.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=get_chunker(),
                                             ruleset=get_ruleset(),
                                             init_token=get_init_token())
         assert solution_token == return_token
 
 
-    def test_inclusive_gateway(self, xml_folders_path, nn_chunker):
+    def test_inclusive_gateway(self, xml_folders_path):
         # test an inclusive gateway with 3 branches where 2 are true
         # checks if both branches are beeing processed and the gateway
         # switches to output
@@ -236,7 +217,6 @@ class TestGateway:
         solution_token = get_solution_token()
         return_token = self.execute_process(filename='inclusive_gateway.bpmn',
                                             xml_folders_path=xml_folders_path,
-                                            chunker=nn_chunker,
                                             ruleset=[],
                                             init_token=get_init_token())
         assert solution_token == return_token
@@ -244,7 +224,7 @@ class TestGateway:
 
 
 
-    def test_dying_xor(self, nn_chunker, xml_folders_path):
+    def test_dying_xor(self, xml_folders_path):
         # test what happens when an XOR with 2 branches but cannot
         # branch anywhere because of the conditions on the flow.
         # And to see how the adjacent inclusive gateway reacts.
@@ -257,11 +237,10 @@ class TestGateway:
         with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor.bpmn',
                                 xml_folders_path=xml_folders_path,
-                                chunker=nn_chunker,
                                 ruleset=[],
                                 init_token=init_token)
 
-    def test_dying_xor_changed_order(self, nn_chunker, xml_folders_path):
+    def test_dying_xor_changed_order(self, xml_folders_path):
         # Because the order of processing depends on where the elements are in
         # the xml file, we rearrange in a second test the order of the branches.
         init_attributes = {
@@ -273,6 +252,5 @@ class TestGateway:
         with pytest.raises(BranchingGatewayError):
             self.execute_process(filename='dying_xor_changed_order.bpmn',
                                 xml_folders_path=xml_folders_path,
-                                chunker=nn_chunker,
                                 ruleset=[],
                                 init_token=init_token)

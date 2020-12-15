@@ -16,18 +16,14 @@ from src.converter.bpmn_models.gateway.bpmn_inclusive_gateway import \
     BPMNInclusiveGateway
 from src.converter.bpmn_models.gateway.bpmn_parallel_gateway import \
     BPMNParallelGateway
-from src.exception.gateway_errors import ExclusiveGatewayBranchError, \
-    BranchingGatewayError
+from src.exception.gateway_errors import BranchingGatewayError
 from src.exception.model_errors import NoStartEventError, \
     MultipleStartEventsError
 from src.graph_pointer import GraphPointer
 from src.models.running_token import RunningToken
 from src.models.token import Token
-from src.models.token_state_condition import TokenStateCondition
-from src.converter.bpmn_models.gateway.branch_condition import Operators, \
-    BranchCondition
+from src.converter.bpmn_models.gateway.branch_condition import BranchCondition
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
 
 
 class TestGraphPointer:
@@ -35,11 +31,9 @@ class TestGraphPointer:
     @staticmethod
     def graph_pointer(model: BPMNModel,
                       token: Token = RunningToken(),
-                      ruleset: List[TokenStateRule] = [],
-                      chunker: Chunker = Chunker()) -> GraphPointer:
+                      ruleset: List[TokenStateRule] = []) -> GraphPointer:
         return GraphPointer(model=model, token=token,
-                            ruleset=ruleset,
-                            chunker=chunker)
+                            ruleset=ruleset)
 
     @staticmethod
     def make_model(elements: List[BPMNFlowObject],
@@ -243,7 +237,7 @@ class TestGraphPointer:
         assert len(flows) == 1
         assert flows[0].id_ == id_of_cond_flow
 
-    def test_next_step_no_gateway_activity(self, nn_chunker):
+    def test_next_step_no_gateway_activity(self):
         # checks if adjacent element of activity is pushed on stack
 
         # model building
@@ -254,14 +248,14 @@ class TestGraphPointer:
         model = self.make_model(elements=[act_1, act_2], flows=[flow])
 
         # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
+        graph_pointer = self.graph_pointer(model=model)
         graph_pointer.stack.push(item=act_1)
 
         # test
         graph_pointer.next_step_no_gateway(element=act_1)
         assert graph_pointer.stack.top() == act_2
 
-    def test_next_step_no_gateway_start_event(self, nn_chunker):
+    def test_next_step_no_gateway_start_event(self):
         # checks if adjacent element of start event is pushed on stack
 
         # model building
@@ -272,14 +266,14 @@ class TestGraphPointer:
         model = self.make_model(elements=[start, act_1], flows=[flow])
 
         # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
+        graph_pointer = self.graph_pointer(model=model)
         graph_pointer.stack.push(item=start)
 
         # test
         graph_pointer.next_step_no_gateway(element=start)
         assert graph_pointer.stack.top() == act_1
 
-    def test_next_step_no_gateway_end_event(self, nn_chunker):
+    def test_next_step_no_gateway_end_event(self):
         # checks if activity with adjacent end event is comes to a stop
 
         # model_building
@@ -291,7 +285,7 @@ class TestGraphPointer:
         model = self.make_model(elements=[act_1, end], flows=[flow])
 
         # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
+        graph_pointer = self.graph_pointer(model=model)
         graph_pointer.stack.push(item=act_1)
 
         # test
@@ -302,7 +296,7 @@ class TestGraphPointer:
         # end puts itself (endEvent) on top
         assert graph_pointer.stack.top() == end
 
-    def test_next_step_opening_parallel_gateway(self, nn_chunker):
+    def test_next_step_opening_parallel_gateway(self):
         # checks if branches of opening parallel gateway and gateway itself
         # are on stack conditional branch checking is done by other tests
 
@@ -324,7 +318,7 @@ class TestGraphPointer:
         gateway: BPMNParallelGateway
 
         # init
-        graph_pointer = self.graph_pointer(model=model, chunker=nn_chunker)
+        graph_pointer = self.graph_pointer(model=model)
 
         # test
         graph_pointer.next_step_parallel_gateway(gateway=gateway)

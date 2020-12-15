@@ -4,6 +4,7 @@ from typing import Callable
 from pedantic import pedantic
 
 from src.models.running_token import RunningToken
+from src.util.string_operations.format_code_string import format_code_string
 
 
 class TokenStateCondition:
@@ -50,10 +51,7 @@ class TokenStateCondition:
         # Print sourcecode of the defined condition. But remove \n and appending
         # spaces and tabs
         src = inspect.getsource(self.condition)
-        src = src.lstrip()
-        src = src.rstrip()
-        src = src.replace('\t', '')
-        src = src.replace('\n', '')
+        src = format_code_string(text=src)
         return f'TokenStateCondition: {src}'
 
     def __repr__(self) -> str:
