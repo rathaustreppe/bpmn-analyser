@@ -6,7 +6,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
-    BPMNFlowObject
+    BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_sequenceflow import \
     BPMNSequenceFlow
@@ -33,7 +33,7 @@ class BPMNFactory():
     # xml is conform to XML and BPMN standard. Therefore it cannot handle
     # corrupt files or file-definitions.
     def create_bpmn_flow_object(self, element: Element, elem_type: BPMNEnum) -> \
-            BPMNFlowObject:
+            BPMNElement:
         if elem_type == BPMNEnum.STARTEVENT:
             return self._create_start_event(element=element)
 
@@ -58,7 +58,7 @@ class BPMNFactory():
     def create_bpmn_connecting_object(self, element: Element,
                                       elem_type: BPMNEnum,
                                       src_tgt_elements: Optional[
-                                          List[BPMNFlowObject]] = None) -> BPMNSequenceFlow:
+                                          List[BPMNElement]] = None) -> BPMNSequenceFlow:
         if elem_type == BPMNEnum.SEQUENCEFLOW:
             return self._create_sequence_flow(sequence_flow=element,
                                           elements=src_tgt_elements)
@@ -108,7 +108,7 @@ class BPMNFactory():
 
     def _create_sequence_flow(self,
                               sequence_flow: Element,
-                              elements: List[BPMNFlowObject]) -> BPMNSequenceFlow:
+                              elements: List[BPMNElement]) -> BPMNSequenceFlow:
         """
         We fully build a sequence flow here. We take the
         BPMN-elements as a list to search for the object
@@ -134,13 +134,13 @@ class BPMNFactory():
         # attribute of our BPMN-elements.
         sequence_targets = []
         for source in elements:
-            source: BPMNFlowObject
+            source: BPMNElement
             if target_ref == source.id_:
                 sequence_targets.append(source)
 
         sequence_sources = []
         for target in elements:
-            target: BPMNFlowObject
+            target: BPMNElement
             if source_ref == target.id_:
                 sequence_sources.append(target)
 

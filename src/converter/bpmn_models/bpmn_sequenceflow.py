@@ -4,12 +4,13 @@ from pedantic import pedantic_class
 
 # local imports
 from src.converter.bpmn_models.bpmn_element import \
-    BPMNFlowObject
+    BPMNElement
+from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
 from src.converter.bpmn_models.gateway.branch_condition import BranchCondition
 
 
 @pedantic_class
-class BPMNSequenceFlow(BPMNFlowObject):
+class BPMNSequenceFlow(BPMNElement):
     def __init__(self, id_: str,
                  condition: Optional[BranchCondition] = None,
                  source: Optional[BPMNFlowObject] = None,

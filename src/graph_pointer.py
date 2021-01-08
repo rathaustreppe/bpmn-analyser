@@ -4,7 +4,7 @@ from typing import List, Union, Optional, Set, Tuple
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
+from src.converter.bpmn_models.bpmn_flow_object import BPMNElement
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
@@ -43,7 +43,7 @@ class GraphPointer:
         self.model = model
         self.token = token
         self.rule_finder = RuleFinder(ruleset=ruleset)
-        self.stack = Stack[Union[BPMNFlowObject]]()
+        self.stack = Stack[Union[BPMNElement]]()
         self._model_start = None
         self.processed_flows: Set[BPMNSequenceFlow] = set()
 
@@ -115,7 +115,7 @@ class GraphPointer:
 
     @staticmethod
     def first_element_of_all_branches(branches: List[BPMNSequenceFlow]) -> \
-            List[Optional[BPMNFlowObject]]:
+            List[Optional[BPMNElement]]:
         return [flow.target for flow in branches]
 
     def condition_fulfilling_sequence_flows(self,
@@ -167,7 +167,7 @@ class GraphPointer:
             else:
                 raise BranchingGatewayError(gateway=gateway)
 
-    def text_analysis(self, current: BPMNFlowObject) -> None:
+    def text_analysis(self, current: BPMNElement) -> None:
         matching_rules = self.rule_finder.find_rules(text=current.name)
         self._modify_token_with_rules(matching_rules=matching_rules)
 
@@ -178,7 +178,7 @@ class GraphPointer:
                 return False
         return True
 
-    def get_inflows(self, element: BPMNFlowObject) -> List[BPMNSequenceFlow]:
+    def get_inflows(self, element: BPMNElement) -> List[BPMNSequenceFlow]:
         if isinstance(element, BPMNGateway):
             return element.sequence_flows_in
         elif isinstance(element, BPMNActivity):
@@ -273,7 +273,7 @@ class GraphPointer:
             raise NoBranchingGatewayError(gateway=gateway)
 
 
-    def next_step_no_gateway(self, element: BPMNFlowObject) -> None:
+    def next_step_no_gateway(self, element: BPMNElement) -> None:
         """
         Method that knows how to deal with every other BPMN-Element except
         gateways and flows. Those BPMNElements (BPMNActivity, BPMNStartEvent,
@@ -283,7 +283,7 @@ class GraphPointer:
         """
 
         # just a little helper function to make the code lines more readable
-        def push(to_push: BPMNFlowObject):
+        def push(to_push: BPMNElement):
             self.stack.push(item=to_push)
 
         # perform text analysis and change the token state if the text is not

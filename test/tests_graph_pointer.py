@@ -3,7 +3,7 @@ from typing import List, Tuple
 import pytest
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
+from src.converter.bpmn_models.bpmn_flow_object import BPMNElement
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
@@ -36,14 +36,14 @@ class TestGraphPointer:
                             ruleset=ruleset)
 
     @staticmethod
-    def make_model(elements: List[BPMNFlowObject],
+    def make_model(elements: List[BPMNElement],
                    flows: List[BPMNSequenceFlow]) -> BPMNModel:
         return BPMNModel(bpmn_elements=elements, sequence_flows=flows)
 
     @staticmethod
-    def link_elements(source: BPMNFlowObject,
-                      target: BPMNFlowObject) -> Tuple[
-        BPMNFlowObject, BPMNFlowObject, BPMNSequenceFlow]:
+    def link_elements(source: BPMNElement,
+                      target: BPMNElement) -> Tuple[
+        BPMNElement, BPMNElement, BPMNSequenceFlow]:
         linking_flow = BPMNSequenceFlow(id_='f1', condition=None, source=source,
                                         target=target)
 

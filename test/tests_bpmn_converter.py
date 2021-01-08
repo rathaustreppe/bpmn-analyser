@@ -4,7 +4,7 @@ from typing import List
 from src.converter.bpmn_converter import BPMNConverter
 from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
+from src.converter.bpmn_models.bpmn_element import BPMNElement
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
@@ -30,13 +30,12 @@ class TestBPMNConverter:
         file_path = os.path.join(self.converter_xmls(), filename)
         bpmn_converter.xml_reader.parse_to_dom(abs_file_path=file_path)
         model= bpmn_converter.create_bpmn_model()
-        bpmn_converter.xml_reader.clean_temp_file_path()
         return model
 
-    def find_elems(self, elements: List[BPMNFlowObject], type):
+    def find_elems(self, elements: List[BPMNElement], type):
         return [elem for elem in elements if isinstance(elem, type)]
 
-    def find_by_id(self, elements: List[BPMNFlowObject], id: str) -> BPMNFlowObject:
+    def find_by_id(self, elements: List[BPMNElement], id: str) -> BPMNElement:
         elements = [elem for elem in elements if elem.id_ == id]
 
         if len(elements) == 0:

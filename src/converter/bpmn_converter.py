@@ -6,7 +6,7 @@ from src.converter.bpmn_factory import BPMNFactory
 from src.converter.bpmn_models.bpmn_activity import \
     BPMNActivity
 from src.converter.bpmn_models.bpmn_element import \
-    BPMNFlowObject
+    BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
 from src.converter.bpmn_models.bpmn_model import BPMNModel
 from src.converter.bpmn_models.bpmn_sequenceflow import \
@@ -21,6 +21,9 @@ from src.converter.xml_reader import XMLReader
 
 @pedantic_class
 class BPMNConverter:
+    """
+    Queries the XML-Reader.
+    """
     def __init__(self,
                  xml_reader: XMLReader,
                  bpmn_factory: BPMNFactory) -> None:
@@ -28,17 +31,17 @@ class BPMNConverter:
         self.bpmn_factory = bpmn_factory
 
     def make_element(self, element_type: BPMNEnum,
-                     src_tgt_elements: Optional[List[BPMNFlowObject]] = None) -> \
-            List[Union[BPMNFlowObject, BPMNSequenceFlow]]:
+                     src_tgt_elements: Optional[List[BPMNElement]] = None) -> \
+            List[Union[BPMNElement, BPMNSequenceFlow]]:
         """
         Searches all element_types in XML-DOM and returns corresponding
         BPMN-Objects.
         Args:
             element_type(BPMNEnum): abc
-            src_tgt_elements (Optional[List[BPMNFlowObject]]): abc
+            src_tgt_elements (Optional[List[BPMNElement]]): abc
 
         Returns:
-            List[Union[BPMNFlowObject,BPMNSequenceFlow]]: abc
+            List[Union[BPMNElement,BPMNSequenceFlow]]: abc
         """
         elements = self.xml_reader.query(element_type=element_type)
         bpmn_objects = []
@@ -87,12 +90,12 @@ class BPMNConverter:
 
         return sequence_flows
 
-    def create_bpmn_flow_objects(self) -> List[BPMNFlowObject]:
+    def create_bpmn_flow_objects(self) -> List[BPMNElement]:
         """
         Method that creates all various types of BPMNFlowObjects by
         reading the XML-Reader XML-DOM.
         """
-        all_flow_objects: List[BPMNFlowObject] = []
+        all_flow_objects: List[BPMNElement] = []
         all_flow_object_types = self.all_bpmn_flow_object_types()
 
         for bpmn_type in all_flow_object_types:
@@ -100,7 +103,7 @@ class BPMNConverter:
             all_flow_objects.extend(bpmn_elements)
         return all_flow_objects
 
-    def create_bpmn_sequence_flows(self, bpmn_elements: List[BPMNFlowObject]) -> \
+    def create_bpmn_sequence_flows(self, bpmn_elements: List[BPMNElement]) -> \
             List[BPMNSequenceFlow]:
         """
         Method that creates BPMNSequenceFlows by reading the XML-Reader XML-DOM.
@@ -127,7 +130,7 @@ class BPMNConverter:
     def all_bpmn_flow_object_types(self) -> List[BPMNEnum]:
         """
         A list of all classes that inherit from BPMNFlowObject.
-        In near future BPMNEnum should be refactored to store classes directly
+        In near future it should be refactored to store classes directly
         instead of their strings. Then this manual notation of subclasses
         can be replaced with:
         https://stackoverflow.com/questions/3862310/how-to-find-all-the-subclasses-of-a-class-given-its-name
