@@ -1,8 +1,8 @@
-from typing import List, Type, Union
+from typing import List, Union
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_element import BPMNElement
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 

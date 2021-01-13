@@ -23,6 +23,10 @@ class BranchCondition:
     is documented on the BPMNSequenceFlow. This string (it comes from BPMN-XML)
     needs to be parsed to check if this condition is true or not - i.e to branch
     a gateway into one or more paths.
+    E.g.
+    ExclusiveGateway A can branch into the activities X and Y, depending on
+    the BranchCondition.
+
     Dont get confused with TokenStateConditions. They are used as part of
     rules in the sample solution creation. (Why not using them as branch
     conditions? Because they want a Callback-Function that evaluates to bool.
@@ -31,7 +35,6 @@ class BranchCondition:
     Furthermore: Having two distinct classes means that TokenStateCondition is
     not used for two different aspects of the software.
     1 Functionality = 1 Class)
-
     """
 
     def __init__(self, tok_attribute: str = '',
@@ -83,6 +86,7 @@ class BranchCondition:
         # find attr
         op_pos = condition.find(operator.value)
         attribute = condition[0:op_pos]
+
         # delete whitespaces
         attribute = attribute.rstrip()
         attribute = attribute.lstrip()
@@ -95,6 +99,7 @@ class BranchCondition:
         value = condition[op_str_ending:len(condition)]
         if value == '':
             raise MissingValueInConditionError(text=condition)
+
         # delete whitespaces
         value = value.rstrip()
         value = value.lstrip()

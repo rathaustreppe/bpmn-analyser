@@ -3,14 +3,12 @@ import shutil
 from typing import List, Tuple
 
 import pytest
-from nltk.corpus import wordnet as wn
 
 from src.models.running_token import RunningToken
 from src.models.token import Token
 
-contract_checked = 'contract checked'
-wn_synset_bill = wn.synset('bill.n.02')
 
+# folder names and paths of all test files
 test_files_folder_name = 'test_files'
 xml_files_folder_name = 'xml'
 temp_xml_files_folder_name = 'temp_xml'

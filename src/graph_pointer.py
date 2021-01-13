@@ -6,7 +6,7 @@ from pedantic import pedantic_class
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_flow_object import BPMNElement
 from src.converter.bpmn_models.bpmn_model import BPMNModel
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 from src.converter.bpmn_models.gateway.bpmn_exclusive_gateway import \

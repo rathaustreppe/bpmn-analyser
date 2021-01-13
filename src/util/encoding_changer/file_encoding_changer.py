@@ -6,7 +6,9 @@ if __name__ == '__main__':
     # So the parser dies. To truly convert the file to utf8 this thing was written.
 
     # Please run this tool on every file only once or you get into troubles with
-    # encoding. So please make a copy of your files :-)
+    # encoding.
+
+    # please make a copy of your files before using this thing here :-)
 
     # Put all file names in this list
     files_to_change = ['2_g.bpmn', '2_h.bpmn', '2_i.bpmn', '2_j.bpmn', '2_j_corrected.bpmn']

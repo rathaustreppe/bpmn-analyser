@@ -7,30 +7,59 @@ from src.exception.token_state_errors import MissingAttributeInTokenError
 
 
 class Token(dict):
-    # taken from
-    # https://dev.to/0xbf/use-dot-syntax-to-access-dictionary-key-python-tips-10ec
+    """
+    Token solve two purposes:
+    1. They run through the diagram and change its state. (The state is encoded
+    in the dict-attribute.) The RunningToken class is designed for this purpose.
+    2. The lecturer defines a solution token. If the RunningToken after
+    running through a diagram equals the solution token, we assume the diagram
+    is correct.
 
-    # direct access: token.house = sold
-    # variable access: attr = 'house' --> token[attr] = sold
+    Token State:
+    To define the state of a token it expects a dictionary with simple
+    key-value pairs.
+    Example:
+        token = Token(attributes={'house': 'to sell', 'money': 0})
+
+    When traversing the BPMN the token state changes. E.g. the BPMNActivity
+    'sell house' can change the token state to house:sold and money: 999999.
+
+    Token State changing:
+    Refer to TokenStateCondition (the conditions when to change token),
+    TokenStateModification (the modification applied to the token) and
+    TokenStateRule (the rule forged of conditions and modifications) for more
+    information.
+
+    Accessing token in code:
+    Token inherits from dict. Together with a special __getattr__ - method it
+    is possible to directly access the dict-attributes.
+    Example:
+        token = Token(attributes={'house': 'sold'})
+        normal python access: token.attributes['house']
+        better access: token['house']
+        best access: token.house
+
+    Downside of this is token attributes cannot have spaces:
+    token['mail checked'] is okay.
+    >token.mail checked< cannot be coded.
+    So we disallow spaces. Use underscores instead.
+
+    copy.copy and copy.deepcopy do not work here. Please use
+    token.copy() - the build-in function of every dict instead.
+    Or use RunningToken.from_token().
+
+    With the current implementation the better and best access
+    version are possible. The implementation was taken from:
+    https://dev.to/0xbf/use-dot-syntax-to-access-dictionary-key-python-tips-10ec
+
+    """
 
     def __init__(self, attributes: Optional[Dict[str, Union[str, bool, int, float]]] = None) -> None:
         if attributes is not None:
+            # Token attributes cannot have spaces because the point-operator
+            # access >token.my attribute< cannot be coded.
+            # So we search them here and throw an exception
             for attribute_key in attributes.keys():
-                # We use eval() in TokenStateConditions. Eval() cannot handle
-                # spaces in attribute names:
-                # token = Token(attributes={'my attribute': 42})
-                # TokenStateCondition(condition='t.my attribute == 42')
-                # this will break.
-                # So there are two options: use []-brackets notation:
-                # TokenStateCondition(condition="t['my attribute'] == 42")
-                # or disallow spaces in attribute names.
-                # We decided for disallowing spaces, because we want the
-                # syntax of conditions easy. And using _ instead of space
-                # is better.
-                # We could automatically replace space with underscore. But we
-                # would have to do this in the TokenStateConditions as well.
-                # This is not so easy, so we decided just to warn the user
-                # about spaces in token-attributes.
                 if ' ' in attribute_key:
                     msg = f'Cannot have spaces in token attribute: {attribute_key}'
                     logging.error(msg)
@@ -38,9 +67,13 @@ class Token(dict):
                 self.__setattr__(key=attribute_key, value=attributes[attribute_key])
 
     def __getattr__(self, key):
+        # Method that allows direct point-access of token dict attributes:
+        # e.g token.house
+        # copy.copy and copy.deepcopy change the key-argument of this method
+        # (somehow?) and therefore the method does not get its intended argument.
         # __deepcopy__ when using copy.deepcopy
         # __getstate__ when using copy.copy
-        # instead token.copy() - the build in function of every dict can be used
+        # So we catch them and throw an exception.
         if key == '__deepcopy__' or key == '__getstate__':
             msg = 'Cannot copy/deepcopy token class. ' \
                   'Use token.copy() or RunningToken.from_token() instead.'
@@ -73,7 +106,7 @@ class Token(dict):
         """
         Compares two tokens if they have equal dict
         Overriding __eq__ means you can use '==' syntax:
-        if token1 == token2: # do something
+        if token1 == token2
         Args:
             other (Token): token you want to compare to
 

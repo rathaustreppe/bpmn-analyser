@@ -5,7 +5,7 @@ import pytest
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
 from src.converter.bpmn_models.bpmn_flow_object import BPMNElement
 from src.converter.bpmn_models.bpmn_model import BPMNModel
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_event import BPMNEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
@@ -65,7 +65,7 @@ class TestGraphPointer:
 
     def test_find_start_event_no_start(self):
         # error here: model has no start event
-        activity = BPMNActivity(id_='42', name='space')
+        activity = BPMNActivity(id_='42', text='space')
         model = self.make_model(elements=[activity], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -74,8 +74,8 @@ class TestGraphPointer:
 
     def test_find_start_event_multiple_starts(self):
         # error here: model has multiple start events
-        start_1 = BPMNStartEvent(id_='1', name='SE1')
-        start_2 = BPMNStartEvent(id_='2', name='SE2')
+        start_1 = BPMNStartEvent(id_='1', text='SE1')
+        start_2 = BPMNStartEvent(id_='2', text='SE2')
         model = self.make_model(elements=[start_1, start_2], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -84,7 +84,7 @@ class TestGraphPointer:
 
     def test_find_start_event(self):
         # no error here: checks if it finds the single start event
-        start = BPMNStartEvent(id_='1', name='SE')
+        start = BPMNStartEvent(id_='1', text='SE')
         model = self.make_model(elements=[start], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -94,7 +94,7 @@ class TestGraphPointer:
         # no error here: checks if previous element is
         # end_event which only happens
         # if graph_pointer reached the end of the graph
-        end = BPMNEndEvent(id_='1', name='EE')
+        end = BPMNEndEvent(id_='1', text='EE')
         model = self.make_model(elements=[end], flows=[])
         graph_pointer = self.graph_pointer(model=model)
         graph_pointer.stack.push(item=end)
@@ -110,7 +110,7 @@ class TestGraphPointer:
 
     def test_not_reached_end_event(self):
         # no error here: not reached end_event yet
-        act = BPMNActivity(id_='1', name='act')
+        act = BPMNActivity(id_='1', text='act')
         model = self.make_model(elements=[act], flows=[])
         graph_pointer = self.graph_pointer(model=model)
 
@@ -241,8 +241,8 @@ class TestGraphPointer:
         # checks if adjacent element of activity is pushed on stack
 
         # model building
-        act_1 = BPMNActivity(id_='act1', name='noun')
-        act_2 = BPMNActivity(id_='act2', name='noun')
+        act_1 = BPMNActivity(id_='act1', text='noun')
+        act_2 = BPMNActivity(id_='act2', text='noun')
         act_1, act_2, flow = self.link_elements(source=act_1, target=act_2)
         act_1: BPMNActivity
         model = self.make_model(elements=[act_1, act_2], flows=[flow])
@@ -259,8 +259,8 @@ class TestGraphPointer:
         # checks if adjacent element of start event is pushed on stack
 
         # model building
-        start = BPMNStartEvent(id_='SE', name='startendevent')
-        act_1 = BPMNActivity(id_='act1', name='noun')
+        start = BPMNStartEvent(id_='SE', text='startendevent')
+        act_1 = BPMNActivity(id_='act1', text='noun')
         start, act_1, flow = self.link_elements(source=start, target=act_1)
         start: BPMNStartEvent
         model = self.make_model(elements=[start, act_1], flows=[flow])
@@ -277,8 +277,8 @@ class TestGraphPointer:
         # checks if activity with adjacent end event is comes to a stop
 
         # model_building
-        end = BPMNEndEvent(id_='EE', name='startendevent')
-        act_1 = BPMNActivity(id_='act1', name='noun')
+        end = BPMNEndEvent(id_='EE', text='startendevent')
+        act_1 = BPMNActivity(id_='act1', text='noun')
         act_1, end, flow = self.link_elements(source=act_1, target=end)
         act_1: BPMNActivity
         end: BPMNEndEvent
@@ -302,9 +302,9 @@ class TestGraphPointer:
 
         # model building
         gateway = BPMNParallelGateway(id_='gw')
-        act_1 = BPMNActivity(id_='act1', name='noun')
-        act_2 = BPMNActivity(id_='act2', name='noun')
-        act_gateway_inflow = BPMNActivity(id_='act_inflow', name='noun')
+        act_1 = BPMNActivity(id_='act1', text='noun')
+        act_2 = BPMNActivity(id_='act2', text='noun')
+        act_gateway_inflow = BPMNActivity(id_='act_inflow', text='noun')
 
         act_gateway_inflow, gateway, flow_0 = self.link_elements(
             source=act_gateway_inflow,

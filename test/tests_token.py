@@ -76,11 +76,11 @@ class TestToken:
 
     def test_equal_deepcopy_token(self, example_token):
         with pytest.raises(NotImplementedError):
-            token_copy = copy.deepcopy(example_token)
+            copy.deepcopy(example_token)
 
     def test_equal_copy_token(self, example_token):
         with pytest.raises(NotImplementedError):
-            token_copy = copy.copy(example_token)
+            copy.copy(example_token)
 
     def test_equal_new_token(self, example_token):
         # same keys and values from examples token above
@@ -118,8 +118,6 @@ class TestToken:
         token2 = Token(attributes=attributes)
         running_token = RunningToken(attributes=attributes)
         running_token2 = RunningToken(attributes=attributes)
-        #expected_token = ExpectedToken(attributes=attributes)
-        #expected_token2 = ExpectedToken(attributes=attributes)
 
         assert token == token2
         assert running_token == running_token2

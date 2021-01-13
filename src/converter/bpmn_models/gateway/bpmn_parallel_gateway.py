@@ -3,7 +3,7 @@ from typing import List, Optional
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.gateway.bpmn_gateway import BPMNGateway
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 
 
 @pedantic_class

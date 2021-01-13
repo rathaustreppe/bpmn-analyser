@@ -1,7 +1,7 @@
 import logging
 from typing import List
 
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 
 
 class ExclusiveGatewayBranchError(Exception):

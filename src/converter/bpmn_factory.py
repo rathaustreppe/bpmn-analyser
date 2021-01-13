@@ -8,7 +8,8 @@ from src.converter.bpmn_models.bpmn_activity import \
 from src.converter.bpmn_models.bpmn_element import \
     BPMNElement
 from src.converter.bpmn_models.bpmn_enum import BPMNEnum
-from src.converter.bpmn_models.bpmn_sequenceflow import \
+from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import \
     BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import \
     BPMNEndEvent
@@ -26,12 +27,18 @@ from src.exception.wrong_type_errors import NotImplementedTypeError
 
 @pedantic_class
 class BPMNFactory():
-    # Attention: BPMNFactory can only, by definition, work
-    # with valid xml + valid bpmn strings and builds python objects of the data
-    # in those xml files. The program is
-    # designed that a factory is only instantiated when the
-    # xml is conform to XML and BPMN standard. Therefore it cannot handle
-    # corrupt files or file-definitions.
+    """
+    Factory pattern for all BPMN-objects. Only need to specify the type of
+    object and the respective XML-DOM / ElementTree of it. Does the work to
+    convert XML-DOM to python objects.
+
+    Attention: BPMNFactory can only, by definition, work
+    with valid xml + valid bpmn strings and builds python objects of the data
+    in those xml files. The program is designed that a factory is only
+    instantiated when the xml is conform to XML and BPMN standard.
+    Therefore BPMNFactory cannot handle corrupt files or file-definitions!
+    """
+
     def create_bpmn_flow_object(self, element: Element, elem_type: BPMNEnum) -> \
             BPMNElement:
         if elem_type == BPMNEnum.STARTEVENT:
@@ -68,11 +75,11 @@ class BPMNFactory():
 
     def _create_end_event(self, element: Element) -> BPMNEndEvent:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNEndEvent(id_=id_, name=name, sequence_flow=None)
+        return BPMNEndEvent(id_=id_, text=name, sequence_flow=None)
 
     def _create_start_event(self, element: Element) -> BPMNStartEvent:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNStartEvent(id_=id_, name=name, sequence_flow=None)
+        return BPMNStartEvent(id_=id_, text=name, sequence_flow=None)
 
     def _create_bpmn_element(self, element: Element) -> Tuple[str, str]:
         id_ = element.get(BPMNEnum.ID.value)
@@ -86,7 +93,7 @@ class BPMNFactory():
 
     def _create_activity(self, element: Element) -> BPMNActivity:
         id_, name = self._create_bpmn_element(element=element)
-        return BPMNActivity(id_=id_, name=name, sequence_flow_in=None,
+        return BPMNActivity(id_=id_, text=name, sequence_flow_in=None,
                             sequence_flow_out=None)
 
     def _create_parallel_gateway(self, element: Element) -> BPMNParallelGateway:
@@ -118,7 +125,9 @@ class BPMNFactory():
         # Reject earlier or raise exception?
 
         id_ = sequence_flow.get(BPMNEnum.ID.value)
-        # name tag in xml (== the text of the element) is treated as a condition
+
+        # <name> tag in xml (== the text of the element) is treated
+        # as a BranchCondition in sequence_flows
         condition = sequence_flow.get(BPMNEnum.NAME.value)
         if condition is not None:
             condition = BranchCondition.from_string(condition=condition)
@@ -134,13 +143,13 @@ class BPMNFactory():
         # attribute of our BPMN-elements.
         sequence_targets = []
         for source in elements:
-            source: BPMNElement
+            source: BPMNFlowObject
             if target_ref == source.id_:
                 sequence_targets.append(source)
 
         sequence_sources = []
         for target in elements:
-            target: BPMNElement
+            target: BPMNFlowObject
             if source_ref == target.id_:
                 sequence_sources.append(target)
 

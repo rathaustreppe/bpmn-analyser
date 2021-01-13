@@ -12,6 +12,6 @@ from src.converter.bpmn_models.bpmn_element import BPMNElement
 
 @pedantic_class
 class BPMNFlowObject(BPMNElement):
-    def __init__(self, id_: str, name: str) -> None:
+    def __init__(self, id_: str, text: str) -> None:
         super().__init__(id_=id_)
-        self.name = name
+        self.name = text

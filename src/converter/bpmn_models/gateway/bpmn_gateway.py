@@ -3,7 +3,7 @@ from typing import List, Optional
 from pedantic import pedantic_class
 
 from src.converter.bpmn_models.bpmn_flow_object import BPMNFlowObject
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 from src.exception.gateway_errors import BranchJoiningGatewayError
 
 '''
@@ -16,7 +16,7 @@ class BPMNGateway(BPMNFlowObject):
     def __init__(self, id_: str, name: Optional[str] = '',
                  sequence_flows_in: Optional[List[BPMNSequenceFlow]] = None,
                  sequence_flows_out: Optional[List[BPMNSequenceFlow]] = None) -> None:
-        super().__init__(id_=id_, name=name)
+        super().__init__(id_=id_, text=name)
         self.sequence_flows_in = sequence_flows_in
         self.sequence_flows_out = sequence_flows_out
 
