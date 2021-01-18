@@ -16,19 +16,6 @@ from src.models.token_state_rule import TokenStateRule
 class Task1Solution(ISolution):
 
     def get_scenarios(self) -> List[Scenario]:
-
-        # idea = Token(attributes={
-        #     # Attribut --Szenario-Startwert - erwarteter Endwert
-        #     'vorgelegter Entwurf': (False, True),
-        #     'geprüfter Entwurf': (False, True),
-        #     'korrigierter_Entwurf': (False, False)
-        # })
-        #
-
-
-
-
-
         scenarios = []
 
         # Scnario 1 of task 1: Entwurf ist fehlerfrei

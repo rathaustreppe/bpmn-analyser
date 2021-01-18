@@ -10,8 +10,7 @@ class Scenario():
     When running a business process that contains gateways, there are one
     or more decisions to make at each gateway - especially at exclusive
     and inclusive gateways.
-    Every BPMN-diagram is a flow chart and often there is no loop back.
-    So a singleton token cannot run trough the entire graph.
+    So a singleton token cannot run trough the >entire< graph.
 
     It is also not possible to duplicate the token at each gateway: the gateway
     decides where to branch next by checking the token state. And this state
