@@ -8,6 +8,5 @@ htmlcov
 
 # python virutal environments
 venv38
-build_requirements.bat
 src/schnell.py
 .coverage

@@ -50,9 +50,7 @@ Check out the [BPMN linting tool](https://github.com/bpmn-io/bpmnlint-playground
     * activities, start-and end events
     * gateways: parallel, inclusive & exclusive 
     * explicit loops
-* read and understand semi-structured text by using Natural Language Processing RegExp-Chunker
-* make use of wordnet to check for synonyms
-
+* define rules and token for sample solution
 
 
 ## Getting Started
@@ -68,11 +66,8 @@ install Python 3.8 (or newer) and execute the main.py.
 
 
 ## RoadMap
-There will be a first real-life stress test with students in october/november 2020,
-followed by bug-fixing (of course!), evaluation of usefulness and needed 
-features and workflow optimization.
-
-A useful front-end integration will be done in early 2021. (That won't be me - I don't like front ends 😐)
+For further workflow-optimization a front-end integration will be done 
+in early 2021.
 
 
 [travis-shield]: https://travis-ci.com/rathaustreppe/bpmn-analyser.svg?branch=master
