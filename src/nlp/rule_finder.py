@@ -2,16 +2,14 @@ from typing import List
 
 from pedantic import pedantic_class
 
-from src.models.token_state_condition import TokenStateCondition, Operators
+from src.converter.bpmn_models.gateway.branch_condition import Operators
 from src.models.token_state_modification import TokenStateModification
 from src.models.token_state_rule import TokenStateRule
-from src.nlp.chunker import Chunker
 
 
 @pedantic_class
 class RuleFinder:
-    def __init__(self, chunker: Chunker, ruleset: List[TokenStateRule]) -> None:
-        self.chunker = chunker
+    def __init__(self, ruleset: List[TokenStateRule]) -> None:
         self.ruleset = ruleset
 
     def find_rules(self, text: str) -> List[TokenStateRule]:
@@ -29,16 +27,16 @@ class RuleFinder:
         if text == 'startendevent':
             return []
 
+        # if an BPMNActitivy contains text like 'a++' it means, the
+        # token attribute 'a' should be increment by 1. We will generate such a
+        # modification on the fly right now.
         if text.endswith('++'):
             return [self._make_increment_rule(text=text)]
-
-
-        chunk = self.chunker.find_chunk(text=text)
 
         matching_rules = []
         for rule in self.ruleset:
             try:
-                if rule.synonym_cloud.are_synonyms(chunk=chunk):
+                if rule.text == text:
                     matching_rules.append(rule)
             except Exception:
                 continue
@@ -46,14 +44,25 @@ class RuleFinder:
         return matching_rules
 
     def _make_increment_rule(self, text:str) -> TokenStateRule:
-        # needs sth. like "a ++" or "a++" (without space)
+        # converts 'haha++' to executable statement 't.haha += 1'
 
         # remove increment and space to have only the name
         token_attribute = text
         token_attribute = token_attribute.replace(Operators.INCREMENT.value, '')
         token_attribute = token_attribute.replace(' ', '')
 
-        modification = TokenStateModification(key=token_attribute, value='++')
 
-        return TokenStateRule(state_conditions=[],
-                             state_modifications=[modification])
+        # This block of code is a closure. To change the specific token attribute
+        # we need to know the token and the attribute. Right now, we know the
+        # attribute but not the token. Later, we will know the token but not
+        # the attribute. So we define a closure to store the attribute inside
+        # the function and later we can call this function with the token-paramter.
+        def increment_function(a):
+            attribute = a
+            def increment_template(t):
+                t[attribute] += 1
+            return increment_template
+
+        tsm = TokenStateModification(modification=increment_function(a=token_attribute))
+
+        return TokenStateRule(modification=tsm)

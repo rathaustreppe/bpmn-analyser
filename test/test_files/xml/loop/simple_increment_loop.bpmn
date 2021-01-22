@@ -4,7 +4,7 @@
     <startEvent id="StartEvent_1sg0yt9" name="startendevent">
       <outgoing>SequenceFlow_1kmz19b</outgoing>
     </startEvent>
-    <task id="Task_0ph7gyc" name="a ++">
+    <task id="Task_0ph7gyc" name="a++">
       <incoming>SequenceFlow_1pxp8sf</incoming>
       <outgoing>SequenceFlow_1rkb336</outgoing>
     </task>

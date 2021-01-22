@@ -1,56 +1,43 @@
-import glob
 import os
 
-from src.converter.converter import Converter
-from src.examples.field_trial.sample_solution import SampleSolution
-from src.graph_pointer import GraphPointer
-from src.models.token import Token
-
-
-def run_pointer(graph_pointer: GraphPointer, solution_token: Token):
-    ret = graph_pointer.iterate_model()
-    if ret[0] == 0:
-        print('diagram processed correctly')
-    else:
-        print('possible infinite loop detected')
-
-    # compare tokens
-    return_token = ret[1]
-
-    print(f'solution token: {solution_token}')
-    print(f'students token: {return_token}')
-
-    if return_token == solution_token:
-        print('token equal: students solution is correct!\n')
-    else:
-        print('token not equal: business process is wrong\n')
+from src.examples.field_trial.task1_solution import Task1Solution
+from src.models.solution_coordinator import SolutionCoordinator
+from src.util.logger.logging_config import setup_logger_config
 
 
 if __name__ == '__main__':
-    # Execute this main.py to analyze several files in a folder and get a
-    # formatted output.
-    converter = Converter()
+    setup_logger_config()
 
-    # tell the program where all the *.bpmn-files are:
-    abs_folder_path = r'.....................\files'
+    # the path where all bpmn_files are you want to check
+    # can be a relative path if the bpmn-files are inside the
+    # bpmn-analyzer-project
+    # or can be an absolute path
+    # Example:
+    # >>> folder_path = r'../test/first_field_trial'
+    # >>> folder_path = r'C:/Users/Anon/Desktop'
+    folder_path = r'../test/first_field_trial'
 
+    # in case you have multiple folders in folder_path, you can specify one
+    # folder here that is used. If not used, leave it as empty string.
+    subfolder = ''
 
+    # file-mask. Is a regular expression to match all the files with a specific
+    # file name.
+    # Example:
+    # >>> file_mask = r'*.bpmn'     matches all bpmn-files. is the default mask
+    # >>> file_mask = r'*corrected.bpmn'       matches all files that end with
+    # 'corrected' e.g. my_house_corrected.bpmn
     file_mask = r'*.bpmn'
+    file_mask = r'*corrected.bpmn'
 
-    # runs through all the files
-    for filepath in glob.glob(os.path.join(abs_folder_path, file_mask)):
-        print(f'\n>>> >>> >>> {os.path.basename(filepath)}<<< <<< <<<')
-        try:
-            students_bpmn_model = converter.convert(abs_file_path=filepath)
-            sample_solution = SampleSolution()
+    # the sample_solution you want to apply
+    # this is the class where you wrote your sample solution
+    # put the file in src and import it here
+    solution = Task1Solution()
 
-            students_graphpointer = GraphPointer(model=students_bpmn_model,
-                                                 token=sample_solution.get_init_token(),
-                                                 ruleset=sample_solution.get_ruleset(),
-                                                 chunker=sample_solution.get_chunker())
-            sample_solution_token = sample_solution.get_solution_token()
-            run_pointer(graph_pointer=students_graphpointer, solution_token=sample_solution_token)
-        except Exception as e:
-            print(f'while processing an error occurred: \n {e}')
-            print(f'{students_graphpointer.token}')
-            continue
+    # check all diagrams. leave code as it is
+    folder_path = os.path.join(folder_path, subfolder)
+    coordinator = SolutionCoordinator(folder_path=folder_path,
+                                      sample_solution=solution,
+                                      file_mask=file_mask)
+    coordinator.run_all_solution_checking()

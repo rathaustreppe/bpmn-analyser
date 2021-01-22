@@ -3,14 +3,12 @@ import shutil
 from typing import List, Tuple
 
 import pytest
-from nltk.corpus import wordnet as wn
 
+from src.models.running_token import RunningToken
 from src.models.token import Token
-from src.nlp.chunker import Chunker
 
-contract_checked = 'contract checked'
-wn_synset_bill = wn.synset('bill.n.02')
 
+# folder names and paths of all test files
 test_files_folder_name = 'test_files'
 xml_files_folder_name = 'xml'
 temp_xml_files_folder_name = 'temp_xml'
@@ -76,33 +74,20 @@ def empty_token() -> Token:
 
 
 @pytest.fixture(scope='function', autouse=True)
+def empty_running_token() -> RunningToken:
+    return RunningToken(attributes=None)
+
+
+@pytest.fixture(scope='function', autouse=True)
 def example_token() -> Token:
     attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
     return Token(attributes=attributes)
 
 
-@pytest.fixture(scope='module', autouse=True)
-def nn_vb_nn_chunker() -> Chunker:
-    grammar = r"""
-    NN_VB_NN:     {<NN.?><VB.?><NN.?>}
-    """
-    return Chunker(chunk_grams=grammar)
-
-
-@pytest.fixture(scope='module', autouse=True)
-def nn_chunker() -> Chunker:
-    grammar = r"""
-    NN_Chunk:     {<NN.?>}
-    """
-    return Chunker(chunk_grams=grammar)
-
-
-@pytest.fixture(scope='module', autouse=True)
-def adj_chunker() -> Chunker:
-    grammar = r"""
-    ADJ_Chunk:      {<JJ.?>}
-    """
-    return Chunker(chunk_grams=grammar)
+@pytest.fixture(scope='function', autouse=True)
+def example_running_token() -> RunningToken:
+    attributes = {'k1': 'v1', 'k2': 'v2', 'k3': 'v3'}
+    return RunningToken(attributes=attributes)
 
 
 @pytest.fixture(scope='module', autouse=True)

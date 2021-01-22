@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.3.0">
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="StartEvent_1sg0yt9" name="Dokumentenentwurf wird vorgelegt">
+      <outgoing>SequenceFlow_1k3582g</outgoing>
+    </startEvent>
+    <task id="Task_0yjradw" name="Berechtigte überprüft den Entwurf">
+      <incoming>SequenceFlow_042z33l</incoming>
+      <outgoing>SequenceFlow_1r6c1yn</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1k3582g" sourceRef="StartEvent_1sg0yt9" targetRef="ExclusiveGateway_1djvjka" />
+    <exclusiveGateway id="ExclusiveGateway_1fcz53h" name="Ja, nein">
+      <incoming>SequenceFlow_1r6c1yn</incoming>
+      <outgoing>SequenceFlow_1r5tz54</outgoing>
+      <outgoing>SequenceFlow_0fjxd0q</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_1r6c1yn" sourceRef="Task_0yjradw" targetRef="ExclusiveGateway_1fcz53h" />
+    <task id="Task_0co83ah" name="Anmelden beim Server">
+      <incoming>SequenceFlow_1r5tz54</incoming>
+      <outgoing>SequenceFlow_0j12k3b</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_1r5tz54" name="Entwurf in Ordnung" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_0co83ah" />
+    <task id="Task_193bcrs" name="Verfasser korrigiert">
+      <incoming>SequenceFlow_0fjxd0q</incoming>
+      <outgoing>SequenceFlow_1g05sp8</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0fjxd0q" name="Entwurf nicht in Ordnung" sourceRef="ExclusiveGateway_1fcz53h" targetRef="Task_193bcrs" />
+    <sequenceFlow id="SequenceFlow_1g05sp8" sourceRef="Task_193bcrs" targetRef="ExclusiveGateway_1djvjka" />
+    <exclusiveGateway id="ExclusiveGateway_1djvjka">
+      <incoming>SequenceFlow_1k3582g</incoming>
+      <incoming>SequenceFlow_1g05sp8</incoming>
+      <outgoing>SequenceFlow_042z33l</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_042z33l" sourceRef="ExclusiveGateway_1djvjka" targetRef="Task_0yjradw" />
+    <task id="Task_136yflw" name="Dokument hochladen">
+      <incoming>SequenceFlow_0j12k3b</incoming>
+      <outgoing>SequenceFlow_0q1kdlt</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0j12k3b" sourceRef="Task_0co83ah" targetRef="Task_136yflw" />
+    <task id="Task_1252q0b" name="Verfasser benachrichtigt">
+      <incoming>SequenceFlow_0q1kdlt</incoming>
+      <outgoing>SequenceFlow_0tjglza</outgoing>
+    </task>
+    <sequenceFlow id="SequenceFlow_0q1kdlt" sourceRef="Task_136yflw" targetRef="Task_1252q0b" />
+    <endEvent id="EndEvent_1g4jwpx" name="Dokument veröffentlicht">
+      <incoming>SequenceFlow_0tjglza</incoming>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_0tjglza" sourceRef="Task_1252q0b" targetRef="EndEvent_1g4jwpx" />
+  </process>
+  <bpmndi:BPMNDiagram id="BpmnDiagram_1">
+    <bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="StartEvent_1sg0yt9_di" bpmnElement="StartEvent_1sg0yt9">
+        <omgdc:Bounds x="392" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="367" y="185" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0yjradw_di" bpmnElement="Task_0yjradw">
+        <omgdc:Bounds x="550" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1k3582g_di" bpmnElement="SequenceFlow_1k3582g">
+        <omgdi:waypoint x="428" y="160" />
+        <omgdi:waypoint x="465" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1fcz53h_di" bpmnElement="ExclusiveGateway_1fcz53h" isMarkerVisible="true">
+        <omgdc:Bounds x="775" y="135" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="834.5" y="153" width="39" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1r6c1yn_di" bpmnElement="SequenceFlow_1r6c1yn">
+        <omgdi:waypoint x="650" y="160" />
+        <omgdi:waypoint x="775" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0co83ah_di" bpmnElement="Task_0co83ah">
+        <omgdc:Bounds x="950" y="10" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1r5tz54_di" bpmnElement="SequenceFlow_1r5tz54">
+        <omgdi:waypoint x="800" y="135" />
+        <omgdi:waypoint x="800" y="50" />
+        <omgdi:waypoint x="950" y="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="791" y="90" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_193bcrs_di" bpmnElement="Task_193bcrs">
+        <omgdc:Bounds x="950" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fjxd0q_di" bpmnElement="SequenceFlow_0fjxd0q">
+        <omgdi:waypoint x="800" y="185" />
+        <omgdi:waypoint x="800" y="270" />
+        <omgdi:waypoint x="950" y="270" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="777" y="225" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g05sp8_di" bpmnElement="SequenceFlow_1g05sp8">
+        <omgdi:waypoint x="1000" y="310" />
+        <omgdi:waypoint x="1000" y="350" />
+        <omgdi:waypoint x="600" y="350" />
+        <omgdi:waypoint x="490" y="270" />
+        <omgdi:waypoint x="490" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1djvjka_di" bpmnElement="ExclusiveGateway_1djvjka" isMarkerVisible="true">
+        <omgdc:Bounds x="465" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_042z33l_di" bpmnElement="SequenceFlow_042z33l">
+        <omgdi:waypoint x="515" y="160" />
+        <omgdi:waypoint x="550" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_136yflw_di" bpmnElement="Task_136yflw">
+        <omgdc:Bounds x="1140" y="10" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0j12k3b_di" bpmnElement="SequenceFlow_0j12k3b">
+        <omgdi:waypoint x="1050" y="50" />
+        <omgdi:waypoint x="1140" y="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_1252q0b_di" bpmnElement="Task_1252q0b">
+        <omgdc:Bounds x="1330" y="10" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q1kdlt_di" bpmnElement="SequenceFlow_0q1kdlt">
+        <omgdi:waypoint x="1240" y="50" />
+        <omgdi:waypoint x="1330" y="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1g4jwpx_di" bpmnElement="EndEvent_1g4jwpx">
+        <omgdc:Bounds x="1522" y="32" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1509" y="75" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tjglza_di" bpmnElement="SequenceFlow_0tjglza">
+        <omgdi:waypoint x="1430" y="50" />
+        <omgdi:waypoint x="1522" y="50" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

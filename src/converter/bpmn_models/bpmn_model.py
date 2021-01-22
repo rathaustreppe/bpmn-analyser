@@ -1,14 +1,14 @@
-from typing import List, Type, Union
+from typing import List, Union
 
 from src.converter.bpmn_models.bpmn_activity import BPMNActivity
-from src.converter.bpmn_models.bpmn_element import BPMNFlowObject
-from src.converter.bpmn_models.bpmn_sequenceflow import BPMNSequenceFlow
+from src.converter.bpmn_models.bpmn_element import BPMNElement
+from src.converter.bpmn_models.flows.bpmn_sequenceflow import BPMNSequenceFlow
 from src.converter.bpmn_models.event.bpmn_endevent import BPMNEndEvent
 from src.converter.bpmn_models.event.bpmn_startevent import BPMNStartEvent
 
 
 class BPMNModel:
-    def __init__(self, bpmn_elements: List[BPMNFlowObject],
+    def __init__(self, bpmn_elements: List[BPMNElement],
                  sequence_flows: List[BPMNSequenceFlow]) -> None:
         for element in bpmn_elements:
             if isinstance(element, BPMNSequenceFlow):
@@ -21,6 +21,6 @@ class BPMNModel:
     def find_elements_by_type(self, type_to_find) -> List[Union[BPMNStartEvent,
                                                                 BPMNEndEvent,
                                                                 BPMNActivity,
-                                                                BPMNFlowObject]]:
+                                                                BPMNElement]]:
         return [elem for elem in self.bpmn_elements if isinstance(elem, type_to_find)]
 

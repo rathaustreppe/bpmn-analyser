@@ -1,112 +1,64 @@
-from enum import Enum
-from typing import Any
+import inspect
+from typing import Callable
 
-from pedantic import pedantic_class
+from pedantic import pedantic
 
-from src.exception.token_state_errors import \
-    MissingOperatorInConditionError, \
-    MissingAttributeInConditionError, MissingValueInConditionError, \
-    MissingAttributeInTokenError
-from src.models.token import Token
+from src.models.running_token import RunningToken
+from src.util.string_operations.format_code_string import format_code_string
 
 
-class Operators(Enum):
-    # list of operators that python can evaluate
-    EQUALS = '=='
-    GREATER_THEN = '>'
-    SMALLER_THEN = '<'
-    INCREMENT = '++'
-
-
-@pedantic_class
 class TokenStateCondition:
     """
-    This class defines a single condition that is checked
-    before a token state can change.
+    This class defines a condition that is checked
+    before a RunningToken state can change. Used for sample solution generation.
+    Dont get confused with BranchCondition. They are used in the BPMNModel to
+    tell when a BPMNGateway has to branch.
     """
 
-    def __init__(self, tok_attribute: str = '',
-                 operator: Operators = Operators.EQUALS,
-                 tok_value: Any = None) -> None:
+    def __init__(self, condition: Callable[[RunningToken], bool]) -> None:
         """
-        Example: If you want to define the condition, where
-        the token attribute foo has to be bar, then you
-        define the condition:
-        TokenStateCondition(tok_attribute = 'foo',
-            operator = '=', tok_value='bar')
-        Args:
-            tok_attribute (str): is the key of the attribute dict of a token
-            operator (Operators): '==' compares equality.
-            tok_value (Any): Defines the value the _tok_attribute has to have.
+        TokenStateCondition excepts a function that is called later.
+        You can choose between standard functions or (anonymous) lambda functions:
+
+        Method 1
+        >>> def check_if_not_hungry(token):
+        >>>    return token.hungry == False
+        >>> TokenStateCondition(condition=check_if_not_hungry)
+        > pay attention not to use brackets when calling the constructor!
+        > it is a callback function
+
+        Method 2
+        >>> TokenStateCondition(condition=lambda token: token.hungry == False)
+        > this method does not pollute namespace and has less lines of code
+        > recommended method
+
+        If you have more conditions, you pass them all at once:
+        >>> TokenStateCondition(condition=lambda token: token.hungry == False and
+        >>>                                             token.poor == True)
+
         """
-        self._tok_attribute = tok_attribute
-        self._operator = operator
-        self._tok_value = tok_value
+        self.condition = condition
 
-    @classmethod
-    def from_string(cls, condition: str) -> 'TokenStateCondition':
-        # parses 'attr=42' to constructor call of TokenStateCondition
-        operator = ''
-        # find operator
-        for op in Operators:
-            if condition.find(op.value) != -1:
-                operator = op
-        if operator == '':
-            raise MissingOperatorInConditionError(text=condition,
-                                                  valid_operators=[op.value for op in Operators])
-
-        # find attr
-        op_pos = condition.find(operator.value)
-        attribute = condition[0:op_pos]
-        if attribute == '':
-            raise MissingAttributeInConditionError(text=condition)
-
-        # find value
-        op_str_ending = op_pos + len(operator.value)
-        value = condition[op_str_ending:len(condition)]
-        if value == '':
-            raise MissingValueInConditionError(text=condition)
-
-        return TokenStateCondition(tok_attribute=attribute,
-                                   operator=operator,
-                                   tok_value=value)
-
-    def check_condition(self, token: Token) -> bool:
+    @pedantic
+    def check_condition(self, token: RunningToken) -> bool:
         """
         Takes a token and checks if its pre-defined
-        condition is true or false wth the given token.
-        Args:
-            token (Token): a Token object you want to check
-
-        Returns:
-             bool: True if condition applied to token is okay.
-             False if token does not comply with condition
+        condition-function is true or false wth the given token.
         """
-        if self._tok_attribute not in token or self._tok_attribute == '':
-            raise MissingAttributeInTokenError(
-                attribute=self._tok_attribute,
-                token=token)
-
-        token_val = token.get_attribute(key=self._tok_attribute)
-
-        if self._operator == Operators.EQUALS:
-            return token_val == self._tok_value
-        elif self._operator == Operators.GREATER_THEN:
-            return token_val > self._tok_value
-        elif self._operator == Operators.SMALLER_THEN:
-            return token_val < self._tok_value
-        else:
-            raise NotImplementedError(f'Operator {self._operator} not implemented.'
-                                      f'Currently implemented: {Operators.value}')
-
+        return self.condition(token)
 
     def __str__(self) -> str:
-        return f'{self._tok_attribute}{self._operator.value}{self._tok_value}'
+        # Print sourcecode of the defined condition. But remove \n and appending
+        # spaces and tabs
+        src = inspect.getsource(self.condition)
+        src = format_code_string(text=src)
+        return f'TokenStateCondition: {src}'
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __eq__(self, other: 'TokenStateCondition') -> bool:
-        return self._tok_attribute == other._tok_attribute and \
-               self._operator == other._operator and \
-               self._tok_value == other._tok_value
+        # I havn't found a way to compare functions. You could compare
+        # the source code with inspect, but the results were wrong?!
+        # So we return always False to make no false promises.
+        return False
