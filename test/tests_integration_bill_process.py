@@ -1,8 +1,6 @@
 import os
 from typing import List
 
-from nltk.corpus import wordnet as wn
-
 from src.converter.converter import Converter
 from src.graph_pointer import GraphPointer
 from src.models.running_token import RunningToken
@@ -32,8 +30,6 @@ class TestIntegrationBillProcess:
 
     @staticmethod
     def ruleset() -> List[TokenStateRule]:
-        wn_synset_bill = wn.synset('bill.n.02')
-
         # Ruleset for modifying a token. These are real-life constraints.
         # E.g. you can
         # only sign a (physical) paper, if it is in front of you.
