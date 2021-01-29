@@ -4,9 +4,8 @@ from src.nlp.rule_finder import RuleFinder
 
 class TestRuleFinder:
     def test_increment(self):
-        # if increment (usually '++') is in the text, make no
-        # chunking, instead just return th TokenStateRule which can
-        # be used to increment the token attribute
+        # if increment (usually '++') is in the text, make increment rule,
+        # apply it and check if it really added 1
         tok_attribute = 'k1'
         value = 0
 
@@ -17,6 +16,6 @@ class TestRuleFinder:
         tsr = tsr_list[0]
 
         token = RunningToken(attributes={tok_attribute: value})
-        return_token = tsr.check_and_modify(token=token)
 
+        return_token = tsr.check_and_modify(token=token)
         assert return_token[tok_attribute] == value + 1

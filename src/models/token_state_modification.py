@@ -66,8 +66,7 @@ class TokenStateModification:
         diff = {}
         for key in token:
             if token[key] != token_before[key]:
-                diff[key] = (token_before[key], token[key])
-        logging.debug(f'Token changed: {diff}')
+                logging.debug(f'Token changed: {key}: {token_before[key]} -> {token[key]}')
 
     def __str__(self) -> str:
         # Print sourcecode of the defined modification. But remove \n

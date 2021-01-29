@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="8.2.0">
+  <process id="Process_1" isExecutable="false">
+    <startEvent id="Event_13rqfhs" name="Bewerbung geht ein">
+      <outgoing>Flow_11mtsp9</outgoing>
+    </startEvent>
+    <task id="Activity_18f142v" name="Bewerbung sichten">
+      <incoming>Flow_11mtsp9</incoming>
+      <outgoing>Flow_1nz5cov</outgoing>
+    </task>
+    <sequenceFlow id="Flow_11mtsp9" sourceRef="Event_13rqfhs" targetRef="Activity_18f142v" />
+    <exclusiveGateway id="Gateway_1igiwmb">
+      <incoming>Flow_1nz5cov</incoming>
+      <outgoing>Flow_1r8g7lw</outgoing>
+      <outgoing>Flow_127alwh</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_1nz5cov" sourceRef="Activity_18f142v" targetRef="Gateway_1igiwmb" />
+    <task id="Activity_1jt4dip" name="Bewerbung ablehnen">
+      <incoming>Flow_1r8g7lw</incoming>
+      <outgoing>Flow_13ywg5h</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1r8g7lw" name="ungeeignete_Bewerbung ==  True" sourceRef="Gateway_1igiwmb" targetRef="Activity_1jt4dip" />
+    <task id="Activity_0nw6c3u" name="Bewerber zum Vorstellungsgespräch einladen">
+      <incoming>Flow_127alwh</incoming>
+      <outgoing>Flow_1v0qdmj</outgoing>
+    </task>
+    <sequenceFlow id="Flow_127alwh" name="ungeeignete_Bewerbung == False" sourceRef="Gateway_1igiwmb" targetRef="Activity_0nw6c3u" />
+    <task id="Activity_17380x2" name="Vorstellungsgespräch führen">
+      <incoming>Flow_1v0qdmj</incoming>
+      <outgoing>Flow_0e4dews</outgoing>
+    </task>
+    <sequenceFlow id="Flow_1v0qdmj" sourceRef="Activity_0nw6c3u" targetRef="Activity_17380x2" />
+    <endEvent id="Event_1l8zujt" name="Bewerber abgelehnt">
+      <incoming>Flow_13ywg5h</incoming>
+    </endEvent>
+    <task id="Activity_16dsquh" name="Stelle besetzen">
+      <incoming>Flow_0e4dews</incoming>
+      <outgoing>Flow_1ybt7it</outgoing>
+    </task>
+    <endEvent id="Event_0v1qxez" name="Bewerber eingestellt">
+      <incoming>Flow_1ybt7it</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1ybt7it" sourceRef="Activity_16dsquh" targetRef="Event_0v1qxez" />
+    <sequenceFlow id="Flow_13ywg5h" sourceRef="Activity_1jt4dip" targetRef="Event_1l8zujt" />
+    <sequenceFlow id="Flow_0e4dews" sourceRef="Activity_17380x2" targetRef="Activity_16dsquh" />
+  </process>
+  <bpmndi:BPMNDiagram id="BpmnDiagram_1">
+    <bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNEdge id="Flow_11mtsp9_di" bpmnElement="Flow_11mtsp9">
+        <omgdi:waypoint x="218" y="140" />
+        <omgdi:waypoint x="350" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nz5cov_di" bpmnElement="Flow_1nz5cov">
+        <omgdi:waypoint x="450" y="140" />
+        <omgdi:waypoint x="585" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r8g7lw_di" bpmnElement="Flow_1r8g7lw">
+        <omgdi:waypoint x="635" y="140" />
+        <omgdi:waypoint x="770" y="140" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="660" y="106" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_127alwh_di" bpmnElement="Flow_127alwh">
+        <omgdi:waypoint x="610" y="165" />
+        <omgdi:waypoint x="610" y="250" />
+        <omgdi:waypoint x="770" y="250" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="583" y="205" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v0qdmj_di" bpmnElement="Flow_1v0qdmj">
+        <omgdi:waypoint x="870" y="250" />
+        <omgdi:waypoint x="1010" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ybt7it_di" bpmnElement="Flow_1ybt7it">
+        <omgdi:waypoint x="1290" y="250" />
+        <omgdi:waypoint x="1422" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13ywg5h_di" bpmnElement="Flow_13ywg5h">
+        <omgdi:waypoint x="870" y="140" />
+        <omgdi:waypoint x="1042" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e4dews_di" bpmnElement="Flow_0e4dews">
+        <omgdi:waypoint x="1110" y="250" />
+        <omgdi:waypoint x="1190" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_13rqfhs_di" bpmnElement="Event_13rqfhs">
+        <omgdc:Bounds x="182" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="158" y="166" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18f142v_di" bpmnElement="Activity_18f142v">
+        <omgdc:Bounds x="350" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1igiwmb_di" bpmnElement="Gateway_1igiwmb" isMarkerVisible="true">
+        <omgdc:Bounds x="585" y="115" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="451" y="172" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nw6c3u_di" bpmnElement="Activity_0nw6c3u">
+        <omgdc:Bounds x="770" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jt4dip_di" bpmnElement="Activity_1jt4dip">
+        <omgdc:Bounds x="770" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17380x2_di" bpmnElement="Activity_17380x2">
+        <omgdc:Bounds x="1010" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16dsquh_di" bpmnElement="Activity_16dsquh">
+        <omgdc:Bounds x="1190" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1l8zujt_di" bpmnElement="Event_1l8zujt">
+        <omgdc:Bounds x="1042" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1035" y="165" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0v1qxez_di" bpmnElement="Event_0v1qxez">
+        <omgdc:Bounds x="1422" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1416" y="275" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

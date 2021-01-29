@@ -1,5 +1,6 @@
 import os
 
+from src.examples.field_trial.bewerber import Bewerber
 from src.examples.field_trial.task1_solution import Task1Solution
 from src.models.solution_coordinator import SolutionCoordinator
 from src.util.logger.logging_config import setup_logger_config
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     # Example:
     # >>> folder_path = r'../test/first_field_trial'
     # >>> folder_path = r'C:/Users/Anon/Desktop'
-    folder_path = r'../test/first_field_trial'
+    folder_path = r'../src/examples/field_trial'
 
     # in case you have multiple folders in folder_path, you can specify one
     # folder here that is used. If not used, leave it as empty string.
@@ -27,13 +28,12 @@ if __name__ == '__main__':
     # >>> file_mask = r'*.bpmn'     matches all bpmn-files. is the default mask
     # >>> file_mask = r'*corrected.bpmn'       matches all files that end with
     # 'corrected' e.g. my_house_corrected.bpmn
-    file_mask = r'*.bpmn'
-    file_mask = r'*corrected.bpmn'
+    file_mask = r'bewerber*.bpmn'
 
     # the sample_solution you want to apply
     # this is the class where you wrote your sample solution
     # put the file in src and import it here
-    solution = Task1Solution()
+    solution = Bewerber()
 
     # check all diagrams. leave code as it is
     folder_path = os.path.join(folder_path, subfolder)

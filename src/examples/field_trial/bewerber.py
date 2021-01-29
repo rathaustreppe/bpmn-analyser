@@ -27,7 +27,7 @@ class Bewerber(ISolution):
             'Bewerbung_abgelehnt': False,
             'Einladung_Vorstellungsgespräch': False,
             'Vorstellungsgespräch': False,
-            'für_Bewerber_entschieden': False,
+            'Bewerber_abgelehnt': False,
             'Stelle_besetzt': False
         })
 
@@ -36,7 +36,7 @@ class Bewerber(ISolution):
         ############ SZENARIO 1 ######################
         ##############################################
 
-        description_1 = 'Bewerber wird sofort abgelehnt'
+        description_1 = 'Bewerbung wird sofort abgelehnt'
 
         expected_token_1 = Token(attributes={
             'ungeeignete_Bewerbung': True,
@@ -47,7 +47,7 @@ class Bewerber(ISolution):
             'Bewerbung_abgelehnt': True,
             'Einladung_Vorstellungsgespräch': False,
             'Vorstellungsgespräch': False,
-            'für_Bewerber_entschieden': False,
+            'Bewerber_abgelehnt': False,
             'Stelle_besetzt': False
         })
 
@@ -61,13 +61,12 @@ class Bewerber(ISolution):
         scen1 = Scenario(running_token=running_token_1,
                          expected_token=expected_token_1,
                          description=description_1)
-        scenarios.append(scen1)
 
         ##############################################
         ############ SZENARIO 2 ######################
         ##############################################
 
-        description_2 = 'Bewerber nach dem Vorstellungsgespräch abelehnt'
+        description_2 = 'Bewerber nach dem Vorstellungsgespräch abgelehnt'
 
         expected_token_2 = Token(attributes={
             'ungeeignete_Bewerbung': False,
@@ -78,7 +77,7 @@ class Bewerber(ISolution):
             'Bewerbung_abgelehnt': False,
             'Einladung_Vorstellungsgespräch': True,
             'Vorstellungsgespräch': True,
-            'für_Bewerber_entschieden': False,
+            'Bewerber_abgelehnt': True,
             'Stelle_besetzt': False
         })
 
@@ -89,7 +88,6 @@ class Bewerber(ISolution):
         scen2 = Scenario(running_token=running_token_2,
                          expected_token=expected_token_2,
                          description=description_2)
-        scenarios.append(scen2)
 
         ##############################################
         ############ SZENARIO 3 ######################
@@ -106,7 +104,7 @@ class Bewerber(ISolution):
             'Bewerbung_abgelehnt': False,
             'Einladung_Vorstellungsgespräch': True,
             'Vorstellungsgespräch': True,
-            'für_Bewerber_entschieden': True,
+            'Bewerber_abgelehnt': False,
             'Stelle_besetzt': True
         })
 
@@ -115,27 +113,105 @@ class Bewerber(ISolution):
         scen3 = Scenario(running_token=running_token_3,
                          expected_token=expected_token_3,
                          description=description_3)
-        # hier die Tokens und Szenarien
-        # ...
 
         return [scen1, scen2, scen3]
 
     def get_ruleset(self) -> List[TokenStateRule]:
 
-        text_einladen= Text('Bewerber zum Vorstellungsgespräch einladen')
+
+        # Rule: Bewerbung geht ein
+        text_eingang = Text('Bewerbung geht ein')
+        cond_eingang = TokenStateCondition(
+            lambda t: t.Bewerbung_eingegangen == False)
+
+        def m(t): t.Bewerbung_eingegangen = True
+        mod_eingang = TokenStateModification(m)
+
+        tsr_eingang = TokenStateRule(text=text_eingang,
+                                     condition=cond_eingang,
+                                     modification=mod_eingang)
+
+        # Rule: Bewerbung sichten
+        text_sichten = Text('Bewerbung sichten')
+        cond_sichten = TokenStateCondition(
+            lambda t: t.Bewerbung_eingegangen == True)
+
+        def m(t): t.Bewerbung_gesichtet = True
+
+        mod_sichten = TokenStateModification(m)
+
+        tsr_sichten = TokenStateRule(text=text_sichten,
+                                     condition=cond_sichten,
+                                     modification=mod_sichten)
+
+        # Rule: Bewerbung ablehnen
+        text_ablehnen = Text('Bewerbung ablehnen')
+        cond_ablehnen = TokenStateCondition(
+            lambda t: t.ungeeignete_Bewerbung == True)
+
+        def m(t): t.Bewerbung_abgelehnt = True
+        mod_ablehnen = TokenStateModification(m)
+
+        tsr_ablehnen = TokenStateRule(text=text_ablehnen,
+                                      condition=cond_ablehnen,
+                                      modification=mod_ablehnen)
+
+
+
+        # Rule: Zum Vorstellungsgespräch einladen
+        text_einladen = Text('Bewerber zum Vorstellungsgespräch einladen')
         cond_einladen = TokenStateCondition(
             lambda t: t.ungeeignete_Bewerbung is False and
                       t.Bewerbung_eingegangen is True and
                       t.Bewerbung_gesichtet is True and
                       t.Bewerbung_abgelehnt is False)
 
-
         def m(t): t.Einladung_Vorstellungsgespräch = True
         mod_einladung = TokenStateModification(m)
 
+        tsr_einladung = TokenStateRule(text=text_einladen,
+                                       condition=cond_einladen,
+                                       modification=mod_einladung)
 
-        tsr_einladung = TokenStateRule(condition=cond_einladen,
-                                       modification=mod_einladung,
-                                       text=text_einladen)
+        # Rule: Vorstellungsgespräch führen
+        text_vorstellung = Text('Vorstellungsgespräch führen')
+        cond_vorstellung = TokenStateCondition(
+            lambda t: t.Einladung_Vorstellungsgespräch == True)
 
-        return [tsr_einladung]
+        def m(t): t.Vorstellungsgespräch = True
+        mod_vorstellung = TokenStateModification(m)
+
+        tsr_vorstellung = TokenStateRule(text=text_vorstellung,
+                                         condition=cond_vorstellung,
+                                         modification=mod_vorstellung)
+
+        # Rule: Bewerbunng abgelehnt (EndEvent)
+        text_bewerber_ablehnen = Text('Bewerber ablehnen')
+        cond_bewerber_ablehnen = TokenStateCondition(
+            lambda t: t.ungeeigneter_Bewerber == True)
+
+        def m(t): t.Bewerber_abgelehnt = True
+
+        mod_bewerber_ablehnen = TokenStateModification(m)
+
+        tsr_bewerber_ablehnen = TokenStateRule(text=text_bewerber_ablehnen,
+                                      condition=cond_bewerber_ablehnen,
+                                      modification=mod_bewerber_ablehnen)
+
+        # Rule: Stelle besetzen
+        text_stelle = Text('Stelle besetzen')
+        cond_stelle = TokenStateCondition(
+            lambda t: t.Vorstellungsgespräch == True and
+                      t.ungeeigneter_Bewerber == False)
+
+        def m(t):
+            t.Bewerber_abgelehnt = False
+            t.Stelle_besetzt = True
+        mod_stelle = TokenStateModification(m)
+
+        tsr_stelle = TokenStateRule(text=text_stelle,
+                                    condition=cond_stelle,
+                                    modification=mod_stelle)
+
+        return [tsr_eingang, tsr_ablehnen, tsr_sichten,
+                tsr_einladung, tsr_vorstellung, tsr_bewerber_ablehnen, tsr_stelle]
